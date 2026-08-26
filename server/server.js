@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const multer = require("multer");
 const { put, del } = require("@vercel/blob");
 const db = require("./db");
+const dashboard = require("./dashboard");
 
 const MATERIAL_MAX_BYTES = 20 * 1024 * 1024; // 교안 업로드 용량 제한: 20MB
 const ALLOWED_MATERIAL_TYPES = {
@@ -406,6 +407,64 @@ app.delete("/api/assignments/:id", async (req, res) => {
     await del(assignment.blob_pathname).catch(() => {});
     await db.deleteAssignment(assignment.id);
     res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.get("/api/dashboard", requireAdmin, async (req, res) => {
+  try {
+    const data = await dashboard.getDashboard();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/requests/:id/approve", requireAdmin, async (req, res) => {
+  try {
+    const studentId = await dashboard.approveRequest(req.params.id);
+    if (!studentId) return res.status(404).json({ error: "찾을 수 없습니다." });
+    const data = await dashboard.getDashboard();
+    res.json(Object.assign({ studentId }, data));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/students/:id/lessons", requireAdmin, async (req, res) => {
+  try {
+    const result = await dashboard.logLesson(req.params.id, req.body.note || "");
+    if (!result) return res.status(404).json({ error: "찾을 수 없습니다." });
+    const data = await dashboard.getDashboard();
+    res.json(Object.assign({}, result, data));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/students/:id/invoices", requireAdmin, async (req, res) => {
+  try {
+    const ok = await dashboard.issueInvoice(req.params.id);
+    if (!ok) return res.status(404).json({ error: "찾을 수 없습니다." });
+    const data = await dashboard.getDashboard();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/invoices/:id/confirm", requireAdmin, async (req, res) => {
+  try {
+    const ok = await dashboard.confirmInvoicePayment(req.params.id);
+    if (!ok) return res.status(404).json({ error: "찾을 수 없습니다." });
+    const data = await dashboard.getDashboard();
+    res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "서버 오류가 발생했습니다." });

@@ -302,5 +302,7 @@ module.exports = {
   createAssignment,
   getAssignmentById,
   renameAssignment,
-  deleteAssignment
+  deleteAssignment,
+  query,
+  ensureSchema
 };
