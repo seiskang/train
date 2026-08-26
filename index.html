@@ -380,7 +380,7 @@ button { font-family: var(--font-sans); }
     authPendingVerify: null, authUnverifiedEmail: "",
     authForgot: null, authForgotBusy: false, authForgotError: "",
     authResetToken: null, authResetBusy: false, authResetError: "",
-    authAgreeTerms: false, authTermsModal: null,
+    authAgreeTerms: false, authTermsModal: null, authConfirmAge: false,
     savedEmail: getSavedEmail(), authRememberEmail: !!getSavedEmail(),
     students: [], requests: [], invoices: [], dashboardReady: false,
     materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
@@ -1341,7 +1341,10 @@ button { font-family: var(--font-sans); }
         '<span style="font-size:var(--text-sm);color:var(--text-body)">' +
         '<a href="#" id="show-terms" style="color:var(--info-500)">이용약관</a> 및 ' +
         '<a href="#" id="show-privacy" style="color:var(--info-500)">개인정보처리방침</a>에 동의합니다. (필수)' +
-        '</span></label>'
+        '</span></label>' +
+        '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-confirm-age" style="margin-top:3px"' + (state.authConfirmAge ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">만 14세 이상입니다. (필수)</span></label>'
         : "") +
       (state.authError ? '<div class="auth-error">' + esc(state.authError) + '</div>' : "") +
       (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
@@ -1430,7 +1433,11 @@ button { font-family: var(--font-sans); }
       setState({ authError: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." });
       return;
     }
-    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "", agreeTerms: true } : { email: email, password: password };
+    if (tab === "signup" && !state.authConfirmAge) {
+      setState({ authError: "만 14세 이상만 가입할 수 있습니다." });
+      return;
+    }
+    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "", agreeTerms: true, confirmAge: true } : { email: email, password: password };
     setState({ authBusy: true, authError: "", authUnverifiedEmail: "" });
     fetch(tab === "signup" ? "/api/signup" : "/api/login", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
@@ -1533,6 +1540,8 @@ button { font-family: var(--font-sans); }
     if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authForgot: null, authTab: "login" }); });
     var agreeBox = document.getElementById("auth-agree-terms");
     if (agreeBox) agreeBox.addEventListener("change", function () { state.authAgreeTerms = agreeBox.checked; });
+    var ageBox = document.getElementById("auth-confirm-age");
+    if (ageBox) ageBox.addEventListener("change", function () { state.authConfirmAge = ageBox.checked; });
     var rememberBox = document.getElementById("auth-remember-email");
     if (rememberBox) rememberBox.addEventListener("change", function () { state.authRememberEmail = rememberBox.checked; });
     var showTerms = document.getElementById("show-terms");

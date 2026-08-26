@@ -30,6 +30,29 @@ const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET;
 const WECHAT_APP_ID = process.env.WECHAT_APP_ID;
 const WECHAT_APP_SECRET = process.env.WECHAT_APP_SECRET;
 
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_EMAIL_DOMAIN = process.env.RESEND_EMAIL_DOMAIN;
+const MAIL_FROM = RESEND_EMAIL_DOMAIN ? `세이스강 클래스 매니저 <noreply@${RESEND_EMAIL_DOMAIN}>` : null;
+
+async function sendEmail({ to, subject, html }) {
+  if (!RESEND_API_KEY || !MAIL_FROM) return false;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: MAIL_FROM, to: [to], subject, html })
+    });
+    if (!res.ok) {
+      console.error("[email] 발송 실패:", res.status, await res.text().catch(() => ""));
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[email] 발송 오류:", err);
+    return false;
+  }
+}
+
 async function issueVerification(userId) {
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + VERIFY_TTL_MS).toISOString();
@@ -39,9 +62,15 @@ async function issueVerification(userId) {
 
 function sendVerificationEmail(req, email, token) {
   const verifyUrl = `${req.protocol}://${req.get("host")}/api/verify-email?token=${token}`;
-  // TODO: 실제 서비스에서는 여기서 SMTP(nodemailer 등)로 실제 메일을 발송한다.
-  // 지금은 개발 모드 시뮬레이션으로 콘솔에만 출력하고, 링크를 응답으로 함께 내려준다.
-  console.log(`[email:simulated] ${email} 님에게 인증 메일 발송 → ${verifyUrl}`);
+  sendEmail({
+    to: email,
+    subject: "[한국어 수업 관리] 이메일 인증을 완료해주세요",
+    html: `<p>안녕하세요,</p><p>아래 버튼을 눌러 이메일 인증을 완료해주세요. (30분간 유효)</p>` +
+      `<p><a href="${verifyUrl}" style="display:inline-block;padding:10px 20px;background:#1e3a8a;color:#fff;border-radius:6px;text-decoration:none">이메일 인증하기</a></p>` +
+      `<p>버튼이 안 눌리면 이 링크를 복사해서 브라우저에 붙여넣으세요:<br>${verifyUrl}</p>`
+  }).then(function (sent) {
+    console.log(`[email] ${email} 님에게 인증 메일 ${sent ? "발송됨" : "발송 실패(콘솔 링크로 대체)"} → ${verifyUrl}`);
+  });
   return verifyUrl;
 }
 
@@ -82,7 +111,7 @@ async function getSessionUser(req) {
 
 app.post("/api/signup", async (req, res) => {
   try {
-    const { email, password, name, agreeTerms } = req.body || {};
+    const { email, password, name, agreeTerms, confirmAge } = req.body || {};
     if (!isValidEmail(email)) {
       return res.status(400).json({ error: "올바른 이메일을 입력해주세요." });
     }
@@ -91,6 +120,9 @@ app.post("/api/signup", async (req, res) => {
     }
     if (agreeTerms !== true) {
       return res.status(400).json({ error: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." });
+    }
+    if (confirmAge !== true) {
+      return res.status(400).json({ error: "만 14세 이상만 가입할 수 있습니다." });
     }
     const exists = await db.getUserByEmail(email);
     if (exists) {
@@ -275,8 +307,16 @@ app.post("/api/forgot-password", async (req, res) => {
     const expiresAt = new Date(Date.now() + VERIFY_TTL_MS).toISOString();
     await db.setResetToken(user.id, token, expiresAt);
     const resetUrl = `${req.protocol}://${req.get("host")}/?resetToken=${token}`;
-    // TODO: 실제 서비스에서는 여기서 SMTP(nodemailer 등)로 실제 메일을 발송한다.
-    console.log(`[email:simulated] ${email} 님에게 비밀번호 재설정 메일 발송 → ${resetUrl}`);
+    sendEmail({
+      to: email,
+      subject: "[한국어 수업 관리] 비밀번호 재설정",
+      html: `<p>안녕하세요,</p><p>아래 버튼을 눌러 새 비밀번호를 설정해주세요. (30분간 유효)</p>` +
+        `<p><a href="${resetUrl}" style="display:inline-block;padding:10px 20px;background:#1e3a8a;color:#fff;border-radius:6px;text-decoration:none">비밀번호 재설정하기</a></p>` +
+        `<p>버튼이 안 눌리면 이 링크를 복사해서 브라우저에 붙여넣으세요:<br>${resetUrl}</p>` +
+        `<p>본인이 요청하지 않았다면 이 메일을 무시해주세요.</p>`
+    }).then(function (sent) {
+      console.log(`[email] ${email} 님에게 재설정 메일 ${sent ? "발송됨" : "발송 실패(콘솔 링크로 대체)"} → ${resetUrl}`);
+    });
     res.json({ email, devResetUrl: resetUrl });
   } catch (err) {
     console.error(err);
