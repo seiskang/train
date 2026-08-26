@@ -349,6 +349,16 @@ button { font-family: var(--font-sans); }
     overdue: { label: "연체", tone: "danger" }
   };
 
+  function getSavedEmail() {
+    try { return localStorage.getItem("savedEmail") || ""; } catch (e) { return ""; }
+  }
+  function setSavedEmail(email) {
+    try {
+      if (email) localStorage.setItem("savedEmail", email);
+      else localStorage.removeItem("savedEmail");
+    } catch (e) { /* 저장소 접근 불가 — 무시 */ }
+  }
+
 
   var ADMIN_ONLY_VIEWS = ["dash", "requests", "students", "student", "payments"];
   var NAV_DEFS = [
@@ -371,6 +381,7 @@ button { font-family: var(--font-sans); }
     authForgot: null, authForgotBusy: false, authForgotError: "",
     authResetToken: null, authResetBusy: false, authResetError: "",
     authAgreeTerms: false, authTermsModal: null,
+    savedEmail: getSavedEmail(), authRememberEmail: !!getSavedEmail(),
     students: [], requests: [], invoices: [], dashboardReady: false,
     materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
     materialsUploadBusy: false, materialsUploadError: "",
@@ -1316,8 +1327,14 @@ button { font-family: var(--font-sans); }
       '<div class="auth-tab' + (tab === "signup" ? " is-active" : "") + '" data-auth-tab="signup">회원가입</div>' +
       '</div>' +
       (tab === "signup" ? '<div><label class="field-label">이름</label><input class="input" id="auth-name" type="text" placeholder="선택 입력" autocomplete="name"></div>' : "") +
-      '<div><label class="field-label">이메일</label><input class="input" id="auth-email" type="email" required placeholder="example@naver.com" autocomplete="email"></div>' +
+      '<div><label class="field-label">이메일</label><input class="input" id="auth-email" type="email" required placeholder="example@naver.com" autocomplete="email" value="' + esc(tab === "login" ? state.savedEmail : "") + '"></div>' +
       '<div><label class="field-label">비밀번호</label><input class="input" id="auth-password" type="password" required placeholder="8자 이상" autocomplete="' + (tab === "signup" ? "new-password" : "current-password") + '"></div>' +
+      (tab === "login" ?
+        '<label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-remember-email"' + (state.authRememberEmail ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">이메일 저장</span>' +
+        '</label>'
+        : "") +
       (tab === "signup" ?
         '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
         '<input type="checkbox" id="auth-agree-terms" style="margin-top:3px"' + (state.authAgreeTerms ? " checked" : "") + '>' +
@@ -1428,6 +1445,7 @@ button { font-family: var(--font-sans); }
           setState({ authBusy: false, authError: "", authPendingVerify: { email: r.data.email, devVerifyUrl: r.data.devVerifyUrl } });
           return;
         }
+        if (tab === "login") setSavedEmail(state.authRememberEmail ? email : "");
         onAuthSuccess(r.data.user);
         setState({ authBusy: false, authError: "" });
         fire("로그인 완료", (r.data.user.name || r.data.user.email) + " 님, 환영합니다.", "success");
@@ -1515,6 +1533,8 @@ button { font-family: var(--font-sans); }
     if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authForgot: null, authTab: "login" }); });
     var agreeBox = document.getElementById("auth-agree-terms");
     if (agreeBox) agreeBox.addEventListener("change", function () { state.authAgreeTerms = agreeBox.checked; });
+    var rememberBox = document.getElementById("auth-remember-email");
+    if (rememberBox) rememberBox.addEventListener("change", function () { state.authRememberEmail = rememberBox.checked; });
     var showTerms = document.getElementById("show-terms");
     if (showTerms) showTerms.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "terms" }); });
     var showPrivacy = document.getElementById("show-privacy");
