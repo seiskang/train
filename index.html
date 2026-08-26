@@ -386,6 +386,16 @@ button { font-family: var(--font-sans); }
     }
   }
 
+  function openFileInline(url, mimeType) {
+    fetch(url)
+      .then(function (res) { return res.blob(); })
+      .then(function (blob) {
+        var displayBlob = mimeType === "text/markdown" ? new Blob([blob], { type: "text/plain;charset=utf-8" }) : blob;
+        window.open(URL.createObjectURL(displayBlob), "_blank");
+      })
+      .catch(function () { window.open(url, "_blank"); });
+  }
+
   function formatBytes(n) {
     if (n < 1024) return n + " B";
     if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
@@ -1054,9 +1064,9 @@ button { font-family: var(--font-sans); }
           '<div class="card">' + rows.map(function (m) {
             return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
               '<span style="display:flex;flex-direction:column;gap:2px;min-width:0">' +
-              '<a href="' + esc(m.blob_url) + '" target="_blank" rel="noopener" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(m.title) + '</a>' +
+              '<a href="#" data-open-file="' + esc(m.blob_url) + '" data-mime="' + esc(m.mime_type) + '" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(m.title) + '</a>' +
               '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(m.file_name) + ' · ' + formatBytes(m.size_bytes) + ' · ' + esc(new Date(m.created_at).toLocaleDateString("ko-KR")) + '</span></span>' +
-              (isAdmin ? '<button class="btn btn-secondary" data-del-material="' + m.id + '">삭제</button>' : '<a class="btn btn-secondary" href="' + esc(m.blob_url) + '" target="_blank" rel="noopener">열기</a>') +
+              (isAdmin ? '<button class="btn btn-secondary" data-del-material="' + m.id + '">삭제</button>' : '<a class="btn btn-secondary" href="#" data-open-file="' + esc(m.blob_url) + '" data-mime="' + esc(m.mime_type) + '">열기</a>') +
               '</div>';
           }).join("") + '</div>'));
   }
@@ -1071,7 +1081,7 @@ button { font-family: var(--font-sans); }
         '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">' +
         (isEditing ?
           '<input class="input" id="assignment-edit-input" value="' + esc(state.assignmentEditTitle) + '">' :
-          '<a href="' + esc(a.blob_url) + '" target="_blank" rel="noopener" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(a.title) + '</a>') +
+          '<a href="#" data-open-file="' + esc(a.blob_url) + '" data-mime="' + esc(a.mime_type) + '" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(a.title) + '</a>') +
         '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(a.file_name) + ' · ' + formatBytes(a.size_bytes) + ' · ' + esc(new Date(a.created_at).toLocaleDateString("ko-KR")) + '</span></span>' +
         (canManage ?
           (isEditing ?
@@ -1082,7 +1092,7 @@ button { font-family: var(--font-sans); }
             '<span style="display:flex;gap:var(--space-2);flex:none">' +
             '<button class="btn btn-secondary" type="button" data-edit-assignment="' + a.id + '" data-title="' + esc(a.title) + '">수정</button>' +
             '<button class="btn btn-secondary" type="button" data-del-assignment="' + a.id + '">삭제</button></span>')
-          : '<a class="btn btn-secondary" href="' + esc(a.blob_url) + '" target="_blank" rel="noopener">열기</a>') +
+          : '<a class="btn btn-secondary" href="#" data-open-file="' + esc(a.blob_url) + '" data-mime="' + esc(a.mime_type) + '">열기</a>') +
         '</div>';
     }).join("") + '</div>';
   }
@@ -1554,6 +1564,12 @@ button { font-family: var(--font-sans); }
     if (materialForm) materialForm.addEventListener("submit", submitMaterialUpload);
     root.querySelectorAll("[data-del-material]").forEach(function (el) {
       el.addEventListener("click", function () { deleteMaterialById(parseInt(el.getAttribute("data-del-material"), 10)); });
+    });
+    root.querySelectorAll("[data-open-file]").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        openFileInline(el.getAttribute("data-open-file"), el.getAttribute("data-mime"));
+      });
     });
     var assignmentForm = document.getElementById("assignment-upload-form");
     if (assignmentForm) assignmentForm.addEventListener("submit", submitAssignmentUpload);
