@@ -4,7 +4,7 @@ const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
 
 const ADMIN_EMAIL = "justice11419@naver.com";
-const ADMIN_PASSWORD = "12345678";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "kRtHoHxSJaz";
 
 const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
