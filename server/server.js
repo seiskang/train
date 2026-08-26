@@ -18,7 +18,10 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAT
 
 const VERIFY_TTL_MS = 30 * 60 * 1000; // 인증 링크 유효 시간: 30분
 const SESSION_TTL_MS = 400 * 24 * 60 * 60 * 1000; // 로그인 유지 시간: 400일(브라우저가 허용하는 쿠키 최대 기간) — 직접 로그아웃하기 전까지 로그인 유지
-const JWT_SECRET = process.env.JWT_SECRET || "class-manager-dev-secret-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET 환경변수가 설정되지 않았습니다.");
+}
 const COOKIE_NAME = "session";
 
 async function issueVerification(userId) {

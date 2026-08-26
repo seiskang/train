@@ -4,7 +4,7 @@ const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
 
 const ADMIN_EMAIL = "justice11419@naver.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "kRtHoHxSJaz";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
@@ -97,7 +97,7 @@ function ensureSchema() {
         )
       `);
       const existing = await query("SELECT id FROM users WHERE email = $1", [ADMIN_EMAIL]);
-      if (existing.rows.length === 0) {
+      if (existing.rows.length === 0 && ADMIN_PASSWORD) {
         const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
         await query(
           "INSERT INTO users (email, password_hash, name, role, email_verified) VALUES ($1, $2, $3, 'admin', 1)",
