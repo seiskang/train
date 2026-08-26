@@ -1,53 +1,122 @@
 "use strict";
 
-const { DatabaseSync } = require("node:sqlite");
-const path = require("path");
-const fs = require("fs");
+const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
-
-const DATA_DIR = path.join(__dirname, "data");
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-const db = new DatabaseSync(path.join(DATA_DIR, "app.db"));
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    name TEXT,
-    role TEXT NOT NULL DEFAULT 'user',
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )
-`);
-
-function ensureColumn(table, column, ddl) {
-  const cols = db.prepare(`PRAGMA table_info(${table})`).all();
-  const exists = cols.some((c) => c.name === column);
-  if (!exists) db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
-}
-
-ensureColumn("users", "email_verified", "email_verified INTEGER NOT NULL DEFAULT 0");
-ensureColumn("users", "verification_token", "verification_token TEXT");
-ensureColumn("users", "verification_expires_at", "verification_expires_at TEXT");
 
 const ADMIN_EMAIL = "justice11419@naver.com";
 const ADMIN_PASSWORD = "12345678";
 
-function seedAdmin() {
-  const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(ADMIN_EMAIL);
-  if (!existing) {
-    const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
-    db.prepare(
-      "INSERT INTO users (email, password_hash, name, role, email_verified) VALUES (?, ?, ?, ?, 1)"
-    ).run(ADMIN_EMAIL, hash, "관리자", "admin");
-    console.log(`[seed] 관리자 계정 생성됨: ${ADMIN_EMAIL}`);
-  } else {
-    // 관리자 계정은 가입 절차를 거치지 않으므로 항상 인증된 상태로 유지한다.
-    db.prepare("UPDATE users SET email_verified = 1 WHERE email = ?").run(ADMIN_EMAIL);
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+
+let pool = null;
+function getPool() {
+  if (!pool) {
+    if (!connectionString) {
+      throw new Error(
+        "데이터베이스 연결 정보(POSTGRES_URL 또는 DATABASE_URL)가 설정되지 않았습니다. Vercel 프로젝트에 Postgres 스토리지를 연결해주세요."
+      );
+    }
+    pool = new Pool({
+      connectionString,
+      ssl: connectionString.includes("sslmode=") ? undefined : { rejectUnauthorized: false }
+    });
   }
+  return pool;
 }
 
-seedAdmin();
+async function query(text, params) {
+  return getPool().query(text, params);
+}
 
-module.exports = db;
+let schemaReady = null;
+
+function ensureSchema() {
+  if (!schemaReady) {
+    schemaReady = (async () => {
+      await query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          email TEXT NOT NULL UNIQUE,
+          password_hash TEXT NOT NULL,
+          name TEXT,
+          role TEXT NOT NULL DEFAULT 'user',
+          email_verified INTEGER NOT NULL DEFAULT 0,
+          verification_token TEXT,
+          verification_expires_at TIMESTAMPTZ,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `);
+      const existing = await query("SELECT id FROM users WHERE email = $1", [ADMIN_EMAIL]);
+      if (existing.rows.length === 0) {
+        const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
+        await query(
+          "INSERT INTO users (email, password_hash, name, role, email_verified) VALUES ($1, $2, $3, 'admin', 1)",
+          [ADMIN_EMAIL, hash, "관리자"]
+        );
+      } else {
+        await query("UPDATE users SET email_verified = 1 WHERE email = $1", [ADMIN_EMAIL]);
+      }
+    })();
+  }
+  return schemaReady;
+}
+
+async function getUserByEmail(email) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM users WHERE email = $1", [email]);
+  return rows[0] || null;
+}
+
+async function getUserById(id) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM users WHERE id = $1", [id]);
+  return rows[0] || null;
+}
+
+async function getUserByToken(token) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM users WHERE verification_token = $1", [token]);
+  return rows[0] || null;
+}
+
+async function createUser(email, passwordHash, name) {
+  await ensureSchema();
+  const { rows } = await query(
+    "INSERT INTO users (email, password_hash, name, role, email_verified) VALUES ($1, $2, $3, 'user', 0) RETURNING id",
+    [email, passwordHash, name || null]
+  );
+  return rows[0].id;
+}
+
+async function setVerification(userId, token, expiresAt) {
+  await ensureSchema();
+  await query(
+    "UPDATE users SET verification_token = $1, verification_expires_at = $2 WHERE id = $3",
+    [token, expiresAt, userId]
+  );
+}
+
+async function markVerified(userId) {
+  await ensureSchema();
+  await query(
+    "UPDATE users SET email_verified = 1, verification_token = NULL, verification_expires_at = NULL WHERE id = $1",
+    [userId]
+  );
+}
+
+async function listUsers() {
+  await ensureSchema();
+  const { rows } = await query("SELECT id, email, name, role, created_at FROM users ORDER BY id");
+  return rows;
+}
+
+module.exports = {
+  ensureSchema,
+  getUserByEmail,
+  getUserById,
+  getUserByToken,
+  createUser,
+  setVerification,
+  markVerified,
+  listUsers
+};
