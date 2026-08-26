@@ -38,6 +38,7 @@ function sendVerificationEmail(req, email, token) {
 
 const app = express();
 
+app.set("trust proxy", true);
 app.use(express.json());
 app.use(cookieParser());
 
