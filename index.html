@@ -406,6 +406,8 @@ button { font-family: var(--font-sans); }
     alerts: {},
     authReady: false, auth: null, authTab: "login", authError: "", authBusy: false,
     authPendingVerify: null, authUnverifiedEmail: "",
+    authForgot: null, authForgotBusy: false, authForgotError: "",
+    authResetToken: null, authResetBusy: false, authResetError: "",
     students: JSON.parse(JSON.stringify(STUDENTS)),
     requests: JSON.parse(JSON.stringify(REQUESTS)),
     invoices: JSON.parse(JSON.stringify(INVOICES))
@@ -946,12 +948,53 @@ button { font-family: var(--font-sans); }
       (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
       '<button class="btn btn-primary full" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
       (state.authBusy ? "처리 중…" : (tab === "signup" ? "회원가입" : "로그인")) + '</button>' +
+      (tab === "login" ? '<button type="button" id="forgot-link" style="align-self:center;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;font:inherit;text-decoration:underline">비밀번호를 잊으셨나요?</button>' : "") +
       '</form>' +
       '<div class="auth-hint">' + (tab === "signup" ? "회원가입 시 이메일로 인증 링크가 발송되며, 인증을 완료해야 로그인할 수 있습니다." : "계정이 없다면 회원가입 탭에서 새로 만들 수 있습니다.") + '</div>'
     );
   }
 
+  function renderAuthForgot() {
+    var f = state.authForgot;
+    if (f.stage === "sent") {
+      return authShell(
+        '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+        '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">비밀번호 재설정 링크</div>' +
+        '<div style="color:var(--text-body)"><strong>' + esc(f.email) + '</strong> 계정의 비밀번호를 재설정할 수 있는 링크입니다.</div>' +
+        '<div class="dev-box"><strong>개발 모드 안내</strong> — 실제 메일 서버가 연동되어 있지 않아 지금은 링크를 화면에 직접 표시합니다. 실제 서비스에서는 이 부분이 실제 이메일 발송으로 대체됩니다.<br><br>' +
+        '<a href="' + esc(f.devResetUrl) + '" target="_blank" rel="noopener">' + esc(f.devResetUrl) + '</a></div>' +
+        '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+        '</div>'
+      );
+    }
+    return authShell(
+      '<form id="forgot-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">비밀번호를 잊으셨나요?</div>' +
+      '<div style="color:var(--text-muted)">가입하신 이메일을 입력하시면 비밀번호를 새로 설정할 수 있는 링크를 보여드립니다.</div>' +
+      '<div><label class="field-label">이메일</label><input class="input" id="forgot-email" type="email" required placeholder="example@naver.com" autocomplete="email"></div>' +
+      (state.authForgotError ? '<div class="auth-error">' + esc(state.authForgotError) + '</div>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="forgot-submit"' + (state.authForgotBusy ? " disabled" : "") + '>' +
+      (state.authForgotBusy ? "처리 중…" : "재설정 링크 받기") + '</button>' +
+      '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+      '</form>'
+    );
+  }
+
+  function renderAuthReset() {
+    return authShell(
+      '<form id="reset-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">새 비밀번호 설정</div>' +
+      '<div><label class="field-label">새 비밀번호</label><input class="input" id="reset-password" type="password" required placeholder="8자 이상" autocomplete="new-password"></div>' +
+      (state.authResetError ? '<div class="auth-error">' + esc(state.authResetError) + '</div>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="reset-submit"' + (state.authResetBusy ? " disabled" : "") + '>' +
+      (state.authResetBusy ? "처리 중…" : "비밀번호 변경") + '</button>' +
+      '</form>'
+    );
+  }
+
   function renderAuth() {
+    if (state.authResetToken) return renderAuthReset();
+    if (state.authForgot) return renderAuthForgot();
     return state.authPendingVerify ? renderAuthPending() : renderAuthForm();
   }
 
@@ -997,6 +1040,39 @@ button { font-family: var(--font-sans); }
       .catch(function () { setState({ authError: "서버에 연결할 수 없습니다." }); });
   }
 
+  function submitForgot(e) {
+    e.preventDefault();
+    if (state.authForgotBusy) return;
+    var email = document.getElementById("forgot-email").value.trim();
+    setState({ authForgotBusy: true, authForgotError: "" });
+    fetch("/api/forgot-password", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authForgotBusy: false, authForgotError: r.data.error || "요청에 실패했습니다." }); return; }
+        setState({ authForgotBusy: false, authForgotError: "", authForgot: { stage: "sent", email: r.data.email, devResetUrl: r.data.devResetUrl } });
+      })
+      .catch(function () { setState({ authForgotBusy: false, authForgotError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitReset(e) {
+    e.preventDefault();
+    if (state.authResetBusy) return;
+    var password = document.getElementById("reset-password").value;
+    setState({ authResetBusy: true, authResetError: "" });
+    fetch("/api/reset-password", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: state.authResetToken, password: password })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authResetBusy: false, authResetError: r.data.error || "요청에 실패했습니다." }); return; }
+        setState({ authResetBusy: false, authResetError: "", authResetToken: null, auth: r.data.user });
+        fire("비밀번호 변경 완료", "새 비밀번호로 로그인되었습니다.", "success");
+      })
+      .catch(function () { setState({ authResetBusy: false, authResetError: "서버에 연결할 수 없습니다." }); });
+  }
+
   function doLogout() {
     fetch("/api/logout", { method: "POST" }).then(function () { setState({ auth: null, view: "dash", modal: null }); });
   }
@@ -1010,8 +1086,14 @@ button { font-family: var(--font-sans); }
     if (form) form.addEventListener("submit", submitAuth);
     var resendBtn = document.getElementById("resend-btn");
     if (resendBtn) resendBtn.addEventListener("click", resendVerification);
+    var forgotLink = document.getElementById("forgot-link");
+    if (forgotLink) forgotLink.addEventListener("click", function () { setState({ authForgot: { stage: "email" }, authForgotError: "" }); });
+    var forgotForm = document.getElementById("forgot-form");
+    if (forgotForm) forgotForm.addEventListener("submit", submitForgot);
+    var resetForm = document.getElementById("reset-form");
+    if (resetForm) resetForm.addEventListener("submit", submitReset);
     var backBtn = document.getElementById("back-to-login");
-    if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authTab: "login" }); });
+    if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authForgot: null, authTab: "login" }); });
   }
 
   function render() {
@@ -1106,6 +1188,11 @@ button { font-family: var(--font-sans); }
     if (qi) qi.addEventListener("input", function () { state.query = qi.value; render(); });
   }
 
+  var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
+  if (resetTokenMatch) {
+    state.authResetToken = decodeURIComponent(resetTokenMatch[1]);
+    history.replaceState(null, "", location.pathname);
+  }
   render();
   var justVerified = /(?:^|[?&])verified=1(?:&|$)/.test(location.search);
   if (justVerified) history.replaceState(null, "", location.pathname);

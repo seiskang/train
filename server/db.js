@@ -46,6 +46,8 @@ function ensureSchema() {
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
       `);
+      await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT");
+      await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires_at TIMESTAMPTZ");
       const existing = await query("SELECT id FROM users WHERE email = $1", [ADMIN_EMAIL]);
       if (existing.rows.length === 0) {
         const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
@@ -104,6 +106,25 @@ async function markVerified(userId) {
   );
 }
 
+async function getUserByResetToken(token) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM users WHERE reset_token = $1", [token]);
+  return rows[0] || null;
+}
+
+async function setResetToken(userId, token, expiresAt) {
+  await ensureSchema();
+  await query("UPDATE users SET reset_token = $1, reset_expires_at = $2 WHERE id = $3", [token, expiresAt, userId]);
+}
+
+async function resetPassword(userId, passwordHash) {
+  await ensureSchema();
+  await query(
+    "UPDATE users SET password_hash = $1, reset_token = NULL, reset_expires_at = NULL WHERE id = $2",
+    [passwordHash, userId]
+  );
+}
+
 async function listUsers() {
   await ensureSchema();
   const { rows } = await query("SELECT id, email, name, role, created_at FROM users ORDER BY id");
@@ -118,5 +139,8 @@ module.exports = {
   createUser,
   setVerification,
   markVerified,
+  getUserByResetToken,
+  setResetToken,
+  resetPassword,
   listUsers
 };

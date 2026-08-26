@@ -5,3 +5,6 @@ server/data/
 cookies.txt
 verify_url.txt
 verify_cookies.txt
+
+.vercel
+.env*

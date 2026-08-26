@@ -137,6 +137,45 @@ app.post("/api/resend-verification", async (req, res) => {
   }
 });
 
+app.post("/api/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body || {};
+    const user = await db.getUserByEmail(email || "");
+    if (!user) return res.status(404).json({ error: "가입된 이메일이 아닙니다." });
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + VERIFY_TTL_MS).toISOString();
+    await db.setResetToken(user.id, token, expiresAt);
+    const resetUrl = `${req.protocol}://${req.get("host")}/?resetToken=${token}`;
+    // TODO: 실제 서비스에서는 여기서 SMTP(nodemailer 등)로 실제 메일을 발송한다.
+    console.log(`[email:simulated] ${email} 님에게 비밀번호 재설정 메일 발송 → ${resetUrl}`);
+    res.json({ email, devResetUrl: resetUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body || {};
+    if (typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({ error: "비밀번호는 8자 이상이어야 합니다." });
+    }
+    const user = await db.getUserByResetToken(token || "");
+    if (!user) return res.status(400).json({ error: "유효하지 않은 링크입니다." });
+    if (user.reset_expires_at && new Date(user.reset_expires_at).getTime() < Date.now()) {
+      return res.status(400).json({ error: "링크가 만료되었습니다. 다시 요청해주세요." });
+    }
+    const hash = bcrypt.hashSync(password, 10);
+    await db.resetPassword(user.id, hash);
+    setSessionCookie(res, user.id);
+    res.json({ user: publicUser(user) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 app.post("/api/logout", (req, res) => {
   res.clearCookie(COOKIE_NAME);
   res.json({ ok: true });
