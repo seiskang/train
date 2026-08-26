@@ -5,7 +5,16 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const multer = require("multer");
+const { put, del } = require("@vercel/blob");
 const db = require("./db");
+
+const MATERIAL_MAX_BYTES = 20 * 1024 * 1024; // 교안 업로드 용량 제한: 20MB
+const ALLOWED_MATERIAL_TYPES = {
+  ".md": "text/markdown",
+  ".pdf": "application/pdf"
+};
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MATERIAL_MAX_BYTES } });
 
 const VERIFY_TTL_MS = 30 * 60 * 1000; // 인증 링크 유효 시간: 30분
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 로그인 유지 시간: 7일
@@ -198,6 +207,66 @@ async function requireAdmin(req, res, next) {
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   const users = await db.listUsers();
   res.json({ users });
+});
+
+app.get("/api/materials", async (req, res) => {
+  const user = await getSessionUser(req);
+  if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
+  try {
+    const materials = await db.listMaterials();
+    res.json({ materials });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/materials", requireAdmin, (req, res) => {
+  upload.single("file")(req, res, async (err) => {
+    if (err) {
+      const message = err.code === "LIMIT_FILE_SIZE" ? "파일 용량은 20MB 이하만 업로드할 수 있습니다." : "업로드에 실패했습니다.";
+      return res.status(400).json({ error: message });
+    }
+    try {
+      const file = req.file;
+      if (!file) return res.status(400).json({ error: "파일을 선택해주세요." });
+      const ext = (file.originalname.match(/\.[^.]+$/) || [""])[0].toLowerCase();
+      const mimeType = ALLOWED_MATERIAL_TYPES[ext];
+      if (!mimeType) return res.status(400).json({ error: "md 또는 pdf 파일만 업로드할 수 있습니다." });
+
+      const blob = await put(`materials/${crypto.randomUUID()}${ext}`, file.buffer, {
+        access: "public",
+        contentType: mimeType
+      });
+
+      const material = await db.createMaterial({
+        title: (req.body.title || file.originalname.replace(ext, "")).trim() || file.originalname,
+        fileName: file.originalname,
+        mimeType,
+        sizeBytes: file.size,
+        blobUrl: blob.url,
+        blobPathname: blob.pathname,
+        uploadedBy: req.user.id
+      });
+      res.status(201).json({ material });
+    } catch (uploadErr) {
+      console.error(uploadErr);
+      res.status(500).json({ error: "서버 오류가 발생했습니다." });
+    }
+  });
+});
+
+app.delete("/api/materials/:id", requireAdmin, async (req, res) => {
+  try {
+    const material = await db.getMaterialById(req.params.id);
+    if (!material) return res.status(404).json({ error: "찾을 수 없습니다." });
+    await del(material.blob_pathname).catch(() => {});
+    await db.deleteMaterial(material.id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
 });
 
 module.exports = app;

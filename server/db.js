@@ -48,6 +48,19 @@ function ensureSchema() {
       `);
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT");
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires_at TIMESTAMPTZ");
+      await query(`
+        CREATE TABLE IF NOT EXISTS materials (
+          id SERIAL PRIMARY KEY,
+          title TEXT NOT NULL,
+          file_name TEXT NOT NULL,
+          mime_type TEXT NOT NULL,
+          size_bytes INTEGER NOT NULL,
+          blob_url TEXT NOT NULL,
+          blob_pathname TEXT NOT NULL,
+          uploaded_by INTEGER REFERENCES users(id),
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `);
       const existing = await query("SELECT id FROM users WHERE email = $1", [ADMIN_EMAIL]);
       if (existing.rows.length === 0) {
         const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
@@ -131,6 +144,38 @@ async function listUsers() {
   return rows;
 }
 
+async function listMaterials() {
+  await ensureSchema();
+  const { rows } = await query(`
+    SELECT m.id, m.title, m.file_name, m.mime_type, m.size_bytes, m.blob_url, m.created_at, u.name AS uploaded_by_name, u.email AS uploaded_by_email
+    FROM materials m
+    LEFT JOIN users u ON u.id = m.uploaded_by
+    ORDER BY m.created_at DESC
+  `);
+  return rows;
+}
+
+async function createMaterial({ title, fileName, mimeType, sizeBytes, blobUrl, blobPathname, uploadedBy }) {
+  await ensureSchema();
+  const { rows } = await query(
+    `INSERT INTO materials (title, file_name, mime_type, size_bytes, blob_url, blob_pathname, uploaded_by)
+     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, title, file_name, mime_type, size_bytes, blob_url, created_at`,
+    [title, fileName, mimeType, sizeBytes, blobUrl, blobPathname, uploadedBy]
+  );
+  return rows[0];
+}
+
+async function getMaterialById(id) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM materials WHERE id = $1", [id]);
+  return rows[0] || null;
+}
+
+async function deleteMaterial(id) {
+  await ensureSchema();
+  await query("DELETE FROM materials WHERE id = $1", [id]);
+}
+
 module.exports = {
   ensureSchema,
   getUserByEmail,
@@ -142,5 +187,9 @@ module.exports = {
   getUserByResetToken,
   setResetToken,
   resetPassword,
-  listUsers
+  listUsers,
+  listMaterials,
+  createMaterial,
+  getMaterialById,
+  deleteMaterial
 };

@@ -396,6 +396,7 @@ button { font-family: var(--font-sans); }
     ["수강 신청", "Requests", "requests"],
     ["학생", "Students", "students"],
     ["결제", "Payments", "payments"],
+    ["교안", "Materials", "materials"],
     ["수업 일정", "Schedule", null],
     ["설정", "Settings", null]
   ];
@@ -410,7 +411,9 @@ button { font-family: var(--font-sans); }
     authResetToken: null, authResetBusy: false, authResetError: "",
     students: JSON.parse(JSON.stringify(STUDENTS)),
     requests: JSON.parse(JSON.stringify(REQUESTS)),
-    invoices: JSON.parse(JSON.stringify(INVOICES))
+    invoices: JSON.parse(JSON.stringify(INVOICES)),
+    materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
+    materialsUploadBusy: false, materialsUploadError: ""
   };
   var pendingRequest = null;
   var toastTimer = null;
@@ -436,6 +439,57 @@ button { font-family: var(--font-sans); }
     var patch = { view: view };
     if (studentId) patch.student = studentId;
     setState(patch);
+    if (view === "materials" && !state.materialsLoaded) loadMaterials();
+  }
+
+  function formatBytes(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function loadMaterials() {
+    if (state.materialsBusy) return;
+    setState({ materialsBusy: true, materialsError: "" });
+    fetch("/api/materials")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ materialsBusy: false, materialsLoaded: true, materialsError: r.data.error || "불러오기에 실패했습니다." }); return; }
+        setState({ materialsBusy: false, materialsLoaded: true, materialsError: "", materials: r.data.materials });
+      })
+      .catch(function () { setState({ materialsBusy: false, materialsLoaded: true, materialsError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitMaterialUpload(e) {
+    e.preventDefault();
+    if (state.materialsUploadBusy) return;
+    var fileInput = document.getElementById("material-file");
+    var file = fileInput && fileInput.files[0];
+    if (!file) return;
+    var titleInput = document.getElementById("material-title");
+    var fd = new FormData();
+    fd.append("file", file);
+    if (titleInput && titleInput.value.trim()) fd.append("title", titleInput.value.trim());
+    setState({ materialsUploadBusy: true, materialsUploadError: "" });
+    fetch("/api/materials", { method: "POST", body: fd })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ materialsUploadBusy: false, materialsUploadError: r.data.error || "업로드에 실패했습니다." }); return; }
+        setState({ materialsUploadBusy: false, materialsUploadError: "", materials: [r.data.material].concat(state.materials) });
+        fire("업로드 완료", r.data.material.title + " 파일이 등록되었습니다.", "success");
+      })
+      .catch(function () { setState({ materialsUploadBusy: false, materialsUploadError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function deleteMaterialById(id) {
+    fetch("/api/materials/" + id, { method: "DELETE" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({ materials: state.materials.filter(function (m) { return m.id !== id; }) });
+        fire("삭제 완료", "교안이 삭제되었습니다.", "success");
+      })
+      .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
   }
 
   function approve(id) {
@@ -545,7 +599,7 @@ button { font-family: var(--font-sans); }
   }
 
   function crumbFor(view, st) {
-    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments" };
+    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments", materials: "교안 / Materials" };
     return { root: map[view] || "", leaf: view === "student" && st ? st.name : "" };
   }
 
@@ -858,6 +912,40 @@ button { font-family: var(--font-sans); }
       }).join("") + '</div></div>';
   }
 
+  function renderMaterials() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    var rows = state.materials;
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Materials</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">교안</h1>' +
+      '<span style="color:var(--text-muted)">옵시디언 형식의 md 파일이나 pdf 파일로 수업 자료를 올려두고 관리하세요.</span></div>' +
+      '</div>' +
+
+      (isAdmin ?
+        '<form id="material-upload-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+        '<div><label class="field-label">제목 (선택)</label><input class="input" id="material-title" type="text" placeholder="예: 3주차 회의 표현 정리"></div>' +
+        '<div><label class="field-label">파일 (.md 또는 .pdf, 20MB 이하)</label><input class="input" id="material-file" type="file" accept=".md,.pdf" required></div>' +
+        (state.materialsUploadError ? '<div class="auth-error">' + esc(state.materialsUploadError) + '</div>' : "") +
+        '<button class="btn btn-primary" type="submit" id="material-upload-submit" style="align-self:flex-start"' + (state.materialsUploadBusy ? " disabled" : "") + '>' +
+        (state.materialsUploadBusy ? "업로드 중…" : "업로드") + '</button>' +
+        '</form>'
+        : "") +
+
+      (state.materialsError ? '<div class="auth-error">' + esc(state.materialsError) + '</div>' : "") +
+
+      (state.materialsBusy && !rows.length ? '<div class="card card--pad" style="color:var(--text-muted)">불러오는 중…</div>' :
+        (!rows.length ? '<div class="card card--pad" style="color:var(--text-muted)">아직 등록된 교안이 없습니다.</div>' :
+          '<div class="card">' + rows.map(function (m) {
+            return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+              '<span style="display:flex;flex-direction:column;gap:2px;min-width:0">' +
+              '<a href="' + esc(m.blob_url) + '" target="_blank" rel="noopener" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(m.title) + '</a>' +
+              '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(m.file_name) + ' · ' + formatBytes(m.size_bytes) + ' · ' + esc(new Date(m.created_at).toLocaleDateString("ko-KR")) + '</span></span>' +
+              (isAdmin ? '<button class="btn btn-secondary" data-del-material="' + m.id + '">삭제</button>' : '<a class="btn btn-secondary" href="' + esc(m.blob_url) + '" target="_blank" rel="noopener">열기</a>') +
+              '</div>';
+          }).join("") + '</div>'));
+  }
+
   function modalMap(st) {
     return {
       approve: pendingRequest ? {
@@ -1123,6 +1211,7 @@ button { font-family: var(--font-sans); }
     else if (state.view === "students") body = renderStudents();
     else if (state.view === "student") body = renderStudent();
     else if (state.view === "payments") body = renderPayments();
+    else if (state.view === "materials") body = renderMaterials();
     else body = renderDash();
 
     var mm = state.modal ? modalMap(st)[state.modal] : null;
@@ -1181,6 +1270,11 @@ button { font-family: var(--font-sans); }
     });
     var logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) logoutBtn.addEventListener("click", doLogout);
+    var materialForm = document.getElementById("material-upload-form");
+    if (materialForm) materialForm.addEventListener("submit", submitMaterialUpload);
+    root.querySelectorAll("[data-del-material]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteMaterialById(parseInt(el.getAttribute("data-del-material"), 10)); });
+    });
     root.querySelectorAll("[data-close-toast]").forEach(function (el) {
       el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
     });
