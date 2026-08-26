@@ -746,16 +746,20 @@ button { font-family: var(--font-sans); }
     var pendingSum = invoices.filter(function (v) { return v.status === "pending"; }).reduce(function (a, v) { return a + v.amount; }, 0);
     var overdueSum = invoices.filter(function (v) { return v.status === "overdue"; }).reduce(function (a, v) { return a + v.amount; }, 0);
     var unpaidLabel = "$" + (pendingSum + overdueSum);
-    var monthDone = students.reduce(function (a, x) { return a + x.lessons.length; }, 0) + 22;
+    var monthDone = students.reduce(function (a, x) { return a + x.lessons.length; }, 0);
     var lowList = students.filter(function (x) { return remainOf(x) <= 2; });
+    var pendingCount = invoices.filter(function (v) { return v.status === "pending"; }).length;
+    var overdueCount = invoices.filter(function (v) { return v.status === "overdue"; }).length;
 
-    var agenda = [
-      { kst: "오늘 07:00", local: "현지 월 15:00", sid: "s1", meta: "중급 1 · 회의 진행 표현 · 6회차", session: "6/8", day: "화", dot: "var(--green-500)" },
-      { kst: "오늘 20:00", local: "KST 동일", sid: "s2", meta: "초급 2 · 직장 대화 · 3회차", session: "3/8", day: "화", dot: "var(--green-500)" },
-      { kst: "오늘 23:00", local: "현지 화 16:00", sid: "s4", meta: "초급 1 · 첫 수업 · 한글 읽기 점검", session: "1/8", day: "화", dot: "var(--info-500)" },
-      { kst: "내일 09:00", local: "현지 화 20:00", sid: "s5", meta: "고급 · 연체로 보류 검토 필요", session: "0/8", day: "수", dot: "var(--danger-500)" },
-      { kst: "내일 20:00", local: "KST 동일", sid: "s2", meta: "초급 2 · TOPIK 읽기 연습", session: "4/8", day: "수", dot: "var(--green-500)" }
-    ];
+    var agenda = students.map(function (x) {
+      var lastLesson = x.lessons[0];
+      return {
+        kst: x.slot || "일정 미정", local: x.local || "", sid: x.id,
+        meta: (x.level || "") + " · " + (lastLesson ? lastLesson.topic : x.goal || "첫 수업 예정"),
+        session: x.used + "/" + x.total,
+        dot: x.pay === "overdue" ? "var(--danger-500)" : x.pay === "pending" ? "var(--info-500)" : "var(--green-500)"
+      };
+    });
 
     var lowBalance = lowList.concat(students.filter(function (x) { return remainOf(x) > 2; }).slice(0, 1));
     var dueInvoices = invoices.filter(function (v) { return v.status !== "paid"; });
@@ -763,23 +767,23 @@ button { font-family: var(--font-sans); }
     return '' +
       '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
       '<div style="display:flex;flex-direction:column;gap:var(--space-2)">' +
-      '<span class="eyebrow">2026년 8월 25일 화요일 · KST</span>' +
-      '<h1 style="font:var(--weight-extrabold) var(--text-3xl)/1.15 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">안녕, 이윤재님</h1>' +
-      '<p style="font:var(--weight-semibold) var(--text-lg)/1.3 var(--font-sans);color:var(--text-body)">오늘 보이스톡 수업 3건, 미수금 ' + esc(unpaidLabel) + '</p>' +
+      '<span class="eyebrow">' + esc(clockText()) + '</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-3xl)/1.15 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">안녕, ' + esc(state.auth.name || state.auth.email) + '님</h1>' +
+      '<p style="font:var(--weight-semibold) var(--text-lg)/1.3 var(--font-sans);color:var(--text-body)">등록 학생 ' + students.length + '명, 미수금 ' + esc(unpaidLabel) + '</p>' +
       '<p style="color:var(--text-muted)">신청을 승인하면 주 2회 8회차와 인보이스가 자동으로 만들어집니다.</p></div>' +
       '<div style="display:flex;gap:var(--space-3)"><button class="btn btn-secondary" data-nav="payments">결제 관리</button>' +
       '<button class="btn btn-primary" data-nav="requests">수강 신청 ' + state.requests.length + '건</button></div></div>' +
 
       '<div class="stat-grid">' +
-      statCard("오늘 수업 / Today", "3", "회", "07:00 Emily · 20:00 Mai · 21:00 Aisha") +
-      statCard("이번 달 진행 / Done", String(monthDone), "회", "8월 예정 48회 기준") +
-      statCard("미수금 / Unpaid", unpaidLabel, "", "대기 1건 · 연체 1건") +
+      statCard("등록 학생 / Students", String(students.length), "명", students.map(function (x) { return x.name; }).join(" · ") || "등록된 학생이 없습니다") +
+      statCard("누적 수업 / Lessons", String(monthDone), "회", "수업 기록에 저장된 회차 합계") +
+      statCard("미수금 / Unpaid", unpaidLabel, "", "대기 " + pendingCount + "건 · 연체 " + overdueCount + "건") +
       statCard("회차 소진 임박 / Low", String(lowList.length), "명", "잔여 2회 이하 — 재결제 안내 필요") +
       '</div>' +
 
       '<div class="dash-grid" style="display:grid;grid-template-columns:1.4fr 1fr;gap:var(--space-4);align-items:start">' +
-      '<div class="card"><div class="card-head"><span class="title">오늘 · 내일 수업</span><span class="note">KST · 학생 현지 시각</span></div>' +
-      agenda.map(function (row) {
+      '<div class="card"><div class="card-head"><span class="title">학생별 고정 슬롯</span><span class="note">KST · 학생 현지 시각</span></div>' +
+      (agenda.length ? agenda.map(function (row) {
         return '<div class="agenda-row" data-goto-student="' + row.sid + '">' +
           '<span><span class="tabular" style="display:block;font:var(--weight-bold) var(--text-md)/1.2 var(--font-sans);color:var(--text-strong)">' + esc(row.kst) + '</span>' +
           '<span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(row.local) + '</span></span>' +
@@ -788,9 +792,8 @@ button { font-family: var(--font-sans); }
           '<span style="display:block;font-size:var(--text-sm);color:var(--text-muted)">' + esc(row.meta) + '</span></span>' +
           '<span class="agenda-session" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">' +
           '<span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--green-600)">' + esc(row.session) + '</span>' +
-          '<span style="font-size:var(--text-xs);color:var(--text-subtle)">' + esc(row.day) + '</span></span>' +
-          '</div>';
-      }).join("") + '</div>' +
+          '</span></div>';
+      }).join("") : '<div style="padding:var(--space-6);color:var(--text-muted)">등록된 학생이 없습니다.</div>') + '</div>' +
 
       '<div style="display:flex;flex-direction:column;gap:var(--space-4)">' +
       '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
@@ -1195,7 +1198,7 @@ button { font-family: var(--font-sans); }
       lesson: {
         title: "수업 완료 기록", subtitle: st.name + " · 50분 보이스톡 · 기록을 저장하면 잔여 회차가 1회 차감됩니다.",
         cta: "기록 저장 · 회차 차감",
-        rows: [["회차", (st.used + 1) + " / " + st.total], ["일시", "8월 25일 " + st.slot.split(" ")[1] + " KST" + (st.local === "동일 시간대" ? "" : " · 현지 " + st.local)], ["차감 후 잔여", Math.max(0, remainOf(st) - 1) + "회"]],
+        rows: [["회차", (st.used + 1) + " / " + st.total], ["일시", new Date().toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", month: "long", day: "numeric" }) + " " + st.slot.split(" ")[1] + " KST" + (st.local === "동일 시간대" ? "" : " · 현지 " + st.local)], ["차감 후 잔여", Math.max(0, remainOf(st) - 1) + "회"]],
         needsNote: true, confirm: logLesson
       },
       invoice: {

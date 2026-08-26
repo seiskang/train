@@ -291,16 +291,20 @@ async function logLesson(studentId, note) {
   const countRes = await query("SELECT COUNT(*)::int AS n FROM lessons WHERE student_id = $1", [studentId]);
   const lessonNo = countRes.rows[0].n + 1;
   const parts = (note || "").split(/[,·/]/).map((x) => x.trim()).filter(Boolean);
+  const lessonDate = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul", month: "long", day: "numeric", weekday: "short"
+  }).format(new Date());
   await query(
     `INSERT INTO lessons (student_id, lesson_no, lesson_date, topic, attend, tone, pron, vocab, hw)
-     VALUES ($1, $2, '오늘', $3, '출석', 'success', $4, $5, $6)`,
+     VALUES ($1, $2, $7, $3, '출석', 'success', $4, $5, $6)`,
     [
       studentId,
       lessonNo,
       parts[0] || "자유 대화 50분",
       parts[1] || "이번 회차 발음 메모 없음",
       parts[2] || "이번 회차 어휘 메모 없음",
-      parts[3] || "다음 수업 전 음성 과제 1건"
+      parts[3] || "다음 수업 전 음성 과제 1건",
+      lessonDate
     ]
   );
   const usedSessions = Math.min(st.total_sessions, lessonNo);
