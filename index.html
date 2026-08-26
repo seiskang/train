@@ -975,10 +975,15 @@ button { font-family: var(--font-sans); }
 
   function renderPayments() {
     var invoices = state.invoices;
-    var billed = invoices.filter(function (v) { return v.period === "2026-08"; }).reduce(function (a, v) { return a + v.amount; }, 0);
-    var paid = invoices.filter(function (v) { return v.period === "2026-08" && v.status === "paid"; }).reduce(function (a, v) { return a + v.amount; }, 0);
-    var pendingSum = invoices.filter(function (v) { return v.status === "pending"; }).reduce(function (a, v) { return a + v.amount; }, 0);
-    var overdueSum = invoices.filter(function (v) { return v.status === "overdue"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var thisPeriodInvoices = invoices.filter(function (v) { return v.period === "2026-08"; });
+    var billed = thisPeriodInvoices.reduce(function (a, v) { return a + v.amount; }, 0);
+    var paidInvoices = invoices.filter(function (v) { return v.status === "paid"; });
+    var paid = thisPeriodInvoices.filter(function (v) { return v.status === "paid"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var pendingInvoices = invoices.filter(function (v) { return v.status === "pending"; });
+    var overdueInvoices = invoices.filter(function (v) { return v.status === "overdue"; });
+    var pendingSum = pendingInvoices.reduce(function (a, v) { return a + v.amount; }, 0);
+    var overdueSum = overdueInvoices.reduce(function (a, v) { return a + v.amount; }, 0);
+    var paidMethods = paidInvoices.filter(function (v, i, arr) { return arr.map(function (x) { return x.method; }).indexOf(v.method) === i; }).map(function (v) { return v.method; });
     var q = state.query.trim().toLowerCase();
     var payFilterDefs = ["전체", "입금 완료", "입금 대기", "연체"];
 
@@ -996,10 +1001,10 @@ button { font-family: var(--font-sans); }
       '<button class="btn btn-primary" data-notyet="1">인보이스 내보내기</button></div>' +
 
       '<div class="stat-grid">' +
-      statCard("8월 청구 / Billed", "$" + billed, "", "정규 6건 + 추가 협의 1건") +
-      statCard("입금 완료 / Paid", "$" + paid, "", "Wise · PayPal · 카카오페이") +
-      statCard("대기 / Pending", "$" + pendingSum, "", "발행 후 5일 경과 1건") +
-      statCard("연체 / Overdue", "$" + overdueSum, "", "D+9 · 수업 보류 검토") +
+      statCard("8월 청구 / Billed", "$" + billed, "", thisPeriodInvoices.length + "건") +
+      statCard("입금 완료 / Paid", "$" + paid, "", paidMethods.join(" · ") || "결제 내역 없음") +
+      statCard("대기 / Pending", "$" + pendingSum, "", pendingInvoices.length + "건") +
+      statCard("연체 / Overdue", "$" + overdueSum, "", overdueInvoices.length + "건") +
       '</div>' +
 
       '<div class="filter-row">' + payFilterDefs.map(function (label) {
