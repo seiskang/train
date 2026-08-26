@@ -387,13 +387,15 @@ button { font-family: var(--font-sans); }
   }
 
   function openFileInline(url, mimeType) {
+    var win = window.open("", "_blank");
     fetch(url)
       .then(function (res) { return res.blob(); })
       .then(function (blob) {
         var displayBlob = mimeType === "text/markdown" ? new Blob([blob], { type: "text/plain;charset=utf-8" }) : blob;
-        window.open(URL.createObjectURL(displayBlob), "_blank");
+        if (win) win.location.href = URL.createObjectURL(displayBlob);
+        else window.open(URL.createObjectURL(displayBlob), "_blank");
       })
-      .catch(function () { window.open(url, "_blank"); });
+      .catch(function () { if (win) win.location.href = url; else window.open(url, "_blank"); });
   }
 
   function formatBytes(n) {
