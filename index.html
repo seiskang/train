@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세이스강 클래스 매니저</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===== tokens: base palette (from 푸른느낌 design system) ===== */
+:root {
+  --green-50:  #f0f7f3; --green-100: #d9ece2; --green-200: #a7d8c4; --green-300: #76c0a4; --green-400: #4aa183;
+  --green-500: #1f6f5c; --green-600: #1a5d4d; --green-700: #15493d; --green-800: #0e3b30; --green-900: #082620;
+  --neutral-0: #ffffff; --neutral-50: #f7f9f8; --neutral-100: #eef2f0; --neutral-200: #dfe5e2; --neutral-300: #c5cecb;
+  --neutral-400: #9aa6a2; --neutral-500: #6f7c78; --neutral-600: #515c59; --neutral-700: #3a4340; --neutral-800: #262d2b; --neutral-900: #161b1a;
+  --clay-500: #c4684a; --amber-400: #e0a64b; --amber-500: #cf8a2b; --sky-400: #5aa9d6; --sky-500: #2f7db8; --moss-500: #7a8b3c;
+  --success-500: var(--green-500); --success-50: var(--green-50);
+  --warning-500: var(--amber-500); --warning-50: #fcf4e4;
+  --danger-500: #c4503a; --danger-50: #fbedea;
+  --info-500: var(--sky-500); --info-50: #e9f3fa;
+
+  --text-strong: var(--neutral-900); --text-body: var(--neutral-700); --text-muted: var(--neutral-500); --text-subtle: var(--neutral-400);
+  --text-on-brand: #ffffff;
+  --surface-page: var(--neutral-50); --surface-card: var(--neutral-0); --surface-sunken: var(--neutral-100); --surface-inverse: var(--green-900);
+  --surface-brand-subtle: var(--green-50);
+  --border-subtle: var(--neutral-200); --border-default: var(--neutral-300); --border-strong: var(--neutral-400); --border-focus: var(--green-400);
+  --action-primary: var(--green-500); --action-primary-hover: var(--green-600); --action-primary-active: var(--green-700); --action-ghost-hover: var(--green-50);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--green-400) 45%, transparent);
+
+  /* ---- Samsung blue reskin (overrides brand + neutrals + success/info) ---- */
+  --green-50: #eef3fb; --green-100: #dae4f6; --green-200: #b3c6ec; --green-300: #7e9bdc; --green-400: #4767c2;
+  --green-500: #1428a0; --green-600: #101f80; --green-700: #0c1863; --green-800: #081046; --green-900: #060c2b;
+  --neutral-50: #f6f8fb; --neutral-100: #eceff5; --neutral-200: #dde2ea; --neutral-300: #c2c9d6; --neutral-400: #98a1b2;
+  --neutral-500: #6b7484; --neutral-600: #4d5563; --neutral-700: #374050; --neutral-800: #232a36; --neutral-900: #131822;
+  --success-500: #1d7a4f; --success-50: #eaf5ef; --info-500: #2f7db8; --info-50: #eaf3fa; --sky-500: #2f7db8;
+  --ring: 0 0 0 3px color-mix(in srgb, var(--green-400) 40%, transparent);
+
+  /* ---- typography ---- */
+  --font-sans: "Mulish", "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700; --weight-extrabold: 800;
+  --text-2xs: 0.6875rem; --text-xs: 0.75rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.125rem;
+  --text-xl: 1.375rem; --text-2xl: 1.75rem; --text-3xl: 2.25rem;
+  --leading-tight: 1.12; --leading-snug: 1.3; --leading-normal: 1.55; --leading-relaxed: 1.7;
+  --tracking-wide: 0.04em;
+  --type-caption: var(--weight-medium) var(--text-xs)/1.4 var(--font-sans);
+  --type-body: var(--weight-regular) var(--text-md)/var(--leading-normal) var(--font-sans);
+
+  /* ---- spacing ---- */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+  --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+
+  /* ---- effects ---- */
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-pill: 999px;
+  --shadow-sm: 0 2px 6px rgba(14, 59, 48, 0.07);
+  --shadow-md: 0 6px 18px rgba(14, 59, 48, 0.09);
+  --shadow-lg: 0 16px 40px rgba(14, 59, 48, 0.12);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-base: 200ms;
+  --transition-base: all var(--duration-base) var(--ease-out);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: var(--type-body);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin: 0; }
+::selection { background: var(--green-200); color: var(--green-900); }
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: var(--radius-sm); }
+button { font-family: var(--font-sans); }
+.tabular { font-variant-numeric: tabular-nums; }
+.eyebrow { font: var(--type-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--text-muted); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== shell ===== */
+#app { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+#app.auth-mode { display: block; }
+.sidebar {
+  display: flex; flex-direction: column; gap: var(--space-8);
+  background: var(--green-900); padding: var(--space-6) var(--space-4);
+}
+.brand-row { display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-2); }
+.brand-mark {
+  display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px;
+  border-radius: 9px; background: var(--green-500); color: #fff; font: var(--weight-extrabold) 13px/1 var(--font-sans); letter-spacing: -0.02em; flex: none;
+}
+.brand-name { font: var(--weight-bold) var(--text-sm)/1.1 var(--font-sans); color: #fff; letter-spacing: -0.02em; }
+.brand-sub { font: var(--weight-medium) 10px/1 var(--font-sans); color: var(--green-300); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-nav-item {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  min-height: 44px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+  cursor: pointer; transition: var(--transition-base); background: transparent; border: none; text-align: left; width: 100%;
+}
+.side-nav-item:hover { background: rgba(255,255,255,.07); }
+.side-nav-item.is-active { background: rgba(255,255,255,.12); }
+.side-nav-item .ko { display: block; font: var(--weight-semibold) var(--text-sm)/1.2 var(--font-sans); color: rgba(255,255,255,.72); white-space: nowrap; }
+.side-nav-item.is-active .ko { color: #fff; }
+.side-nav-item .en { display: block; font: var(--weight-regular) 10px/1 var(--font-sans); color: rgba(255,255,255,.38); white-space: nowrap; }
+.side-nav-item.is-active .en { color: var(--green-200); }
+.side-nav-item .count { flex: none; font: var(--weight-semibold) 11px/1 var(--font-sans); color: rgba(255,255,255,.38); }
+.side-nav-item.is-active .count { color: var(--green-200); }
+.side-nav-item.is-soon .ko::after { content: " · 준비중"; font-weight: var(--weight-regular); color: rgba(255,255,255,.4); }
+
+.package-box {
+  margin-top: auto; padding: var(--space-4); border-radius: var(--radius-lg); background: rgba(255,255,255,.06);
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.package-box .lbl { font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--green-200); letter-spacing: 0.06em; text-transform: uppercase; }
+.package-box .big { font: var(--weight-bold) var(--text-lg)/1.2 var(--font-sans); color: #fff; }
+.package-box .fine { font: var(--weight-regular) var(--text-xs)/1.5 var(--font-sans); color: var(--green-300); }
+
+.main { display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  padding: var(--space-3) var(--space-8); min-height: 64px; background: var(--surface-card); border-bottom: 1px solid var(--border-subtle);
+}
+.crumbs { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.crumb-root { font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); color: var(--text-muted); white-space: nowrap; }
+.crumb-sep { color: var(--text-subtle); }
+.crumb-leaf { font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); color: var(--text-strong); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-right { display: flex; align-items: center; gap: var(--space-4); flex: none; }
+.who { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.who .name { font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); color: var(--text-strong); }
+.who .clock { font: var(--weight-regular) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); }
+
+.mobile-nav { display: none; gap: var(--space-2); padding: var(--space-3) var(--space-4); background: var(--surface-card); border-bottom: 1px solid var(--border-subtle); overflow-x: auto; }
+.chip {
+  display: inline-flex; flex: none; align-items: center; gap: var(--space-2); height: 34px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); cursor: pointer; font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans);
+  border: 1px solid var(--border-subtle); background: var(--surface-card); color: var(--text-body); white-space: nowrap;
+}
+.chip.is-active { border-color: var(--green-500); background: var(--green-500); color: #fff; }
+.chip.is-soon { border-style: dashed; color: var(--text-muted); }
+
+.view { flex: 1; min-width: 0; padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* ===== search input ===== */
+.search-wrap { position: relative; display: inline-flex; align-items: center; }
+.search-wrap .icon { position: absolute; left: 12px; color: var(--text-subtle); font-size: 14px; pointer-events: none; }
+.search-input {
+  width: 240px; height: 40px; padding: 0 var(--space-3) 0 34px; border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); background: var(--surface-card); color: var(--text-body);
+}
+.search-input:focus { border-color: var(--border-focus); }
+
+/* ===== buttons ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 var(--space-5);
+  border-radius: var(--radius-md); font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); cursor: pointer;
+  border: 1px solid transparent; transition: var(--transition-base); white-space: nowrap;
+}
+.btn-primary { background: var(--action-primary); color: #fff; }
+.btn-primary:hover { background: var(--action-primary-hover); }
+.btn-secondary { background: var(--surface-card); border-color: var(--border-default); color: var(--text-body); }
+.btn-secondary:hover { border-color: var(--border-strong); }
+.btn-ghost { background: transparent; color: var(--text-body); }
+.btn-ghost:hover { background: var(--action-ghost-hover); }
+.btn.full { width: 100%; }
+
+/* ===== card / stat / badge ===== */
+.card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.card--pad { padding: var(--space-6); }
+.card-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); }
+.card-head .title { font: var(--weight-bold) var(--text-md)/1 var(--font-sans); color: var(--text-strong); }
+.card-head .note { font: var(--weight-medium) var(--text-sm)/1 var(--font-sans); color: var(--text-muted); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.stat-card { display: flex; flex-direction: column; gap: var(--space-2); justify-content: center; min-height: 132px; padding: var(--space-5) var(--space-6); }
+.stat-card .label { font: var(--type-caption); color: var(--text-muted); }
+.stat-card .value { font: var(--weight-extrabold) var(--text-2xl)/1.1 var(--font-sans); color: var(--text-strong); }
+.stat-card .value .unit { font: var(--weight-semibold) var(--text-md)/1 var(--font-sans); color: var(--text-muted); margin-left: 4px; }
+.stat-card .caption { font: var(--weight-regular) var(--text-xs)/1.4 var(--font-sans); color: var(--text-muted); }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: var(--radius-pill); font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); white-space: nowrap; }
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.badge.tone-success { background: var(--success-50); color: var(--success-500); } .badge.tone-success .dot { background: var(--success-500); }
+.badge.tone-warning { background: var(--warning-50); color: var(--warning-500); } .badge.tone-warning .dot { background: var(--warning-500); }
+.badge.tone-danger { background: var(--danger-50); color: var(--danger-500); } .badge.tone-danger .dot { background: var(--danger-500); }
+.badge.tone-info { background: var(--info-50); color: var(--info-500); } .badge.tone-info .dot { background: var(--info-500); }
+.badge.tone-brand { background: var(--surface-brand-subtle); color: var(--green-600); } .badge.tone-brand .dot { background: var(--green-500); }
+.badge.tone-neutral { background: var(--neutral-100); color: var(--text-muted); } .badge.tone-neutral .dot { background: var(--text-muted); }
+
+/* ===== filter chips ===== */
+.filter-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.filter-chip {
+  display: inline-flex; flex: none; align-items: center; height: 32px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); cursor: pointer; white-space: nowrap; font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans);
+  border: 1px solid var(--border-subtle); background: var(--surface-card); color: var(--text-body);
+}
+.filter-chip.is-active { border-color: var(--green-500); background: var(--green-500); color: #fff; }
+
+/* ===== progress ===== */
+.bar-track { height: 6px; border-radius: 999px; background: var(--neutral-100); overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 999px; }
+
+.ring-wrap { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; }
+.ring-wrap .card-head.solo { align-self: flex-start; border-bottom: none; padding: 0; }
+
+/* ===== table ===== */
+.table-head, .table-row { display: grid; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-6); }
+.table-head { background: var(--neutral-50); border-bottom: 1px solid var(--border-subtle); font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.table-row { border-bottom: 1px solid var(--neutral-100); cursor: pointer; transition: var(--transition-base); }
+.table-row:hover { background: var(--green-50); }
+.table-row:last-child, .table-body > *:last-child .table-row { border-bottom: none; }
+.grid-students { grid-template-columns: 1.6fr 1.3fr 0.8fr 1.2fr 1.1fr 1fr; }
+.grid-payments { grid-template-columns: 1.5fr 1fr 0.8fr 0.8fr 1.1fr 1.1fr; }
+.avatar-init { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: none; border-radius: 50%; background: var(--green-100); color: var(--green-700); font: var(--weight-bold) var(--text-xs)/1 var(--font-sans); }
+
+/* ===== lists ===== */
+.agenda-row { display: grid; grid-template-columns: 104px 8px 1fr auto; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--neutral-100); cursor: pointer; }
+.agenda-row:last-child { border-bottom: none; }
+.agenda-row:hover { background: var(--green-50); }
+.dot-lg { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ===== alert / toast ===== */
+.alert { display: flex; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); border: 1px solid; }
+.alert.tone-success { background: var(--success-50); border-color: color-mix(in srgb, var(--success-500) 35%, transparent); }
+.alert.tone-danger { background: var(--danger-50); border-color: color-mix(in srgb, var(--danger-500) 35%, transparent); }
+.alert.tone-info { background: var(--info-50); border-color: color-mix(in srgb, var(--info-500) 35%, transparent); }
+.alert .title { font: var(--weight-bold) var(--text-sm)/1.3 var(--font-sans); color: var(--text-strong); }
+.alert .body { font: var(--weight-regular) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); margin-top: 2px; }
+.alert .close { margin-left: auto; flex: none; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px; line-height: 1; }
+
+.toast-wrap { position: fixed; z-index: 70; left: 50%; bottom: 28px; transform: translateX(-50%); width: min(560px, calc(100vw - 32px)); animation: toastIn 220ms var(--ease-out) both; }
+.toast-wrap .card { box-shadow: var(--shadow-lg); }
+
+/* ===== modal ===== */
+.modal-backdrop { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: var(--space-6); background: rgba(6,12,43,.42); animation: fadeIn 160ms var(--ease-out) both; }
+.modal-box { width: 100%; max-width: 520px; animation: rise 200ms var(--ease-out) both; }
+.modal-rows { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); background: var(--neutral-50); border-radius: var(--radius-md); }
+.modal-rows .r { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); }
+.modal-rows .r .k { font: var(--weight-regular) var(--text-sm)/1.4 var(--font-sans); color: var(--text-muted); }
+.modal-rows .r .v { flex: none; font: var(--weight-semibold) var(--text-sm)/1.4 var(--font-sans); color: var(--text-strong); text-align: right; white-space: nowrap; }
+
+.field-label { display: block; font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: var(--space-2); }
+.textarea {
+  width: 100%; padding: var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  font: var(--weight-regular) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); background: var(--surface-card); resize: vertical;
+}
+.textarea:focus { border-color: var(--border-focus); }
+.input {
+  width: 100%; height: 40px; padding: 0 var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); color: var(--text-body); background: var(--surface-card);
+}
+.input:focus { border-color: var(--border-focus); }
+
+/* ===== auth ===== */
+.auth-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-6); background: var(--surface-page); }
+.auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: var(--space-5); }
+.auth-brand { display: flex; align-items: center; justify-content: center; gap: var(--space-3); }
+.auth-tabs { display: flex; gap: var(--space-2); padding: 3px; background: var(--surface-sunken); border-radius: var(--radius-md); }
+.auth-tab { flex: 1; text-align: center; padding: var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); color: var(--text-muted); }
+.auth-tab.is-active { background: var(--surface-card); color: var(--text-strong); box-shadow: var(--shadow-sm); }
+.auth-error { font: var(--weight-medium) var(--text-sm)/1.4 var(--font-sans); color: var(--danger-500); }
+.auth-hint { text-align: center; font: var(--weight-regular) var(--text-xs)/1.4 var(--font-sans); color: var(--text-subtle); }
+.dev-box {
+  padding: var(--space-4); border-radius: var(--radius-md); background: var(--warning-50);
+  border: 1px solid color-mix(in srgb, var(--warning-500) 35%, transparent);
+  font: var(--weight-regular) var(--text-xs)/1.6 var(--font-sans); color: var(--text-body); word-break: break-all;
+}
+.dev-box a { color: var(--info-500); }
+
+/* ===== misc content ===== */
+.field-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5) var(--space-6); }
+.field-grid-2 { grid-template-columns: 1fr 1fr; }
+.field-grid .f .k { display: block; font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: var(--space-2); }
+.field-grid .f .v { font: var(--weight-medium) var(--text-md)/1.35 var(--font-sans); color: var(--text-strong); }
+.lesson-row { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--neutral-100); animation: rise 280ms var(--ease-out) both; }
+.lesson-row:last-child { border-bottom: none; }
+.lesson-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3) var(--space-5); }
+.lesson-cols .k { display: block; font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); margin-bottom: 2px; }
+.lesson-cols .v { font: var(--weight-regular) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); }
+
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .mobile-nav { display: flex; }
+  .topbar { padding: var(--space-3) var(--space-4); }
+  .who { display: none; }
+  .search-input { width: 150px; }
+  .view { padding: var(--space-4); }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .dash-grid { grid-template-columns: 1fr !important; }
+  .detail-grid { grid-template-columns: 1fr !important; }
+  .field-grid { grid-template-columns: 1fr; }
+  .req-grid { grid-template-columns: 1fr !important; }
+  .lesson-cols { grid-template-columns: 1fr; }
+  .table-head { display: none; }
+  .table-row.grid-students, .table-row.grid-payments { grid-template-columns: 1fr; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .agenda-row { grid-template-columns: auto 8px 1fr; }
+  .agenda-row .agenda-session { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var RATE = 20;
+  var PACK = 8;
+
+  var PAY = {
+    paid: { label: "입금 완료", tone: "success" },
+    pending: { label: "입금 대기", tone: "warning" },
+    overdue: { label: "연체", tone: "danger" }
+  };
+
+  var STUDENTS = [
+    { id: "s1", name: "Emily Carter", initials: "EC", level: "중급 1", where: "미국 시애틀", offset: "KST −16h", goal: "업무 이메일·회의 한국어",
+      slot: "화·목 07:00", local: "월·수 15:00 PDT", pay: "paid", used: 5, total: 8, method: "Wise",
+      fields: [["거주지 / 시차", "미국 시애틀 · KST −16h"], ["고정 슬롯", "화·목 07:00 KST (현지 월·수 15:00)"], ["학습 목표", "사내 회의·이메일에서 쓰는 존댓말"], ["모국어 / 가능 언어", "영어 · 한국어 중급 1"], ["결제 수단", "Wise · 월 8회 선불"], ["시작일", "2026년 4월 6일 (누적 42회)"]],
+      lessons: [
+        { no: 5, date: "8월 20일 (목)", topic: "회의 진행 표현", attend: "출석", tone: "success", pron: "'했습니다' 받침 탈락 교정, 억양 하강 연습", vocab: "안건, 검토하다, 공유드리다 외 9개", hw: "회의 요약 음성 3분 녹음" },
+        { no: 4, date: "8월 18일 (화)", topic: "이메일 존댓말", attend: "출석", tone: "success", pron: "'ㄹ' 유음화(할 일 → 할릴)", vocab: "회신, 첨부, 확인 부탁드립니다 외 7개", hw: "실제 업무 메일 1건 한국어로 작성" },
+        { no: 3, date: "8월 13일 (목)", topic: "전화 통화 상황극", attend: "지각 6분", tone: "warning", pron: "숫자 읽기(십육 vs 열여섯)", vocab: "연결해 드리겠습니다, 부재중 외 6개", hw: "번호·날짜 받아쓰기 20문항" },
+        { no: 2, date: "8월 11일 (화)", topic: "자기소개 심화", attend: "출석", tone: "success", pron: "장단음 구분(눈/눈)", vocab: "담당하다, 경력, 소속 외 8개", hw: "1분 자기소개 녹음 재제출" }
+      ]
+    },
+    { id: "s2", name: "Nguyen Thi Mai", initials: "NM", level: "초급 2", where: "한국 안산 (거주)", offset: "KST 동일", goal: "직장 대화 · TOPIK 2급",
+      slot: "월·수 20:00", local: "동일 시간대", pay: "paid", used: 2, total: 8, method: "카카오페이",
+      fields: [["거주지 / 시차", "한국 안산 · KST 동일"], ["고정 슬롯", "월·수 20:00 KST"], ["학습 목표", "직장 동료와의 일상 대화, TOPIK 2급"], ["모국어 / 가능 언어", "베트남어 · 한국어 초급 2"], ["결제 수단", "카카오페이 · 월 8회 선불"], ["시작일", "2026년 6월 15일 (누적 19회)"]],
+      lessons: [
+        { no: 2, date: "8월 24일 (월)", topic: "직장 인사·부탁 표현", attend: "출석", tone: "success", pron: "종성 'ㅂ/ㅍ' 구분", vocab: "부탁드려요, 도와주세요 외 8개", hw: "동료와 실제 대화 3문장 녹음" },
+        { no: 1, date: "8월 19일 (수)", topic: "하루 일과 말하기", attend: "출석", tone: "success", pron: "'ㅓ/ㅗ' 모음 구분", vocab: "출근, 야근, 점심시간 외 10개", hw: "일과 5문장 작성 후 낭독" }
+      ]
+    },
+    { id: "s3", name: "Kenji Sato", initials: "KS", level: "중급 2", where: "일본 오사카", offset: "KST 동일", goal: "드라마 대사·자연스러운 반말",
+      slot: "토·일 10:00", local: "동일 시간대", pay: "pending", used: 7, total: 8, method: "PayPal",
+      fields: [["거주지 / 시차", "일본 오사카 · KST 동일"], ["고정 슬롯", "토·일 10:00 KST"], ["학습 목표", "드라마 대사 이해, 자연스러운 반말"], ["모국어 / 가능 언어", "일본어 · 한국어 중급 2"], ["결제 수단", "PayPal · 월 8회 선불"], ["시작일", "2026년 2월 8일 (누적 63회)"]],
+      lessons: [
+        { no: 7, date: "8월 24일 (일)", topic: "드라마 대사 섀도잉", attend: "출석", tone: "success", pron: "경음화(학교→학꾜) 과교정 완화", vocab: "그러니까, 어차피, 하필 외 6개", hw: "3분 장면 섀도잉 녹음" },
+        { no: 6, date: "8월 23일 (토)", topic: "반말 전환 연습", attend: "출석", tone: "success", pron: "'ㅡ' 모음(일본어 う 간섭)", vocab: "-잖아, -거든 외 7개", hw: "존댓말 문장 10개 반말 변환" }
+      ]
+    },
+    { id: "s4", name: "Sofia Rossi", initials: "SR", level: "초급 1", where: "이탈리아 밀라노", offset: "KST −7h", goal: "여행·기초 회화",
+      slot: "화·금 23:00", local: "화·금 16:00 CEST", pay: "paid", used: 0, total: 8, method: "PayPal",
+      fields: [["거주지 / 시차", "이탈리아 밀라노 · KST −7h"], ["고정 슬롯", "화·금 23:00 KST (현지 16:00)"], ["학습 목표", "여행 회화, 한글 읽기 정착"], ["모국어 / 가능 언어", "이탈리아어 · 영어"], ["결제 수단", "PayPal · 월 8회 선불"], ["시작일", "2026년 8월 26일 (첫 수업 예정)"]],
+      lessons: []
+    },
+    { id: "s5", name: "Daniel Kim", initials: "DK", level: "고급", where: "미국 뉴저지", offset: "KST −13h", goal: "가족 대화 · 뉴스 청취",
+      slot: "수·토 09:00", local: "화·금 20:00 EDT", pay: "overdue", used: 8, total: 8, method: "PayPal",
+      fields: [["거주지 / 시차", "미국 뉴저지 · KST −13h"], ["고정 슬롯", "수·토 09:00 KST (현지 화·금 20:00)"], ["학습 목표", "가족과의 대화, 뉴스 청취"], ["모국어 / 가능 언어", "영어 · 한국어 고급(교포)"], ["결제 수단", "PayPal · 월 8회 선불"], ["시작일", "2025년 11월 5일 (누적 78회)"]],
+      lessons: [
+        { no: 8, date: "8월 22일 (토)", topic: "뉴스 리스닝 요약", attend: "출석", tone: "success", pron: "한자어 장음 처리", vocab: "정책, 물가, 여파 외 9개", hw: "5분 뉴스 요약 음성 제출" },
+        { no: 7, date: "8월 19일 (수)", topic: "친척 호칭 정리", attend: "결석(사전 통보)", tone: "warning", pron: "—", vocab: "이모/고모/외삼촌 체계", hw: "가족 관계도 한국어로 정리" }
+      ]
+    },
+    { id: "s6", name: "Aisha Rahman", initials: "AR", level: "초급 1", where: "한국 서울 (거주)", offset: "KST 동일", goal: "동네 생활 회화",
+      slot: "월·목 21:00", local: "동일 시간대", pay: "paid", used: 3, total: 8, method: "카카오페이",
+      fields: [["거주지 / 시차", "한국 서울 · KST 동일"], ["고정 슬롯", "월·목 21:00 KST"], ["학습 목표", "병원·관공서 등 생활 회화"], ["모국어 / 가능 언어", "우르두어 · 영어"], ["결제 수단", "카카오페이 · 월 8회 선불"], ["시작일", "2026년 7월 7일 (누적 11회)"]],
+      lessons: [
+        { no: 3, date: "8월 21일 (목)", topic: "병원 접수 상황극", attend: "출석", tone: "success", pron: "'ㅐ/ㅔ' 구분", vocab: "접수, 진료, 처방전 외 8개", hw: "증상 설명 3문장 녹음" }
+      ]
+    }
+  ];
+
+  var REQUESTS = [
+    { id: "r1", name: "Lucas Silva", region: "브라질 상파울루", offset: "KST −12h", state: "신규", tone: "brand",
+      level: "초급 1 희망", wish: "화·목 22:00 KST (현지 10:00)", via: "인스타그램 DM", lang: "포르투갈어 · 영어",
+      note: "한국 회사 취업 준비 중입니다. 한글은 읽을 수 있고 말하기 연습이 필요합니다. 주 2회 8회 패키지로 시작하고 싶습니다.",
+      slot: "화·목 22:00", localLabel: "현지 화·목 10:00", initials: "LS" },
+    { id: "r2", name: "Chen Wei", region: "대만 타이베이", offset: "KST −1h", state: "상담 완료", tone: "info",
+      level: "중급 1 희망", wish: "토·일 11:00 KST (현지 10:00)", via: "기존 학생 소개", lang: "중국어 · 영어",
+      note: "TOPIK 3급 목표입니다. 발음 교정 중심으로 진행하고 싶고, 첫 달은 8회 기본 패키지로 시작하겠습니다.",
+      slot: "토·일 11:00", localLabel: "현지 토·일 10:00", initials: "CW" }
+  ];
+
+  var INVOICES = [
+    { id: "i1", sid: "s1", period: "2026-08", sessions: 8, amount: 160, status: "paid", method: "Wise", issued: "8/01 발행", kind: "정규 8회 패키지" },
+    { id: "i2", sid: "s1", period: "2026-08", sessions: 2, amount: 40, status: "paid", method: "Wise", issued: "8/18 발행", kind: "추가 2회 (별도 협의)" },
+    { id: "i3", sid: "s2", period: "2026-08", sessions: 8, amount: 160, status: "paid", method: "카카오페이", issued: "8/12 발행", kind: "정규 8회 패키지" },
+    { id: "i4", sid: "s3", period: "2026-08", sessions: 8, amount: 160, status: "pending", method: "PayPal", issued: "8/20 발행", kind: "정규 8회 패키지" },
+    { id: "i5", sid: "s4", period: "2026-09", sessions: 8, amount: 160, status: "paid", method: "PayPal", issued: "8/24 발행", kind: "정규 8회 패키지" },
+    { id: "i6", sid: "s5", period: "2026-08", sessions: 8, amount: 160, status: "overdue", method: "PayPal", issued: "8/01 발행 · D+9", kind: "정규 8회 패키지" },
+    { id: "i7", sid: "s6", period: "2026-08", sessions: 8, amount: 160, status: "paid", method: "카카오페이", issued: "8/05 발행", kind: "정규 8회 패키지" }
+  ];
+
+  var NAV_DEFS = [
+    ["개요", "Overview", "dash"],
+    ["수강 신청", "Requests", "requests"],
+    ["학생", "Students", "students"],
+    ["결제", "Payments", "payments"],
+    ["수업 일정", "Schedule", null],
+    ["설정", "Settings", null]
+  ];
+
+  var state = {
+    view: "dash", student: "s1", query: "", filter: "전체", payFilter: "전체",
+    modal: null, note: "", toast: null, toastBody: "", toastTone: "success",
+    alerts: {},
+    authReady: false, auth: null, authTab: "login", authError: "", authBusy: false,
+    authPendingVerify: null, authUnverifiedEmail: "",
+    students: JSON.parse(JSON.stringify(STUDENTS)),
+    requests: JSON.parse(JSON.stringify(REQUESTS)),
+    invoices: JSON.parse(JSON.stringify(INVOICES))
+  };
+  var pendingRequest = null;
+  var toastTimer = null;
+
+  function esc(str) {
+    return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function setState(patch) { Object.assign(state, patch); render(); }
+  function remainOf(st) { return st.total - st.used; }
+  function colorVar(st) {
+    var r = remainOf(st);
+    return r <= 1 ? "var(--danger-500)" : r <= 2 ? "var(--amber-500)" : "var(--green-500)";
+  }
+  function nameOf(sid) { var s = state.students.find(function (x) { return x.id === sid; }); return s ? s.name : "—"; }
+  function fire(title, body, tone) {
+    clearTimeout(toastTimer);
+    setState({ toast: title, toastBody: body || "", toastTone: tone || "success" });
+    toastTimer = setTimeout(function () { setState({ toast: null }); }, 5200);
+  }
+  function go(view, studentId) {
+    var patch = { view: view };
+    if (studentId) patch.student = studentId;
+    setState(patch);
+  }
+
+  function approve(id) {
+    var r = state.requests.find(function (x) { return x.id === id; });
+    if (!r) return;
+    var sid = "n" + id;
+    var student = {
+      id: sid, name: r.name, initials: r.initials, level: r.level.replace(" 희망", ""),
+      where: r.region, offset: r.offset, goal: r.note.slice(0, 22) + "…",
+      slot: r.slot, local: r.localLabel, pay: "pending", used: 0, total: PACK, method: "PayPal",
+      fields: [
+        ["거주지 / 시차", r.region + " · " + r.offset],
+        ["고정 슬롯", r.slot + " KST (" + r.localLabel + ")"],
+        ["학습 목표", r.level + " · 상담 메모 참고"],
+        ["모국어 / 가능 언어", r.lang],
+        ["결제 수단", "PayPal · 월 8회 선불"],
+        ["시작일", "2026년 8월 27일 (첫 수업 예정)"]
+      ],
+      lessons: []
+    };
+    state.requests = state.requests.filter(function (x) { return x.id !== id; });
+    state.students = [student].concat(state.students);
+    state.invoices = [{ id: "inv" + id, sid: sid, period: "2026-09", sessions: PACK, amount: PACK * RATE, status: "pending", method: "PayPal", issued: "8/25 발행", kind: "정규 8회 패키지 (자동)" }].concat(state.invoices);
+    state.alerts[sid] = true;
+    setState({ view: "student", student: sid, modal: null });
+    fire(r.name + " 님 등록 완료 — 8회차 자동 편성", r.slot + " 슬롯으로 8회차가 배정되고 $" + (PACK * RATE) + " 인보이스가 발행되었습니다.", "success");
+  }
+
+  function logLesson() {
+    var studentId = state.student, note = state.note;
+    state.students = state.students.map(function (st) {
+      if (st.id !== studentId) return st;
+      var no = st.used + 1;
+      var parts = (note || "").split(/[,·/]/).map(function (x) { return x.trim(); }).filter(Boolean);
+      var newLesson = {
+        no: no, date: "8월 25일 (화)", topic: parts[0] || "자유 대화 50분", attend: "출석", tone: "success",
+        pron: parts[1] || "이번 회차 발음 메모 없음",
+        vocab: parts[2] || "이번 회차 어휘 메모 없음",
+        hw: parts[3] || "다음 수업 전 음성 과제 1건"
+      };
+      return Object.assign({}, st, { used: Math.min(st.total, no), lessons: [newLesson].concat(st.lessons) });
+    });
+    var st = state.students.find(function (x) { return x.id === studentId; });
+    var left = st ? st.total - Math.min(st.total, st.used) : 0;
+    setState({ modal: null, note: "" });
+    if (left <= 2) {
+      fire("수업 기록 완료 — 잔여 " + left + "회", "잔여 2회 이하입니다. 다음 8회 인보이스를 미리 발행해 보이스톡 일정을 이어가세요.", "warning");
+    } else {
+      fire("수업 기록 완료 — 잔여 " + left + "회", "학습 기록에 발음·어휘·과제가 저장되었습니다.", "success");
+    }
+  }
+
+  function issueInvoice() {
+    var studentId = state.student;
+    var st = state.students.find(function (x) { return x.id === studentId; });
+    state.invoices = [{ id: "iv" + Date.now(), sid: studentId, period: "2026-09", sessions: PACK, amount: PACK * RATE, status: "pending", method: st ? st.method : "PayPal", issued: "8/25 발행", kind: "정규 8회 패키지" }].concat(state.invoices);
+    setState({ modal: null });
+    fire("인보이스 발행 — $" + (PACK * RATE), (st ? st.name : "") + " 님에게 9월 8회 패키지 청구서를 보냈습니다. 입금 확인 시 회차가 충전됩니다.", "info");
+  }
+
+  function confirmPayment(id) {
+    var v = state.invoices.find(function (x) { return x.id === id; });
+    state.invoices = state.invoices.map(function (row) { return row.id === id ? Object.assign({}, row, { status: "paid", issued: row.issued + " · 8/25 입금" }) : row; });
+    if (v) {
+      state.students = state.students.map(function (st) { return st.id === v.sid ? Object.assign({}, st, { pay: "paid", used: 0, total: v.sessions }) : st; });
+    }
+    render();
+    fire("입금 확인 — 회차 충전 완료", "잔여 회차가 8회로 초기화되고 결제 상태가 입금 완료로 바뀌었습니다.", "success");
+  }
+
+  function notYet() { fire("이 화면은 다음 단계에서 만들어요", "지금은 수강 신청 · 학습 관리 · 결제 관리 흐름만 동작합니다.", "info"); }
+
+  /* ===== rendering ===== */
+  function badge(label, tone, dot) {
+    return '<span class="badge tone-' + tone + '">' + (dot ? '<span class="dot"></span>' : "") + esc(label) + "</span>";
+  }
+  function bar(pct, color) {
+    return '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>';
+  }
+
+  function navHtml(kind) {
+    var active = state.view === "student" ? "students" : state.view;
+    return NAV_DEFS.map(function (d) {
+      var ko = d[0], en = d[1], key = d[2];
+      var on = key === active;
+      var countMap = { requests: state.requests.length, students: state.students.length, payments: state.invoices.filter(function (v) { return v.status !== "paid"; }).length };
+      var count = countMap[key] || "";
+      if (kind === "side") {
+        var sideAttr = key ? ' data-nav="' + key + '"' : ' data-notyet="1"';
+        return '<button class="side-nav-item' + (on ? " is-active" : "") + (key ? "" : " is-soon") + '"' + sideAttr + '>' +
+          '<span><span class="ko">' + esc(ko) + '</span><span class="en">' + esc(en) + '</span></span>' +
+          '<span class="count">' + esc(count) + '</span></button>';
+      }
+      var chipAttr = key ? ' data-nav="' + key + '"' : ' data-notyet="1"';
+      return '<span class="chip' + (on ? " is-active" : "") + (key ? "" : " is-soon") + '"' + chipAttr + '>' + esc(ko) + '</span>';
+    }).join("");
+  }
+
+  function sidebarHtml() {
+    return '' +
+      '<aside class="sidebar">' +
+      '<div class="brand-row"><span class="brand-mark">한</span><span><span class="brand-name" style="display:block">한국어 수업 관리</span><span class="brand-sub">1:1 Voice Lessons</span></span></div>' +
+      '<nav class="side-nav">' + navHtml("side") + '</nav>' +
+      '<div class="package-box"><span class="lbl">기본 패키지</span><span class="big tabular">월 ' + PACK + '회 · $' + (PACK * RATE) + '</span>' +
+      '<span class="fine">주 2회 · 1회 50분 · 회당 $' + RATE + '<br>보이스톡 1:1 · 추가 회차 별도 협의</span></div>' +
+      '</aside>';
+  }
+
+  function crumbFor(view, st) {
+    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments" };
+    return { root: map[view] || "", leaf: view === "student" && st ? st.name : "" };
+  }
+
+  function clockText() {
+    var now = new Date();
+    var kst = now.toLocaleString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hour12: false, month: "long", day: "numeric" });
+    var local = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    var tzLabel = "UTC" + (-now.getTimezoneOffset() >= 0 ? "+" : "") + (-now.getTimezoneOffset() / 60);
+    return "KST " + kst + " · 현지 " + local + " (" + tzLabel + ")";
+  }
+
+  function topbarHtml(st) {
+    var c = crumbFor(state.view, st);
+    var clock = clockText();
+    var who = state.auth ? (state.auth.name || state.auth.email) : "이윤재 강사";
+    var roleBadge = state.auth && state.auth.role === "admin" ? badge("관리자", "brand", true) : "";
+    return '' +
+      '<header class="topbar">' +
+      '<div class="crumbs"><span class="crumb-root">' + esc(c.root) + '</span>' +
+      (c.leaf ? '<span class="crumb-sep">/</span><span class="crumb-leaf">' + esc(c.leaf) + '</span>' : "") + '</div>' +
+      '<div class="topbar-right">' +
+      '<span class="search-wrap"><span class="icon">⌕</span><input class="search-input" id="query-input" type="text" placeholder="학생·결제 검색" value="' + esc(state.query) + '"></span>' +
+      '<span class="who"><span class="name">' + esc(who) + ' ' + roleBadge + '</span><span class="clock tabular">' + esc(clock) + '</span></span>' +
+      '<button class="btn btn-secondary" id="logout-btn" style="height:32px;padding:0 var(--space-4)">로그아웃</button>' +
+      '</div></header>' +
+      '<div class="mobile-nav">' + navHtml("chip") + '</div>';
+  }
+
+  function statCard(label, value, unit, caption) {
+    return '<div class="card stat-card"><span class="label">' + esc(label) + '</span>' +
+      '<span class="value tabular">' + esc(value) + (unit ? '<span class="unit">' + esc(unit) + '</span>' : "") + '</span>' +
+      '<span class="caption">' + esc(caption) + '</span></div>';
+  }
+
+  function renderDash() {
+    var students = state.students, invoices = state.invoices;
+    var pendingSum = invoices.filter(function (v) { return v.status === "pending"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var overdueSum = invoices.filter(function (v) { return v.status === "overdue"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var unpaidLabel = "$" + (pendingSum + overdueSum);
+    var monthDone = students.reduce(function (a, x) { return a + x.lessons.length; }, 0) + 22;
+    var lowList = students.filter(function (x) { return remainOf(x) <= 2; });
+
+    var agenda = [
+      { kst: "오늘 07:00", local: "현지 월 15:00", sid: "s1", meta: "중급 1 · 회의 진행 표현 · 6회차", session: "6/8", day: "화", dot: "var(--green-500)" },
+      { kst: "오늘 20:00", local: "KST 동일", sid: "s2", meta: "초급 2 · 직장 대화 · 3회차", session: "3/8", day: "화", dot: "var(--green-500)" },
+      { kst: "오늘 23:00", local: "현지 화 16:00", sid: "s4", meta: "초급 1 · 첫 수업 · 한글 읽기 점검", session: "1/8", day: "화", dot: "var(--info-500)" },
+      { kst: "내일 09:00", local: "현지 화 20:00", sid: "s5", meta: "고급 · 연체로 보류 검토 필요", session: "0/8", day: "수", dot: "var(--danger-500)" },
+      { kst: "내일 20:00", local: "KST 동일", sid: "s2", meta: "초급 2 · TOPIK 읽기 연습", session: "4/8", day: "수", dot: "var(--green-500)" }
+    ];
+
+    var lowBalance = lowList.concat(students.filter(function (x) { return remainOf(x) > 2; }).slice(0, 1));
+    var dueInvoices = invoices.filter(function (v) { return v.status !== "paid"; });
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+      '<span class="eyebrow">2026년 8월 25일 화요일 · KST</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-3xl)/1.15 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">안녕, 이윤재님</h1>' +
+      '<p style="font:var(--weight-semibold) var(--text-lg)/1.3 var(--font-sans);color:var(--text-body)">오늘 보이스톡 수업 3건, 미수금 ' + esc(unpaidLabel) + '</p>' +
+      '<p style="color:var(--text-muted)">신청을 승인하면 주 2회 8회차와 인보이스가 자동으로 만들어집니다.</p></div>' +
+      '<div style="display:flex;gap:var(--space-3)"><button class="btn btn-secondary" data-nav="payments">결제 관리</button>' +
+      '<button class="btn btn-primary" data-nav="requests">수강 신청 ' + state.requests.length + '건</button></div></div>' +
+
+      '<div class="stat-grid">' +
+      statCard("오늘 수업 / Today", "3", "회", "07:00 Emily · 20:00 Mai · 21:00 Aisha") +
+      statCard("이번 달 진행 / Done", String(monthDone), "회", "8월 예정 48회 기준") +
+      statCard("미수금 / Unpaid", unpaidLabel, "", "대기 1건 · 연체 1건") +
+      statCard("회차 소진 임박 / Low", String(lowList.length), "명", "잔여 2회 이하 — 재결제 안내 필요") +
+      '</div>' +
+
+      '<div class="dash-grid" style="display:grid;grid-template-columns:1.4fr 1fr;gap:var(--space-4);align-items:start">' +
+      '<div class="card"><div class="card-head"><span class="title">오늘 · 내일 수업</span><span class="note">KST · 학생 현지 시각</span></div>' +
+      agenda.map(function (row) {
+        return '<div class="agenda-row" data-goto-student="' + row.sid + '">' +
+          '<span><span class="tabular" style="display:block;font:var(--weight-bold) var(--text-md)/1.2 var(--font-sans);color:var(--text-strong)">' + esc(row.kst) + '</span>' +
+          '<span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(row.local) + '</span></span>' +
+          '<span class="dot-lg" style="background:' + row.dot + '"></span>' +
+          '<span><span style="display:block;font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(nameOf(row.sid)) + '</span>' +
+          '<span style="display:block;font-size:var(--text-sm);color:var(--text-muted)">' + esc(row.meta) + '</span></span>' +
+          '<span class="agenda-session" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">' +
+          '<span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--green-600)">' + esc(row.session) + '</span>' +
+          '<span style="font-size:var(--text-xs);color:var(--text-subtle)">' + esc(row.day) + '</span></span>' +
+          '</div>';
+      }).join("") + '</div>' +
+
+      '<div style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+      '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">잔여 회차 · 재결제 안내</span>' +
+      lowBalance.map(function (x) {
+        return '<div data-goto-student="' + x.id + '" style="cursor:pointer;display:flex;flex-direction:column;gap:var(--space-2)">' +
+          '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3)">' +
+          '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-body)">' + esc(x.name) + '</span>' +
+          '<span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:' + colorVar(x) + '">' + remainOf(x) + '/' + x.total + '회</span></div>' +
+          bar(Math.round((remainOf(x) / x.total) * 100), colorVar(x)) + '</div>';
+      }).join("") + '</div>' +
+
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">확인이 필요한 결제</span>' +
+      dueInvoices.map(function (v) {
+        return '<div data-nav="payments" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-2) 0;border-bottom:1px solid var(--neutral-100)">' +
+          '<span style="display:flex;flex-direction:column;gap:1px"><span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-body)">' + esc(nameOf(v.sid)) + '</span>' +
+          '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.period + " · $" + v.amount + " · " + v.method) + '</span></span>' +
+          badge(PAY[v.status].label, PAY[v.status].tone, true) + '</div>';
+      }).join("") + '</div></div></div>';
+  }
+
+  function renderRequests() {
+    var requests = state.requests;
+    var header = '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Requests</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">수강 신청</h1>' +
+      '<span style="color:var(--text-muted)">승인하면 희망 요일 기준 8회차가 자동 편성되고 $' + (PACK * RATE) + ' 인보이스가 발행됩니다.</span></div>';
+
+    var grid = '<div class="req-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)">' +
+      requests.map(function (r) {
+        var fields = [["희망 레벨", r.level], ["희망 슬롯", r.wish], ["유입 경로", r.via], ["언어", r.lang]];
+        return '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+          '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)">' +
+          '<span><span style="display:block;font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong)">' + esc(r.name) + '</span>' +
+          '<span style="display:block;color:var(--text-muted)">' + esc(r.region + " · " + r.offset) + '</span></span>' +
+          badge(r.state, r.tone, true) + '</div>' +
+          '<div class="field-grid field-grid-2">' + fields.map(function (f) {
+            return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v" style="font-size:var(--text-sm)">' + esc(f[1]) + '</span></span>';
+          }).join("") + '</div>' +
+          '<span style="font-size:var(--text-sm);color:var(--text-body);padding:var(--space-3) var(--space-4);background:var(--neutral-50);border-radius:var(--radius-md)">' + esc(r.note) + '</span>' +
+          '<div style="display:flex;gap:var(--space-3);justify-content:flex-end">' +
+          '<button class="btn btn-ghost" data-notyet="1">보류</button>' +
+          '<button class="btn btn-primary" data-approve="' + r.id + '">승인 · 8회 편성</button></div></div>';
+      }).join("") + '</div>';
+
+    var empty = requests.length ? "" : '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+      '<span style="font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">대기 중인 신청이 없습니다.</span>' +
+      '<span style="color:var(--text-muted)">승인한 신청은 학생 목록에서 확인할 수 있습니다.</span></div>';
+
+    return header + grid + empty;
+  }
+
+  function renderStudents() {
+    var q = state.query.trim().toLowerCase();
+    var lowCount = state.students.filter(function (x) { return remainOf(x) <= 2; }).length;
+    var summary = "활동 " + state.students.length + "명 · 주 2회 고정 슬롯 · 잔여 2회 이하 " + lowCount + "명";
+    var filterDefs = ["전체", "입금 완료", "입금 대기", "연체", "잔여 2회 이하"];
+    var rows = state.students.filter(function (st) {
+      if (q && !(st.name + st.where + st.level + st.goal).toLowerCase().includes(q)) return false;
+      if (state.filter === "전체") return true;
+      if (state.filter === "잔여 2회 이하") return remainOf(st) <= 2;
+      return PAY[st.pay].label === state.filter;
+    });
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Students</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">학생 관리</h1>' +
+      '<span style="color:var(--text-muted)">' + esc(summary) + '</span></div>' +
+      '<button class="btn btn-primary" data-nav="requests">신청에서 등록</button></div>' +
+
+      '<div class="filter-row">' + filterDefs.map(function (label) {
+        return '<span class="filter-chip' + (label === state.filter ? " is-active" : "") + '" data-filter="' + esc(label) + '">' + esc(label) + '</span>';
+      }).join("") + '</div>' +
+
+      '<div class="card" style="overflow:hidden">' +
+      '<div class="table-head grid-students"><span>학생</span><span>거주 / 시차</span><span>레벨</span><span>고정 슬롯 (KST)</span><span>잔여 회차</span><span>결제</span></div>' +
+      '<div class="table-body">' + rows.map(function (st) {
+        var pct = Math.round((remainOf(st) / st.total) * 100);
+        return '<div class="table-row grid-students" data-goto-student="' + st.id + '">' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3);min-width:0">' +
+          '<span class="avatar-init">' + esc(st.initials) + '</span>' +
+          '<span><span style="display:block;font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(st.name) + '</span>' +
+          '<span style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(st.goal) + '</span></span></span>' +
+          '<span><span style="display:block;font-size:var(--text-sm)">' + esc(st.where) + '</span><span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(st.offset) + '</span></span>' +
+          '<span style="font-size:var(--text-sm)">' + esc(st.level) + '</span>' +
+          '<span class="tabular" style="font-size:var(--text-sm)">' + esc(st.slot) + '</span>' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3)"><span style="flex:1;max-width:80px">' + bar(pct, colorVar(st)) + '</span>' +
+          '<span class="tabular" style="font:var(--weight-semibold) var(--text-xs)/1 var(--font-sans);color:var(--text-muted);white-space:nowrap">' + remainOf(st) + '/' + st.total + '</span></span>' +
+          '<span>' + badge(PAY[st.pay].label, PAY[st.pay].tone, true) + '</span></div>';
+      }).join("") + '</div></div>';
+  }
+
+  function renderStudent() {
+    var st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+    var invoices = state.invoices.filter(function (v) { return v.sid === st.id; });
+    var paidTotal = invoices.filter(function (v) { return v.status === "paid"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var remainPct = Math.round((remainOf(st) / st.total) * 100);
+    var justApproved = !!state.alerts[st.id];
+
+    var alertHtml = "";
+    if (justApproved) {
+      alertHtml = '<div class="alert tone-success"><div><div class="title">8회차 자동 편성 완료 · 인보이스 발행됨</div>' +
+        '<div class="body">' + esc(st.slot) + ' KST 슬롯으로 8회차가 배정되었고, $' + (PACK * RATE) + ' 청구서가 발행되었습니다. 입금 확인 시 회차가 충전됩니다.</div></div></div>';
+    } else if (st.pay === "overdue") {
+      alertHtml = '<div class="alert tone-danger"><div><div class="title">결제가 9일 지연되었습니다</div>' +
+        '<div class="body">잔여 회차가 0회입니다. 입금 확인 전까지 다음 보이스톡 일정을 잡지 않는 것을 권장합니다.</div></div></div>';
+    }
+
+    var remainNote = remainOf(st) <= 2
+      ? "잔여 " + remainOf(st) + "회 — 다음 8회 패키지($" + (PACK * RATE) + ") 발행이 필요합니다."
+      : "이번 패키지 " + st.total + "회 중 " + st.used + "회 진행 · 주 2회 기준 " + Math.ceil(remainOf(st) / 2) + "주치 남음";
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-3);min-width:0">' +
+      '<span data-nav="students" style="font:var(--weight-medium) var(--text-sm)/1 var(--font-sans);color:var(--green-600);cursor:pointer">← 학생 목록</span>' +
+      '<div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap">' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">' + esc(st.name) + '</h1>' +
+      badge(PAY[st.pay].label, PAY[st.pay].tone, true) + badge(st.level, "neutral", false) + '</div>' +
+      '<span style="color:var(--text-muted)">' + esc(st.where + " · " + st.offset + " · " + st.slot + " KST (" + st.local + ") · 1회 50분 보이스톡") + '</span></div>' +
+      '<div style="display:flex;gap:var(--space-3)"><button class="btn btn-secondary" data-open-modal="invoice">인보이스 발행</button>' +
+      '<button class="btn btn-primary" data-open-modal="lesson">수업 완료 기록</button></div></div>' +
+
+      alertHtml +
+
+      '<div class="detail-grid" style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:0">' +
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">수강 정보</span>' +
+      '<div class="field-grid">' + st.fields.map(function (f) {
+        return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v">' + esc(f[1]) + '</span></span>';
+      }).join("") + '</div></div>' +
+
+      '<div class="card"><div class="card-head"><span class="title">학습 기록 · 보이스톡 50분</span>' +
+      '<span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--green-600)">누적 ' + st.lessons.length + '회 기록</span></div>' +
+      (st.lessons.length ? st.lessons.map(function (l) {
+        return '<div class="lesson-row"><div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--space-3)">' +
+          '<span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:var(--text-strong)">' + l.no + '회차</span>' +
+          '<span class="tabular" style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(l.date) + '</span>' +
+          '<span style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--text-body)">' + esc(l.topic) + '</span>' +
+          badge(l.attend, l.tone, false) + '</div>' +
+          '<div class="lesson-cols">' +
+          '<span><span class="k">발음 교정</span><span class="v">' + esc(l.pron) + '</span></span>' +
+          '<span><span class="k">어휘 · 표현</span><span class="v">' + esc(l.vocab) + '</span></span>' +
+          '<span><span class="k">과제</span><span class="v">' + esc(l.hw) + '</span></span>' +
+          '</div></div>';
+      }).join("") : '<div style="padding:var(--space-8) var(--space-6);display:flex;flex-direction:column;gap:var(--space-2)">' +
+        '<span style="font:var(--weight-semibold) var(--text-sm)/1.4 var(--font-sans);color:var(--text-body)">아직 진행한 수업이 없습니다.</span>' +
+        '<span style="color:var(--text-muted)">첫 수업을 마친 뒤 &lsquo;수업 완료 기록&rsquo;을 누르면 회차가 차감되고 기록이 남습니다.</span></div>') +
+      '</div></div>' +
+
+      '<div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:0">' +
+      '<div class="card card--pad ring-wrap">' +
+      '<span style="align-self:flex-start;font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">잔여 회차</span>' +
+      ringSvg(remainPct, remainOf(st) + "/" + st.total, colorVar(st)) +
+      '<span style="color:var(--text-muted)">' + esc(remainNote) + '</span>' +
+      '<button class="btn btn-secondary full" data-open-modal="invoice">다음 8회 인보이스</button></div>' +
+
+      '<div class="card"><div class="card-head"><span class="title">결제 이력</span><span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--text-muted)">입금 누계 $' + paidTotal + '</span></div>' +
+      invoices.map(function (v) {
+        return '<div data-nav="payments" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+          '<span style="display:flex;flex-direction:column;gap:2px"><span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(v.period + " · " + v.sessions + "회") + '</span>' +
+          '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.method + " · " + v.issued) + '</span></span>' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3)"><span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:var(--text-strong)">$' + v.amount + '</span>' +
+          badge(PAY[v.status].label, PAY[v.status].tone, false) + '</span></div>';
+      }).join("") + '</div></div></div>';
+  }
+
+  function ringSvg(pct, label, color) {
+    var r = 40, c = 2 * Math.PI * r, off = c * (1 - pct / 100);
+    return '<svg width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="잔여 회차 ' + esc(label) + '">' +
+      '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="var(--neutral-100)" stroke-width="8"></circle>' +
+      '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="8" stroke-linecap="round" ' +
+      'stroke-dasharray="' + c + '" stroke-dashoffset="' + off + '" transform="rotate(-90 48 48)"></circle>' +
+      '<text x="48" y="53" text-anchor="middle" font-family="var(--font-mono)" font-size="15" font-weight="600" fill="var(--text-strong)">' + esc(label) + '</text>' +
+      '</svg>';
+  }
+
+  function renderPayments() {
+    var invoices = state.invoices;
+    var billed = invoices.filter(function (v) { return v.period === "2026-08"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var paid = invoices.filter(function (v) { return v.period === "2026-08" && v.status === "paid"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var pendingSum = invoices.filter(function (v) { return v.status === "pending"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var overdueSum = invoices.filter(function (v) { return v.status === "overdue"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var q = state.query.trim().toLowerCase();
+    var payFilterDefs = ["전체", "입금 완료", "입금 대기", "연체"];
+
+    var rows = invoices.filter(function (v) {
+      if (state.payFilter !== "전체" && PAY[v.status].label !== state.payFilter) return false;
+      if (q && !(nameOf(v.sid) + v.method + v.period).toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Payments</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">결제 관리</h1>' +
+      '<span style="color:var(--text-muted)">회당 $' + RATE + ' · 월 ' + PACK + '회 $' + (PACK * RATE) + ' 기준 · 추가 회차는 별도 협의</span></div>' +
+      '<button class="btn btn-primary" data-notyet="1">인보이스 내보내기</button></div>' +
+
+      '<div class="stat-grid">' +
+      statCard("8월 청구 / Billed", "$" + billed, "", "정규 6건 + 추가 협의 1건") +
+      statCard("입금 완료 / Paid", "$" + paid, "", "Wise · PayPal · 카카오페이") +
+      statCard("대기 / Pending", "$" + pendingSum, "", "발행 후 5일 경과 1건") +
+      statCard("연체 / Overdue", "$" + overdueSum, "", "D+9 · 수업 보류 검토") +
+      '</div>' +
+
+      '<div class="filter-row">' + payFilterDefs.map(function (label) {
+        return '<span class="filter-chip' + (label === state.payFilter ? " is-active" : "") + '" data-payfilter="' + esc(label) + '">' + esc(label) + '</span>';
+      }).join("") + '</div>' +
+
+      '<div class="card" style="overflow:hidden">' +
+      '<div class="table-head grid-payments"><span>학생</span><span>기간</span><span>회차</span><span>금액</span><span>수단 / 발행일</span><span>상태</span></div>' +
+      '<div class="table-body">' + rows.map(function (v) {
+        return '<div class="table-row grid-payments" data-goto-student="' + v.sid + '">' +
+          '<span><span style="display:block;font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(nameOf(v.sid)) + '</span>' +
+          '<span style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.kind) + '</span></span>' +
+          '<span class="tabular" style="font-size:var(--text-sm)">' + esc(v.period) + '</span>' +
+          '<span class="tabular" style="font-size:var(--text-sm)">' + v.sessions + '회</span>' +
+          '<span class="tabular" style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">$' + v.amount + '</span>' +
+          '<span><span style="display:block;font-size:var(--text-sm)">' + esc(v.method) + '</span><span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.issued) + '</span></span>' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3)" data-stop="1">' + badge(PAY[v.status].label, PAY[v.status].tone, true) +
+          (v.status !== "paid" ? '<span data-confirm-payment="' + v.id + '" style="font:var(--weight-semibold) var(--text-xs)/1 var(--font-sans);color:var(--green-600);cursor:pointer;white-space:nowrap">입금 확인</span>' : "") +
+          '</span></div>';
+      }).join("") + '</div></div>';
+  }
+
+  function modalMap(st) {
+    return {
+      approve: pendingRequest ? {
+        title: "수강 신청 승인", subtitle: "승인하면 희망 슬롯 기준으로 8회차가 자동 편성되고, $" + (PACK * RATE) + " 인보이스가 발행됩니다.",
+        cta: "승인하고 8회 편성",
+        rows: [["학생", pendingRequest.name], ["희망 슬롯", pendingRequest.slot + " KST"], ["현지 시각", pendingRequest.localLabel], ["패키지", "월 " + PACK + "회 · 1회 50분 · $" + RATE + "/회"], ["청구 금액", "$" + (PACK * RATE)]],
+        needsNote: false, confirm: function () { approve(pendingRequest.id); }
+      } : null,
+      lesson: {
+        title: "수업 완료 기록", subtitle: st.name + " · 50분 보이스톡 · 기록을 저장하면 잔여 회차가 1회 차감됩니다.",
+        cta: "기록 저장 · 회차 차감",
+        rows: [["회차", (st.used + 1) + " / " + st.total], ["일시", "8월 25일 " + st.slot.split(" ")[1] + " KST" + (st.local === "동일 시간대" ? "" : " · 현지 " + st.local)], ["차감 후 잔여", Math.max(0, remainOf(st) - 1) + "회"]],
+        needsNote: true, confirm: logLesson
+      },
+      invoice: {
+        title: "다음 " + PACK + "회 인보이스 발행", subtitle: st.name + " 님에게 다음 패키지 청구서를 발행합니다. 추가 회차는 별도 협의 항목으로 따로 발행하세요.",
+        cta: "$" + (PACK * RATE) + " 청구서 발행",
+        rows: [["패키지", "월 " + PACK + "회 · 주 2회 · 1회 50분"], ["단가", "$" + RATE + " / 회"], ["합계", "$" + (PACK * RATE)], ["수단", st.method]],
+        needsNote: false, confirm: issueInvoice
+      }
+    };
+  }
+
+  function renderModal() {
+    if (!state.modal) return "";
+    var st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+    var mm = modalMap(st)[state.modal];
+    if (!mm) return "";
+    return '<div class="modal-backdrop" data-close-modal="1"><div class="modal-box" data-stop="1"><div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+      '<span style="font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong);letter-spacing:-0.01em">' + esc(mm.title) + '</span>' +
+      '<span style="color:var(--text-muted)">' + esc(mm.subtitle) + '</span></div>' +
+      (mm.rows ? '<div class="modal-rows">' + mm.rows.map(function (r) {
+        return '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v tabular">' + esc(r[1]) + '</span></div>';
+      }).join("") + '</div>' : "") +
+      (mm.needsNote ? '<div><label class="field-label">수업 메모</label><textarea class="textarea" id="lesson-note" rows="3" placeholder="예: 종결어미 발음 교정, 사무실 표현 12개, 과제 — 자기소개 음성 녹음">' + esc(state.note) + '</textarea></div>' : "") +
+      '<div style="display:flex;justify-content:flex-end;gap:var(--space-3)">' +
+      '<button class="btn btn-secondary" data-close-modal="1">취소</button>' +
+      '<button class="btn btn-primary" id="modal-confirm">' + esc(mm.cta) + '</button></div>' +
+      '</div></div></div>';
+  }
+
+  function renderToast() {
+    if (!state.toast) return "";
+    return '<div class="toast-wrap"><div class="card card--pad alert tone-' + (state.toastTone === "warning" ? "warning" : state.toastTone) + '" style="align-items:flex-start">' +
+      '<div style="flex:1"><div class="title">' + esc(state.toast) + '</div><div class="body">' + esc(state.toastBody) + '</div></div>' +
+      '<button class="close" data-close-toast="1" aria-label="닫기">×</button></div></div>';
+  }
+
+  var lastConfirm = null;
+
+  /* ===== auth ===== */
+  function authShell(inner) {
+    return '' +
+      '<div class="auth-shell"><div class="auth-card">' +
+      '<div class="auth-brand"><span class="brand-mark">한</span>' +
+      '<span><span class="brand-name" style="display:block;color:var(--text-strong)">한국어 수업 관리</span>' +
+      '<span class="brand-sub" style="color:var(--text-muted)">1:1 Voice Lessons</span></span></div>' +
+      inner +
+      '</div></div>';
+  }
+
+  function renderAuthPending() {
+    var p = state.authPendingVerify;
+    return authShell(
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">이메일 인증이 필요합니다</div>' +
+      '<div style="color:var(--text-body)"><strong>' + esc(p.email) + '</strong> 주소로 인증 메일을 보냈습니다. 메일함에서 링크를 클릭하면 가입이 완료되고 자동으로 로그인됩니다.</div>' +
+      '<div class="dev-box"><strong>개발 모드 안내</strong> — 실제 메일 서버가 연동되어 있지 않아 지금은 링크를 화면에 직접 표시합니다. 실제 서비스에서는 이 부분이 실제 이메일 발송으로 대체됩니다.<br><br>' +
+      '<a href="' + esc(p.devVerifyUrl) + '" target="_blank" rel="noopener">' + esc(p.devVerifyUrl) + '</a></div>' +
+      '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+      '</div>'
+    );
+  }
+
+  function renderAuthForm() {
+    var tab = state.authTab;
+    return authShell(
+      '<form id="auth-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div class="auth-tabs">' +
+      '<div class="auth-tab' + (tab === "login" ? " is-active" : "") + '" data-auth-tab="login">로그인</div>' +
+      '<div class="auth-tab' + (tab === "signup" ? " is-active" : "") + '" data-auth-tab="signup">회원가입</div>' +
+      '</div>' +
+      (tab === "signup" ? '<div><label class="field-label">이름</label><input class="input" id="auth-name" type="text" placeholder="선택 입력" autocomplete="name"></div>' : "") +
+      '<div><label class="field-label">이메일</label><input class="input" id="auth-email" type="email" required placeholder="example@naver.com" autocomplete="email"></div>' +
+      '<div><label class="field-label">비밀번호</label><input class="input" id="auth-password" type="password" required placeholder="8자 이상" autocomplete="' + (tab === "signup" ? "new-password" : "current-password") + '"></div>' +
+      (state.authError ? '<div class="auth-error">' + esc(state.authError) + '</div>' : "") +
+      (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
+      (state.authBusy ? "처리 중…" : (tab === "signup" ? "회원가입" : "로그인")) + '</button>' +
+      '</form>' +
+      '<div class="auth-hint">' + (tab === "signup" ? "회원가입 시 이메일로 인증 링크가 발송되며, 인증을 완료해야 로그인할 수 있습니다." : "계정이 없다면 회원가입 탭에서 새로 만들 수 있습니다.") + '</div>'
+    );
+  }
+
+  function renderAuth() {
+    return state.authPendingVerify ? renderAuthPending() : renderAuthForm();
+  }
+
+  function submitAuth(e) {
+    e.preventDefault();
+    if (state.authBusy) return;
+    var tab = state.authTab;
+    var email = document.getElementById("auth-email").value.trim();
+    var password = document.getElementById("auth-password").value;
+    var nameEl = document.getElementById("auth-name");
+    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "" } : { email: email, password: password };
+    setState({ authBusy: true, authError: "", authUnverifiedEmail: "" });
+    fetch(tab === "signup" ? "/api/signup" : "/api/login", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) {
+          setState({ authBusy: false, authError: r.data.error || "요청에 실패했습니다.", authUnverifiedEmail: r.data.unverified ? email : "" });
+          return;
+        }
+        if (tab === "signup" && r.data.pendingVerification) {
+          setState({ authBusy: false, authError: "", authPendingVerify: { email: r.data.email, devVerifyUrl: r.data.devVerifyUrl } });
+          return;
+        }
+        setState({ authBusy: false, authError: "", auth: r.data.user });
+        fire("로그인 완료", (r.data.user.name || r.data.user.email) + " 님, 환영합니다.", "success");
+      })
+      .catch(function () { setState({ authBusy: false, authError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function resendVerification() {
+    var email = state.authUnverifiedEmail;
+    if (!email) return;
+    fetch("/api/resend-verification", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authError: r.data.error || "재발송에 실패했습니다." }); return; }
+        setState({ authError: "", authUnverifiedEmail: "", authPendingVerify: { email: email, devVerifyUrl: r.data.devVerifyUrl } });
+      })
+      .catch(function () { setState({ authError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function doLogout() {
+    fetch("/api/logout", { method: "POST" }).then(function () { setState({ auth: null, view: "dash", modal: null }); });
+  }
+
+  function bindAuthEvents() {
+    var root = document.getElementById("app");
+    root.querySelectorAll("[data-auth-tab]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ authTab: el.getAttribute("data-auth-tab"), authError: "", authUnverifiedEmail: "" }); });
+    });
+    var form = document.getElementById("auth-form");
+    if (form) form.addEventListener("submit", submitAuth);
+    var resendBtn = document.getElementById("resend-btn");
+    if (resendBtn) resendBtn.addEventListener("click", resendVerification);
+    var backBtn = document.getElementById("back-to-login");
+    if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authTab: "login" }); });
+  }
+
+  function render() {
+    var appEl = document.getElementById("app");
+
+    if (!state.authReady) {
+      appEl.className = "auth-mode";
+      appEl.innerHTML = "";
+      return;
+    }
+    if (!state.auth) {
+      appEl.className = "auth-mode";
+      appEl.innerHTML = renderAuth() + renderToast();
+      bindAuthEvents();
+      var closeToast = document.querySelector("[data-close-toast]");
+      if (closeToast) closeToast.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
+      var emailInput = document.getElementById("auth-email");
+      if (emailInput) emailInput.focus();
+      return;
+    }
+
+    appEl.className = "";
+    var hadFocus = document.activeElement && document.activeElement.id === "query-input";
+    var st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+    var body;
+    if (state.view === "requests") body = renderRequests();
+    else if (state.view === "students") body = renderStudents();
+    else if (state.view === "student") body = renderStudent();
+    else if (state.view === "payments") body = renderPayments();
+    else body = renderDash();
+
+    var mm = state.modal ? modalMap(st)[state.modal] : null;
+    lastConfirm = mm ? mm.confirm : null;
+
+    appEl.innerHTML =
+      sidebarHtml() +
+      '<div class="main">' + topbarHtml(st) + '<div class="view">' + body + '</div></div>' +
+      renderModal() + renderToast();
+
+    bindEvents();
+    if (hadFocus) {
+      var qi = document.getElementById("query-input");
+      if (qi) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); }
+    }
+  }
+
+  function bindEvents() {
+    var root = document.getElementById("app");
+    root.querySelectorAll("[data-nav]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); go(el.getAttribute("data-nav")); });
+    });
+    root.querySelectorAll("[data-goto-student]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); go("student", el.getAttribute("data-goto-student")); });
+    });
+    root.querySelectorAll("[data-filter]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ filter: el.getAttribute("data-filter") }); });
+    });
+    root.querySelectorAll("[data-payfilter]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ payFilter: el.getAttribute("data-payfilter") }); });
+    });
+    root.querySelectorAll("[data-approve]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        pendingRequest = state.requests.find(function (r) { return r.id === el.getAttribute("data-approve"); });
+        setState({ modal: "approve" });
+      });
+    });
+    root.querySelectorAll("[data-open-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ modal: el.getAttribute("data-open-modal"), note: "" }); });
+    });
+    root.querySelectorAll("[data-close-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ modal: null, note: "" }); });
+    });
+    root.querySelectorAll("[data-stop]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+    var modalConfirmBtn = document.getElementById("modal-confirm");
+    if (modalConfirmBtn) modalConfirmBtn.addEventListener("click", function () { if (lastConfirm) lastConfirm(); });
+    var noteInput = document.getElementById("lesson-note");
+    if (noteInput) noteInput.addEventListener("input", function () { state.note = noteInput.value; });
+    root.querySelectorAll("[data-confirm-payment]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); confirmPayment(el.getAttribute("data-confirm-payment")); });
+    });
+    root.querySelectorAll("[data-notyet]").forEach(function (el) {
+      el.addEventListener("click", function () { notYet(); });
+    });
+    var logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) logoutBtn.addEventListener("click", doLogout);
+    root.querySelectorAll("[data-close-toast]").forEach(function (el) {
+      el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
+    });
+    var qi = document.getElementById("query-input");
+    if (qi) qi.addEventListener("input", function () { state.query = qi.value; render(); });
+  }
+
+  render();
+  var justVerified = /(?:^|[?&])verified=1(?:&|$)/.test(location.search);
+  if (justVerified) history.replaceState(null, "", location.pathname);
+
+  fetch("/api/me")
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      state.auth = data ? data.user : null;
+      state.authReady = true;
+      render();
+      if (justVerified && state.auth) {
+        fire("이메일 인증 완료", "인증이 완료되어 자동으로 로그인되었습니다.", "success");
+      }
+    })
+    .catch(function () { state.authReady = true; render(); });
+
+  setInterval(function () {
+    var clockEl = document.querySelector(".who .clock");
+    if (clockEl) clockEl.textContent = clockText();
+  }, 30000);
+})();
+</script>
+</body>
+</html>

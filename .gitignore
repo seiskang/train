@@ -1,0 +1,7 @@
+node_modules/
+server/node_modules/
+server/data/
+*.log
+cookies.txt
+verify_url.txt
+verify_cookies.txt

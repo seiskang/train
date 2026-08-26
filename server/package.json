@@ -1,0 +1,15 @@
+{
+  "name": "class-manager-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "회원가입/로그인 DB 백엔드 (SQLite + bcrypt)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  }
+}
