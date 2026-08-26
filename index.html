@@ -400,7 +400,7 @@ button { font-family: var(--font-sans); }
     ["교안", "Materials", "materials"],
     ["과제방", "Assignments", "assignments"],
     ["수업 일정", "Schedule", null],
-    ["설정", "Settings", null]
+    ["설정", "Settings", "settings"]
   ];
 
   var state = {
@@ -420,7 +420,9 @@ button { font-family: var(--font-sans); }
     assignmentsUploadBusy: false, assignmentsUploadError: "",
     myStudent: null, myStudentChecked: false,
     adminStudents: [], adminStudentsLoaded: false, selectedStudentId: null,
-    assignmentEditId: null, assignmentEditTitle: ""
+    assignmentEditId: null, assignmentEditTitle: "",
+    adminUsers: [], adminUsersLoaded: false,
+    studentEmailEditId: null, studentEmailEditValue: ""
   };
   var pendingRequest = null;
   var toastTimer = null;
@@ -448,6 +450,10 @@ button { font-family: var(--font-sans); }
     setState(patch);
     if (view === "materials" && !state.materialsLoaded) loadMaterials();
     if (view === "assignments") loadAssignmentsView();
+    if (view === "settings" && state.auth && state.auth.role === "admin") {
+      if (!state.adminStudentsLoaded) loadAdminStudents();
+      if (!state.adminUsersLoaded) loadAdminUsers();
+    }
   }
 
   function formatBytes(n) {
@@ -607,6 +613,43 @@ button { font-family: var(--font-sans); }
       .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
   }
 
+  /* ===== settings (관리자: 회원 목록 · 수강생 이메일 관리) ===== */
+  function loadAdminUsers() {
+    fetch("/api/admin/users")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ adminUsersLoaded: true }); return; }
+        setState({ adminUsersLoaded: true, adminUsers: r.data.users });
+      })
+      .catch(function () { setState({ adminUsersLoaded: true }); });
+  }
+
+  function startEditStudentEmail(id, currentEmail) {
+    setState({ studentEmailEditId: id, studentEmailEditValue: currentEmail });
+  }
+
+  function cancelEditStudentEmail() {
+    setState({ studentEmailEditId: null, studentEmailEditValue: "" });
+  }
+
+  function saveEditStudentEmail(id) {
+    var email = (state.studentEmailEditValue || "").trim();
+    if (!email) return;
+    fetch("/api/students/" + id, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("수정 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({
+          studentEmailEditId: null, studentEmailEditValue: "",
+          adminStudents: state.adminStudents.map(function (s) { return s.id === id ? r.data.student : s; })
+        });
+        fire("수정 완료", "이메일이 변경되었습니다.", "success");
+      })
+      .catch(function () { fire("수정 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
   function approve(id) {
     var r = state.requests.find(function (x) { return x.id === id; });
     if (!r) return;
@@ -714,7 +757,7 @@ button { font-family: var(--font-sans); }
   }
 
   function crumbFor(view, st) {
-    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments", materials: "교안 / Materials", assignments: "과제방 / Assignments" };
+    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments", materials: "교안 / Materials", assignments: "과제방 / Assignments", settings: "설정 / Settings" };
     return { root: map[view] || "", leaf: view === "student" && st ? st.name : "" };
   }
 
@@ -1136,6 +1179,62 @@ button { font-family: var(--font-sans); }
     return isAdmin ? renderAssignmentsAdmin() : renderAssignmentsStudent();
   }
 
+  function renderStudentEmailPanel() {
+    var students = state.adminStudents;
+    return '<div class="card">' +
+      '<div class="card-head"><span class="title">수강생 이메일 관리</span><span class="note">과제방 자동 연결에 사용됩니다</span></div>' +
+      (!students.length ? '<div style="padding:var(--space-6);color:var(--text-muted)">' + (state.adminStudentsLoaded ? "등록된 수강생이 없습니다." : "불러오는 중…") + '</div>' :
+        students.map(function (s) {
+          var isEditing = state.studentEmailEditId === s.id;
+          return '<div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+            '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong);width:140px;flex:none">' + esc(s.name) + '</span>' +
+            (isEditing ?
+              '<input class="input" id="student-email-edit-input" type="email" value="' + esc(state.studentEmailEditValue) + '" style="flex:1">' :
+              '<span style="flex:1;color:var(--text-body);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(s.email) + '</span>') +
+            (isEditing ?
+              '<span style="display:flex;gap:var(--space-2);flex:none">' +
+              '<button class="btn btn-secondary" type="button" data-save-student-email="' + esc(s.id) + '">저장</button>' +
+              '<button class="btn btn-ghost" type="button" data-cancel-student-email="1">취소</button></span>'
+              :
+              '<button class="btn btn-secondary" type="button" data-edit-student-email="' + esc(s.id) + '" data-email="' + esc(s.email) + '" style="flex:none">수정</button>') +
+            '</div>';
+        }).join("")) +
+      '</div>';
+  }
+
+  function renderMemberListPanel() {
+    var users = state.adminUsers;
+    return '<div class="card">' +
+      '<div class="card-head"><span class="title">회원 목록</span><span class="note">' + users.length + '명 가입</span></div>' +
+      (!users.length ? '<div style="padding:var(--space-6);color:var(--text-muted)">' + (state.adminUsersLoaded ? "가입한 회원이 없습니다." : "불러오는 중…") + '</div>' :
+        users.map(function (u) {
+          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+            '<span style="display:flex;flex-direction:column;gap:2px;min-width:0">' +
+            '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(u.name || u.email) + '</span>' +
+            '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(u.email) + '</span></span>' +
+            badge(u.role === "admin" ? "관리자" : "일반", u.role === "admin" ? "brand" : "neutral", true) +
+            '</div>';
+        }).join("")) +
+      '</div>';
+  }
+
+  function renderSettings() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    if (!isAdmin) {
+      return '' +
+        '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Settings</span>' +
+        '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">설정</h1></div>' +
+        '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+        '<span class="field-label">이메일</span><span style="color:var(--text-strong)">' + esc(state.auth.email) + '</span>' +
+        '</div>';
+    }
+    return '' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Settings</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">설정</h1></div>' +
+      renderStudentEmailPanel() +
+      renderMemberListPanel();
+  }
+
   function modalMap(st) {
     return {
       approve: pendingRequest ? {
@@ -1403,6 +1502,7 @@ button { font-family: var(--font-sans); }
     else if (state.view === "payments") body = renderPayments();
     else if (state.view === "materials") body = renderMaterials();
     else if (state.view === "assignments") body = renderAssignments();
+    else if (state.view === "settings") body = renderSettings();
     else body = renderDash();
 
     var mm = state.modal ? modalMap(st)[state.modal] : null;
@@ -1486,6 +1586,19 @@ button { font-family: var(--font-sans); }
     });
     root.querySelectorAll("[data-del-assignment]").forEach(function (el) {
       el.addEventListener("click", function () { deleteAssignmentById(parseInt(el.getAttribute("data-del-assignment"), 10)); });
+    });
+    root.querySelectorAll("[data-edit-student-email]").forEach(function (el) {
+      el.addEventListener("click", function () { startEditStudentEmail(el.getAttribute("data-edit-student-email"), el.getAttribute("data-email")); });
+    });
+    root.querySelectorAll("[data-save-student-email]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var input = document.getElementById("student-email-edit-input");
+        if (input) state.studentEmailEditValue = input.value;
+        saveEditStudentEmail(el.getAttribute("data-save-student-email"));
+      });
+    });
+    root.querySelectorAll("[data-cancel-student-email]").forEach(function (el) {
+      el.addEventListener("click", cancelEditStudentEmail);
     });
     root.querySelectorAll("[data-close-toast]").forEach(function (el) {
       el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });

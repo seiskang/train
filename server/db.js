@@ -229,6 +229,15 @@ async function getStudentByEmail(email) {
   return rows[0] || null;
 }
 
+async function updateStudentEmail(id, email) {
+  await ensureSchema();
+  const { rows } = await query(
+    "UPDATE students SET email = $1 WHERE id = $2 RETURNING id, name, email",
+    [email, id]
+  );
+  return rows[0] || null;
+}
+
 async function listAssignments(studentId) {
   await ensureSchema();
   const { rows } = await query(
@@ -288,6 +297,7 @@ module.exports = {
   listStudents,
   getStudentById,
   getStudentByEmail,
+  updateStudentEmail,
   listAssignments,
   createAssignment,
   getAssignmentById,

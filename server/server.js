@@ -290,6 +290,22 @@ app.get("/api/students", requireAdmin, async (req, res) => {
   }
 });
 
+app.patch("/api/students/:id", requireAdmin, async (req, res) => {
+  try {
+    const email = (req.body.email || "").trim();
+    if (!isValidEmail(email)) return res.status(400).json({ error: "올바른 이메일을 입력해주세요." });
+    const updated = await db.updateStudentEmail(req.params.id, email);
+    if (!updated) return res.status(404).json({ error: "찾을 수 없습니다." });
+    res.json({ student: updated });
+  } catch (err) {
+    if (err && err.code === "23505") {
+      return res.status(409).json({ error: "이미 다른 수강생이 사용 중인 이메일입니다." });
+    }
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 app.get("/api/students/me", async (req, res) => {
   const user = await getSessionUser(req);
   if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
