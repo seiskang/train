@@ -343,7 +343,6 @@ button { font-family: var(--font-sans); }
     authPendingVerify: null, authUnverifiedEmail: "",
     authForgot: null, authForgotBusy: false, authForgotError: "",
     authResetToken: null, authResetBusy: false, authResetError: "",
-    oauthProviders: null,
     students: [], requests: [], invoices: [], dashboardReady: false,
     materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
     materialsUploadBusy: false, materialsUploadError: "",
@@ -1291,13 +1290,13 @@ button { font-family: var(--font-sans); }
   }
 
   function renderOAuthButtons() {
-    var p = state.oauthProviders;
-    if (!p || (!p.kakao && !p.wechat)) return "";
+    var KAKAO_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><path fill="#191600" d="M12 3C6.48 3 2 6.58 2 11c0 2.86 1.87 5.36 4.7 6.8-.15.6-.96 3.6-1 3.8 0 0-.02.17.09.24.11.07.24.02.24.02.32-.04 3.7-2.42 4.3-2.85.53.08 1.08.12 1.67.12 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>';
+    var WECHAT_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><ellipse cx="9" cy="10" rx="7" ry="5.5" fill="#fff"/><ellipse cx="16" cy="15" rx="5.5" ry="4.3" fill="#fff" fill-opacity="0.85"/></svg>';
     return '<div style="display:flex;flex-direction:column;gap:var(--space-3)">' +
       '<div style="display:flex;align-items:center;gap:var(--space-3);color:var(--text-subtle);font-size:var(--text-xs)">' +
-      '<span style="flex:1;height:1px;background:var(--border-subtle)"></span>또는<span style="flex:1;height:1px;background:var(--border-subtle)"></span></div>' +
-      (p.kakao ? '<a href="/api/auth/kakao" class="btn full" style="background:#FEE500;color:#191600;border:none">카카오로 시작하기</a>' : "") +
-      (p.wechat ? '<a href="/api/auth/wechat" class="btn full" style="background:#07C160;color:#fff;border:none">위챗으로 시작하기</a>' : "") +
+      '<span style="flex:1;height:1px;background:var(--border-subtle)"></span>메신저 앱이 없으신가요?<span style="flex:1;height:1px;background:var(--border-subtle)"></span></div>' +
+      '<a href="https://www.kakaocorp.com/page/service/service/KakaoTalk" target="_blank" rel="noopener" class="btn full" style="background:#FEE500;color:#191600;border:none;gap:var(--space-2)">' + KAKAO_ICON + '카카오톡 받기 / 가입</a>' +
+      '<a href="https://www.wechat.com/en/" target="_blank" rel="noopener" class="btn full" style="background:#07C160;color:#fff;border:none;gap:var(--space-2)">' + WECHAT_ICON + '위챗 받기 / 가입</a>' +
       '</div>';
   }
 
@@ -1605,11 +1604,6 @@ button { font-family: var(--font-sans); }
   render();
   var justVerified = /(?:^|[?&])verified=1(?:&|$)/.test(location.search);
   if (justVerified) history.replaceState(null, "", location.pathname);
-
-  fetch("/api/auth/providers")
-    .then(function (res) { return res.ok ? res.json() : null; })
-    .then(function (data) { state.oauthProviders = data || {}; render(); })
-    .catch(function () { state.oauthProviders = {}; });
 
   fetch("/api/me")
     .then(function (res) { return res.ok ? res.json() : null; })
