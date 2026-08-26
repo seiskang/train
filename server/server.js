@@ -25,6 +25,11 @@ if (!JWT_SECRET) {
 }
 const COOKIE_NAME = "session";
 
+const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
+const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET;
+const WECHAT_APP_ID = process.env.WECHAT_APP_ID;
+const WECHAT_APP_SECRET = process.env.WECHAT_APP_SECRET;
+
 async function issueVerification(userId) {
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + VERIFY_TTL_MS).toISOString();
@@ -116,6 +121,113 @@ app.post("/api/login", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "서버 오류가 발생했습니다." });
   }
+});
+
+app.get("/api/auth/kakao", (req, res) => {
+  if (!KAKAO_CLIENT_ID) return res.status(503).send("카카오 로그인이 아직 설정되지 않았습니다.");
+  const redirectUri = `${req.protocol}://${req.get("host")}/api/auth/kakao/callback`;
+  const url = "https://kauth.kakao.com/oauth/authorize?" + new URLSearchParams({
+    client_id: KAKAO_CLIENT_ID, redirect_uri: redirectUri, response_type: "code"
+  });
+  res.redirect(url);
+});
+
+app.get("/api/auth/kakao/callback", async (req, res) => {
+  if (!KAKAO_CLIENT_ID) return res.status(503).send("카카오 로그인이 아직 설정되지 않았습니다.");
+  try {
+    const code = req.query.code;
+    if (!code) return res.status(400).send("인증 코드가 없습니다.");
+    const redirectUri = `${req.protocol}://${req.get("host")}/api/auth/kakao/callback`;
+
+    const tokenParams = new URLSearchParams({
+      grant_type: "authorization_code", client_id: KAKAO_CLIENT_ID, redirect_uri: redirectUri, code
+    });
+    if (KAKAO_CLIENT_SECRET) tokenParams.set("client_secret", KAKAO_CLIENT_SECRET);
+
+    const tokenRes = await fetch("https://kauth.kakao.com/oauth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: tokenParams
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) {
+      console.error("카카오 토큰 발급 실패:", tokenData);
+      return res.status(502).send("카카오 로그인에 실패했습니다.");
+    }
+
+    const profileRes = await fetch("https://kapi.kakao.com/v2/user/me", {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
+    const profile = await profileRes.json();
+    const kakaoId = String(profile.id);
+    const account = profile.kakao_account || {};
+    const email = account.email || null;
+    const name = (account.profile && account.profile.nickname) || null;
+
+    let user = await db.getUserByKakaoId(kakaoId);
+    if (!user && email) user = await db.getUserByEmail(email);
+    if (!user) {
+      user = await db.createOAuthUser({ email: email || `kakao_${kakaoId}@kakao.local`, name, kakaoId });
+    } else if (!user.kakao_id) {
+      await db.linkKakaoId(user.id, kakaoId);
+    }
+
+    setSessionCookie(res, user.id);
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("카카오 로그인 중 오류가 발생했습니다.");
+  }
+});
+
+app.get("/api/auth/wechat", (req, res) => {
+  if (!WECHAT_APP_ID) return res.status(503).send("위챗 로그인이 아직 설정되지 않았습니다.");
+  const redirectUri = `${req.protocol}://${req.get("host")}/api/auth/wechat/callback`;
+  const url = "https://open.weixin.qq.com/connect/qrconnect?" + new URLSearchParams({
+    appid: WECHAT_APP_ID, redirect_uri: redirectUri, response_type: "code", scope: "snsapi_login", state: "login"
+  }) + "#wechat_redirect";
+  res.redirect(url);
+});
+
+app.get("/api/auth/wechat/callback", async (req, res) => {
+  if (!WECHAT_APP_ID) return res.status(503).send("위챗 로그인이 아직 설정되지 않았습니다.");
+  try {
+    const code = req.query.code;
+    if (!code) return res.status(400).send("인증 코드가 없습니다.");
+
+    const tokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?" + new URLSearchParams({
+      appid: WECHAT_APP_ID, secret: WECHAT_APP_SECRET, code, grant_type: "authorization_code"
+    });
+    const tokenRes = await fetch(tokenUrl);
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) {
+      console.error("위챗 토큰 발급 실패:", tokenData);
+      return res.status(502).send("위챗 로그인에 실패했습니다.");
+    }
+
+    const profileUrl = "https://api.weixin.qq.com/sns/userinfo?" + new URLSearchParams({
+      access_token: tokenData.access_token, openid: tokenData.openid
+    });
+    const profileRes = await fetch(profileUrl);
+    const profile = await profileRes.json();
+    const wechatId = tokenData.openid;
+    const name = profile.nickname || null;
+
+    let user = await db.getUserByWechatId(wechatId);
+    if (!user) {
+      user = await db.createOAuthUser({ email: `wechat_${wechatId}@wechat.local`, name, wechatId });
+    }
+
+    setSessionCookie(res, user.id);
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("위챗 로그인 중 오류가 발생했습니다.");
+  }
+});
+
+app.get("/api/auth/providers", (req, res) => {
+  res.json({ kakao: !!KAKAO_CLIENT_ID, wechat: !!WECHAT_APP_ID });
 });
 
 app.get("/api/verify-email", async (req, res) => {

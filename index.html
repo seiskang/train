@@ -343,6 +343,7 @@ button { font-family: var(--font-sans); }
     authPendingVerify: null, authUnverifiedEmail: "",
     authForgot: null, authForgotBusy: false, authForgotError: "",
     authResetToken: null, authResetBusy: false, authResetError: "",
+    oauthProviders: null,
     students: [], requests: [], invoices: [], dashboardReady: false,
     materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
     materialsUploadBusy: false, materialsUploadError: "",
@@ -1284,8 +1285,20 @@ button { font-family: var(--font-sans); }
       (state.authBusy ? "처리 중…" : (tab === "signup" ? "회원가입" : "로그인")) + '</button>' +
       (tab === "login" ? '<button type="button" id="forgot-link" style="align-self:center;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;font:inherit;text-decoration:underline">비밀번호를 잊으셨나요?</button>' : "") +
       '</form>' +
+      renderOAuthButtons() +
       '<div class="auth-hint">' + (tab === "signup" ? "회원가입 시 이메일로 인증 링크가 발송되며, 인증을 완료해야 로그인할 수 있습니다." : "계정이 없다면 회원가입 탭에서 새로 만들 수 있습니다.") + '</div>'
     );
+  }
+
+  function renderOAuthButtons() {
+    var p = state.oauthProviders;
+    if (!p || (!p.kakao && !p.wechat)) return "";
+    return '<div style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<div style="display:flex;align-items:center;gap:var(--space-3);color:var(--text-subtle);font-size:var(--text-xs)">' +
+      '<span style="flex:1;height:1px;background:var(--border-subtle)"></span>또는<span style="flex:1;height:1px;background:var(--border-subtle)"></span></div>' +
+      (p.kakao ? '<a href="/api/auth/kakao" class="btn full" style="background:#FEE500;color:#191600;border:none">카카오로 시작하기</a>' : "") +
+      (p.wechat ? '<a href="/api/auth/wechat" class="btn full" style="background:#07C160;color:#fff;border:none">위챗으로 시작하기</a>' : "") +
+      '</div>';
   }
 
   function renderAuthForgot() {
@@ -1592,6 +1605,11 @@ button { font-family: var(--font-sans); }
   render();
   var justVerified = /(?:^|[?&])verified=1(?:&|$)/.test(location.search);
   if (justVerified) history.replaceState(null, "", location.pathname);
+
+  fetch("/api/auth/providers")
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) { state.oauthProviders = data || {}; render(); })
+    .catch(function () { state.oauthProviders = {}; });
 
   fetch("/api/me")
     .then(function (res) { return res.ok ? res.json() : null; })

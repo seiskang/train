@@ -2,6 +2,7 @@
 
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const ADMIN_EMAIL = "justice11419@naver.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
@@ -48,6 +49,8 @@ function ensureSchema() {
       `);
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT");
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires_at TIMESTAMPTZ");
+      await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS kakao_id TEXT UNIQUE");
+      await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS wechat_id TEXT UNIQUE");
       await query(`
         CREATE TABLE IF NOT EXISTS students (
           id TEXT PRIMARY KEY,
@@ -173,6 +176,39 @@ async function resetPassword(userId, passwordHash) {
   );
 }
 
+async function getUserByKakaoId(kakaoId) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM users WHERE kakao_id = $1", [kakaoId]);
+  return rows[0] || null;
+}
+
+async function getUserByWechatId(wechatId) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM users WHERE wechat_id = $1", [wechatId]);
+  return rows[0] || null;
+}
+
+async function linkKakaoId(userId, kakaoId) {
+  await ensureSchema();
+  await query("UPDATE users SET kakao_id = $1 WHERE id = $2", [kakaoId, userId]);
+}
+
+async function linkWechatId(userId, wechatId) {
+  await ensureSchema();
+  await query("UPDATE users SET wechat_id = $1 WHERE id = $2", [wechatId, userId]);
+}
+
+async function createOAuthUser({ email, name, kakaoId, wechatId }) {
+  await ensureSchema();
+  const randomPassword = bcrypt.hashSync(crypto.randomBytes(24).toString("hex"), 10);
+  const { rows } = await query(
+    `INSERT INTO users (email, password_hash, name, role, email_verified, kakao_id, wechat_id)
+     VALUES ($1, $2, $3, 'user', 1, $4, $5) RETURNING *`,
+    [email, randomPassword, name || null, kakaoId || null, wechatId || null]
+  );
+  return rows[0];
+}
+
 async function listUsers() {
   await ensureSchema();
   const { rows } = await query("SELECT id, email, name, role, created_at FROM users ORDER BY id");
@@ -289,6 +325,11 @@ module.exports = {
   getUserByResetToken,
   setResetToken,
   resetPassword,
+  getUserByKakaoId,
+  getUserByWechatId,
+  linkKakaoId,
+  linkWechatId,
+  createOAuthUser,
   listUsers,
   listMaterials,
   createMaterial,
