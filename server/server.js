@@ -17,7 +17,7 @@ const ALLOWED_MATERIAL_TYPES = {
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MATERIAL_MAX_BYTES } });
 
 const VERIFY_TTL_MS = 30 * 60 * 1000; // 인증 링크 유효 시간: 30분
-const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 로그인 유지 시간: 7일
+const SESSION_TTL_MS = 400 * 24 * 60 * 60 * 1000; // 로그인 유지 시간: 400일(브라우저가 허용하는 쿠키 최대 기간) — 직접 로그아웃하기 전까지 로그인 유지
 const JWT_SECRET = process.env.JWT_SECRET || "class-manager-dev-secret-change-in-production";
 const COOKIE_NAME = "session";
 
@@ -50,7 +50,7 @@ function isValidEmail(email) {
 }
 
 function setSessionCookie(res, userId) {
-  const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: "7d" });
+  const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: "400d" });
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
