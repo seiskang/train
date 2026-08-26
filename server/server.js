@@ -269,6 +269,129 @@ app.delete("/api/materials/:id", requireAdmin, async (req, res) => {
   }
 });
 
+async function resolveStudentAccess(user, studentId) {
+  if (user.role === "admin") return { canView: true, canManage: false };
+  const me = await db.getStudentByEmail(user.email);
+  const isOwner = !!(me && me.id === studentId);
+  return { canView: isOwner, canManage: isOwner };
+}
+
+app.get("/api/students", requireAdmin, async (req, res) => {
+  try {
+    const students = await db.listStudents();
+    res.json({ students });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.get("/api/students/me", async (req, res) => {
+  const user = await getSessionUser(req);
+  if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
+  try {
+    const student = await db.getStudentByEmail(user.email);
+    res.json({ student });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.get("/api/assignments", async (req, res) => {
+  const user = await getSessionUser(req);
+  if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
+  const studentId = req.query.studentId;
+  if (!studentId) return res.status(400).json({ error: "studentId가 필요합니다." });
+  try {
+    const access = await resolveStudentAccess(user, studentId);
+    if (!access.canView) return res.status(403).json({ error: "열람 권한이 없습니다." });
+    const assignments = await db.listAssignments(studentId);
+    res.json({ assignments });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/assignments", (req, res) => {
+  upload.single("file")(req, res, async (err) => {
+    if (err) {
+      const message = err.code === "LIMIT_FILE_SIZE" ? "파일 용량은 20MB 이하만 업로드할 수 있습니다." : "업로드에 실패했습니다.";
+      return res.status(400).json({ error: message });
+    }
+    const user = await getSessionUser(req);
+    if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
+    try {
+      const studentId = req.body.studentId;
+      if (!studentId) return res.status(400).json({ error: "studentId가 필요합니다." });
+      const access = await resolveStudentAccess(user, studentId);
+      if (!access.canManage) return res.status(403).json({ error: "본인의 과제방에만 업로드할 수 있습니다." });
+
+      const file = req.file;
+      if (!file) return res.status(400).json({ error: "파일을 선택해주세요." });
+      const ext = (file.originalname.match(/\.[^.]+$/) || [""])[0].toLowerCase();
+      const mimeType = ALLOWED_MATERIAL_TYPES[ext];
+      if (!mimeType) return res.status(400).json({ error: "md 또는 pdf 파일만 업로드할 수 있습니다." });
+
+      const blob = await put(`assignments/${studentId}/${crypto.randomUUID()}${ext}`, file.buffer, {
+        access: "public",
+        contentType: mimeType
+      });
+
+      const assignment = await db.createAssignment({
+        studentId,
+        title: (req.body.title || file.originalname.replace(ext, "")).trim() || file.originalname,
+        fileName: file.originalname,
+        mimeType,
+        sizeBytes: file.size,
+        blobUrl: blob.url,
+        blobPathname: blob.pathname,
+        uploadedBy: user.id
+      });
+      res.status(201).json({ assignment });
+    } catch (uploadErr) {
+      console.error(uploadErr);
+      res.status(500).json({ error: "서버 오류가 발생했습니다." });
+    }
+  });
+});
+
+app.patch("/api/assignments/:id", async (req, res) => {
+  const user = await getSessionUser(req);
+  if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
+  try {
+    const assignment = await db.getAssignmentById(req.params.id);
+    if (!assignment) return res.status(404).json({ error: "찾을 수 없습니다." });
+    const access = await resolveStudentAccess(user, assignment.student_id);
+    if (!access.canManage) return res.status(403).json({ error: "본인의 과제만 수정할 수 있습니다." });
+    const title = (req.body.title || "").trim();
+    if (!title) return res.status(400).json({ error: "제목을 입력해주세요." });
+    const updated = await db.renameAssignment(assignment.id, title);
+    res.json({ assignment: updated });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.delete("/api/assignments/:id", async (req, res) => {
+  const user = await getSessionUser(req);
+  if (!user) return res.status(401).json({ error: "로그인이 필요합니다." });
+  try {
+    const assignment = await db.getAssignmentById(req.params.id);
+    if (!assignment) return res.status(404).json({ error: "찾을 수 없습니다." });
+    const access = await resolveStudentAccess(user, assignment.student_id);
+    if (!access.canManage) return res.status(403).json({ error: "본인의 과제만 삭제할 수 있습니다." });
+    await del(assignment.blob_pathname).catch(() => {});
+    await db.deleteAssignment(assignment.id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 module.exports = app;
 
 if (require.main === module) {

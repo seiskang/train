@@ -398,6 +398,7 @@ button { font-family: var(--font-sans); }
     ["학생", "Students", "students"],
     ["결제", "Payments", "payments"],
     ["교안", "Materials", "materials"],
+    ["과제방", "Assignments", "assignments"],
     ["수업 일정", "Schedule", null],
     ["설정", "Settings", null]
   ];
@@ -414,7 +415,12 @@ button { font-family: var(--font-sans); }
     requests: JSON.parse(JSON.stringify(REQUESTS)),
     invoices: JSON.parse(JSON.stringify(INVOICES)),
     materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
-    materialsUploadBusy: false, materialsUploadError: ""
+    materialsUploadBusy: false, materialsUploadError: "",
+    assignments: [], assignmentsLoaded: false, assignmentsBusy: false, assignmentsError: "",
+    assignmentsUploadBusy: false, assignmentsUploadError: "",
+    myStudent: null, myStudentChecked: false,
+    adminStudents: [], adminStudentsLoaded: false, selectedStudentId: null,
+    assignmentEditId: null, assignmentEditTitle: ""
   };
   var pendingRequest = null;
   var toastTimer = null;
@@ -441,6 +447,7 @@ button { font-family: var(--font-sans); }
     if (studentId) patch.student = studentId;
     setState(patch);
     if (view === "materials" && !state.materialsLoaded) loadMaterials();
+    if (view === "assignments") loadAssignmentsView();
   }
 
   function formatBytes(n) {
@@ -489,6 +496,113 @@ button { font-family: var(--font-sans); }
         if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
         setState({ materials: state.materials.filter(function (m) { return m.id !== id; }) });
         fire("삭제 완료", "교안이 삭제되었습니다.", "success");
+      })
+      .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  /* ===== assignments (과제방) ===== */
+  function loadAssignmentsView() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    if (isAdmin) {
+      if (!state.adminStudentsLoaded) loadAdminStudents();
+    } else if (!state.myStudentChecked) {
+      loadMyStudent();
+    }
+  }
+
+  function loadAdminStudents() {
+    fetch("/api/students")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ adminStudentsLoaded: true, assignmentsError: r.data.error || "불러오기에 실패했습니다." }); return; }
+        setState({ adminStudentsLoaded: true, adminStudents: r.data.students });
+      })
+      .catch(function () { setState({ adminStudentsLoaded: true, assignmentsError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function selectAdminStudent(id) {
+    setState({ selectedStudentId: id, assignmentsLoaded: false, assignments: [] });
+    loadAssignments(id);
+  }
+
+  function loadMyStudent() {
+    fetch("/api/students/me")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ myStudentChecked: true, myStudent: null }); return; }
+        setState({ myStudentChecked: true, myStudent: r.data.student });
+        if (r.data.student) loadAssignments(r.data.student.id);
+      })
+      .catch(function () { setState({ myStudentChecked: true, myStudent: null }); });
+  }
+
+  function loadAssignments(studentId) {
+    if (!studentId) return;
+    setState({ assignmentsBusy: true, assignmentsError: "" });
+    fetch("/api/assignments?studentId=" + encodeURIComponent(studentId))
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ assignmentsBusy: false, assignmentsLoaded: true, assignmentsError: r.data.error || "불러오기에 실패했습니다." }); return; }
+        setState({ assignmentsBusy: false, assignmentsLoaded: true, assignmentsError: "", assignments: r.data.assignments });
+      })
+      .catch(function () { setState({ assignmentsBusy: false, assignmentsLoaded: true, assignmentsError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitAssignmentUpload(e) {
+    e.preventDefault();
+    if (state.assignmentsUploadBusy || !state.myStudent) return;
+    var fileInput = document.getElementById("assignment-file");
+    var file = fileInput && fileInput.files[0];
+    if (!file) return;
+    var titleInput = document.getElementById("assignment-title");
+    var fd = new FormData();
+    fd.append("file", file);
+    fd.append("studentId", state.myStudent.id);
+    if (titleInput && titleInput.value.trim()) fd.append("title", titleInput.value.trim());
+    setState({ assignmentsUploadBusy: true, assignmentsUploadError: "" });
+    fetch("/api/assignments", { method: "POST", body: fd })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ assignmentsUploadBusy: false, assignmentsUploadError: r.data.error || "업로드에 실패했습니다." }); return; }
+        setState({ assignmentsUploadBusy: false, assignmentsUploadError: "", assignments: [r.data.assignment].concat(state.assignments) });
+        fire("업로드 완료", r.data.assignment.title + " 파일이 등록되었습니다.", "success");
+      })
+      .catch(function () { setState({ assignmentsUploadBusy: false, assignmentsUploadError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function startEditAssignment(id, currentTitle) {
+    setState({ assignmentEditId: id, assignmentEditTitle: currentTitle });
+  }
+
+  function cancelEditAssignment() {
+    setState({ assignmentEditId: null, assignmentEditTitle: "" });
+  }
+
+  function saveEditAssignment(id) {
+    var title = (state.assignmentEditTitle || "").trim();
+    if (!title) return;
+    fetch("/api/assignments/" + id, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: title })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("수정 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({
+          assignmentEditId: null, assignmentEditTitle: "",
+          assignments: state.assignments.map(function (a) { return a.id === id ? r.data.assignment : a; })
+        });
+        fire("수정 완료", "제목이 변경되었습니다.", "success");
+      })
+      .catch(function () { fire("수정 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function deleteAssignmentById(id) {
+    fetch("/api/assignments/" + id, { method: "DELETE" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({ assignments: state.assignments.filter(function (a) { return a.id !== id; }) });
+        fire("삭제 완료", "과제가 삭제되었습니다.", "success");
       })
       .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
   }
@@ -600,7 +714,7 @@ button { font-family: var(--font-sans); }
   }
 
   function crumbFor(view, st) {
-    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments", materials: "교안 / Materials" };
+    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments", materials: "교안 / Materials", assignments: "과제방 / Assignments" };
     return { root: map[view] || "", leaf: view === "student" && st ? st.name : "" };
   }
 
@@ -947,6 +1061,81 @@ button { font-family: var(--font-sans); }
           }).join("") + '</div>'));
   }
 
+  function renderAssignmentList(canManage) {
+    var rows = state.assignments;
+    if (state.assignmentsBusy && !rows.length) return '<div class="card card--pad" style="color:var(--text-muted)">불러오는 중…</div>';
+    if (!rows.length) return '<div class="card card--pad" style="color:var(--text-muted)">아직 등록된 과제가 없습니다.</div>';
+    return '<div class="card">' + rows.map(function (a) {
+      var isEditing = state.assignmentEditId === a.id;
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+        '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">' +
+        (isEditing ?
+          '<input class="input" id="assignment-edit-input" value="' + esc(state.assignmentEditTitle) + '">' :
+          '<a href="' + esc(a.blob_url) + '" target="_blank" rel="noopener" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(a.title) + '</a>') +
+        '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(a.file_name) + ' · ' + formatBytes(a.size_bytes) + ' · ' + esc(new Date(a.created_at).toLocaleDateString("ko-KR")) + '</span></span>' +
+        (canManage ?
+          (isEditing ?
+            '<span style="display:flex;gap:var(--space-2);flex:none">' +
+            '<button class="btn btn-secondary" type="button" data-save-assignment="' + a.id + '">저장</button>' +
+            '<button class="btn btn-ghost" type="button" data-cancel-assignment="1">취소</button></span>'
+            :
+            '<span style="display:flex;gap:var(--space-2);flex:none">' +
+            '<button class="btn btn-secondary" type="button" data-edit-assignment="' + a.id + '" data-title="' + esc(a.title) + '">수정</button>' +
+            '<button class="btn btn-secondary" type="button" data-del-assignment="' + a.id + '">삭제</button></span>')
+          : '<a class="btn btn-secondary" href="' + esc(a.blob_url) + '" target="_blank" rel="noopener">열기</a>') +
+        '</div>';
+    }).join("") + '</div>';
+  }
+
+  function renderAssignmentUploadForm() {
+    return '<form id="assignment-upload-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<div><label class="field-label">제목 (선택)</label><input class="input" id="assignment-title" type="text" placeholder="예: 3주차 숙제"></div>' +
+      '<div><label class="field-label">파일 (.md 또는 .pdf, 20MB 이하)</label><input class="input" id="assignment-file" type="file" accept=".md,.pdf" required></div>' +
+      (state.assignmentsUploadError ? '<div class="auth-error">' + esc(state.assignmentsUploadError) + '</div>' : "") +
+      '<button class="btn btn-primary" type="submit" id="assignment-upload-submit" style="align-self:flex-start"' + (state.assignmentsUploadBusy ? " disabled" : "") + '>' +
+      (state.assignmentsUploadBusy ? "업로드 중…" : "업로드") + '</button>' +
+      '</form>';
+  }
+
+  function renderAssignmentsHeader(sub) {
+    return '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Assignments</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">과제방</h1>' +
+      '<span style="color:var(--text-muted)">' + esc(sub) + '</span></div></div>';
+  }
+
+  function renderAssignmentsAdmin() {
+    var students = state.adminStudents;
+    return '' +
+      renderAssignmentsHeader("수강생을 선택하면 그 학생의 과제방을 열람할 수 있습니다. (업로드·수정은 수강생 본인만 가능)") +
+      (state.assignmentsError ? '<div class="auth-error">' + esc(state.assignmentsError) + '</div>' : "") +
+      (!students.length ? '<div class="card card--pad" style="color:var(--text-muted)">' + (state.adminStudentsLoaded ? "등록된 수강생이 없습니다." : "불러오는 중…") + '</div>' :
+        '<div class="filter-row">' + students.map(function (s) {
+          return '<span class="filter-chip' + (s.id === state.selectedStudentId ? " is-active" : "") + '" data-pick-student="' + esc(s.id) + '">' + esc(s.name) + '</span>';
+        }).join("") + '</div>' +
+        (!state.selectedStudentId ? '<div class="card card--pad" style="color:var(--text-muted)">수강생을 선택해주세요.</div>' : renderAssignmentList(false)));
+  }
+
+  function renderAssignmentsStudent() {
+    if (!state.myStudentChecked) {
+      return renderAssignmentsHeader("확인하는 중…") + '<div class="card card--pad" style="color:var(--text-muted)">확인하는 중…</div>';
+    }
+    if (!state.myStudent) {
+      return renderAssignmentsHeader("본인만 업로드·수정·열람할 수 있는 개인 과제방입니다.") +
+        '<div class="card card--pad" style="color:var(--text-muted)">연결된 수강생 정보가 없습니다. 가입하신 이메일이 수강생으로 등록된 이메일과 다를 수 있어요 — 강사에게 문의해주세요.</div>';
+    }
+    return '' +
+      renderAssignmentsHeader(state.myStudent.name + " 님의 과제방 — 본인만 업로드·수정·열람할 수 있습니다.") +
+      renderAssignmentUploadForm() +
+      (state.assignmentsError ? '<div class="auth-error">' + esc(state.assignmentsError) + '</div>' : "") +
+      renderAssignmentList(true);
+  }
+
+  function renderAssignments() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    return isAdmin ? renderAssignmentsAdmin() : renderAssignmentsStudent();
+  }
+
   function modalMap(st) {
     return {
       approve: pendingRequest ? {
@@ -1213,6 +1402,7 @@ button { font-family: var(--font-sans); }
     else if (state.view === "student") body = renderStudent();
     else if (state.view === "payments") body = renderPayments();
     else if (state.view === "materials") body = renderMaterials();
+    else if (state.view === "assignments") body = renderAssignments();
     else body = renderDash();
 
     var mm = state.modal ? modalMap(st)[state.modal] : null;
@@ -1275,6 +1465,27 @@ button { font-family: var(--font-sans); }
     if (materialForm) materialForm.addEventListener("submit", submitMaterialUpload);
     root.querySelectorAll("[data-del-material]").forEach(function (el) {
       el.addEventListener("click", function () { deleteMaterialById(parseInt(el.getAttribute("data-del-material"), 10)); });
+    });
+    var assignmentForm = document.getElementById("assignment-upload-form");
+    if (assignmentForm) assignmentForm.addEventListener("submit", submitAssignmentUpload);
+    root.querySelectorAll("[data-pick-student]").forEach(function (el) {
+      el.addEventListener("click", function () { selectAdminStudent(el.getAttribute("data-pick-student")); });
+    });
+    root.querySelectorAll("[data-edit-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () { startEditAssignment(parseInt(el.getAttribute("data-edit-assignment"), 10), el.getAttribute("data-title")); });
+    });
+    root.querySelectorAll("[data-save-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var input = document.getElementById("assignment-edit-input");
+        if (input) state.assignmentEditTitle = input.value;
+        saveEditAssignment(parseInt(el.getAttribute("data-save-assignment"), 10));
+      });
+    });
+    root.querySelectorAll("[data-cancel-assignment]").forEach(function (el) {
+      el.addEventListener("click", cancelEditAssignment);
+    });
+    root.querySelectorAll("[data-del-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteAssignmentById(parseInt(el.getAttribute("data-del-assignment"), 10)); });
     });
     root.querySelectorAll("[data-close-toast]").forEach(function (el) {
       el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });

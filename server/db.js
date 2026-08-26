@@ -49,6 +49,41 @@ function ensureSchema() {
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT");
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires_at TIMESTAMPTZ");
       await query(`
+        CREATE TABLE IF NOT EXISTS students (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL UNIQUE
+        )
+      `);
+      const STUDENT_SEED = [
+        ["s1", "Emily Carter", "emily.carter@example.com"],
+        ["s2", "Nguyen Thi Mai", "nguyen.mai@example.com"],
+        ["s3", "Kenji Sato", "kenji.sato@example.com"],
+        ["s4", "Sofia Rossi", "sofia.rossi@example.com"],
+        ["s5", "Daniel Kim", "daniel.kim@example.com"],
+        ["s6", "Aisha Rahman", "aisha.rahman@example.com"]
+      ];
+      for (const [id, name, email] of STUDENT_SEED) {
+        await query(
+          "INSERT INTO students (id, name, email) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
+          [id, name, email]
+        );
+      }
+      await query(`
+        CREATE TABLE IF NOT EXISTS assignments (
+          id SERIAL PRIMARY KEY,
+          student_id TEXT NOT NULL REFERENCES students(id),
+          title TEXT NOT NULL,
+          file_name TEXT NOT NULL,
+          mime_type TEXT NOT NULL,
+          size_bytes INTEGER NOT NULL,
+          blob_url TEXT NOT NULL,
+          blob_pathname TEXT NOT NULL,
+          uploaded_by INTEGER REFERENCES users(id),
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `);
+      await query(`
         CREATE TABLE IF NOT EXISTS materials (
           id SERIAL PRIMARY KEY,
           title TEXT NOT NULL,
@@ -176,6 +211,64 @@ async function deleteMaterial(id) {
   await query("DELETE FROM materials WHERE id = $1", [id]);
 }
 
+async function listStudents() {
+  await ensureSchema();
+  const { rows } = await query("SELECT id, name, email FROM students ORDER BY id");
+  return rows;
+}
+
+async function getStudentById(id) {
+  await ensureSchema();
+  const { rows } = await query("SELECT id, name, email FROM students WHERE id = $1", [id]);
+  return rows[0] || null;
+}
+
+async function getStudentByEmail(email) {
+  await ensureSchema();
+  const { rows } = await query("SELECT id, name, email FROM students WHERE email = $1", [email]);
+  return rows[0] || null;
+}
+
+async function listAssignments(studentId) {
+  await ensureSchema();
+  const { rows } = await query(
+    "SELECT id, student_id, title, file_name, mime_type, size_bytes, blob_url, created_at FROM assignments WHERE student_id = $1 ORDER BY created_at DESC",
+    [studentId]
+  );
+  return rows;
+}
+
+async function createAssignment({ studentId, title, fileName, mimeType, sizeBytes, blobUrl, blobPathname, uploadedBy }) {
+  await ensureSchema();
+  const { rows } = await query(
+    `INSERT INTO assignments (student_id, title, file_name, mime_type, size_bytes, blob_url, blob_pathname, uploaded_by)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+     RETURNING id, student_id, title, file_name, mime_type, size_bytes, blob_url, created_at`,
+    [studentId, title, fileName, mimeType, sizeBytes, blobUrl, blobPathname, uploadedBy]
+  );
+  return rows[0];
+}
+
+async function getAssignmentById(id) {
+  await ensureSchema();
+  const { rows } = await query("SELECT * FROM assignments WHERE id = $1", [id]);
+  return rows[0] || null;
+}
+
+async function renameAssignment(id, title) {
+  await ensureSchema();
+  const { rows } = await query(
+    "UPDATE assignments SET title = $1 WHERE id = $2 RETURNING id, student_id, title, file_name, mime_type, size_bytes, blob_url, created_at",
+    [title, id]
+  );
+  return rows[0] || null;
+}
+
+async function deleteAssignment(id) {
+  await ensureSchema();
+  await query("DELETE FROM assignments WHERE id = $1", [id]);
+}
+
 module.exports = {
   ensureSchema,
   getUserByEmail,
@@ -191,5 +284,13 @@ module.exports = {
   listMaterials,
   createMaterial,
   getMaterialById,
-  deleteMaterial
+  deleteMaterial,
+  listStudents,
+  getStudentById,
+  getStudentByEmail,
+  listAssignments,
+  createAssignment,
+  getAssignmentById,
+  renameAssignment,
+  deleteAssignment
 };
