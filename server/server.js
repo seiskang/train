@@ -82,12 +82,15 @@ async function getSessionUser(req) {
 
 app.post("/api/signup", async (req, res) => {
   try {
-    const { email, password, name } = req.body || {};
+    const { email, password, name, agreeTerms } = req.body || {};
     if (!isValidEmail(email)) {
       return res.status(400).json({ error: "올바른 이메일을 입력해주세요." });
     }
     if (typeof password !== "string" || password.length < 8) {
       return res.status(400).json({ error: "비밀번호는 8자 이상이어야 합니다." });
+    }
+    if (agreeTerms !== true) {
+      return res.status(400).json({ error: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." });
     }
     const exists = await db.getUserByEmail(email);
     if (exists) {

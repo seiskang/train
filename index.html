@@ -316,6 +316,33 @@ button { font-family: var(--font-sans); }
   var RATE = 20;
   var PACK = 8;
 
+  var TERMS_TEXT = "제1조 (목적)\n" +
+    "이 약관은 세이스강 클래스 매니저(이하 \"서비스\")가 제공하는 한국어 1:1 개인교습 관리 서비스의 이용 조건 및 절차, 이용자와 운영자의 권리·의무를 규정합니다.\n\n" +
+    "제2조 (회원가입)\n" +
+    "이용자는 이메일과 비밀번호를 입력하고 본 약관 및 개인정보처리방침에 동의함으로써 회원가입을 신청하며, 이메일 인증을 완료한 시점에 가입이 확정됩니다.\n\n" +
+    "제3조 (서비스의 제공)\n" +
+    "서비스는 수강 신청, 학생 관리, 결제·회차 관리, 수업 기록, 교안·과제 자료 업로드 등의 기능을 제공합니다. 운영상 필요에 따라 서비스의 전부 또는 일부가 변경되거나 중단될 수 있습니다.\n\n" +
+    "제4조 (이용자의 의무)\n" +
+    "이용자는 본인의 계정 정보를 안전하게 관리해야 하며, 타인의 정보를 도용하거나 서비스를 부정하게 이용해서는 안 됩니다.\n\n" +
+    "제5조 (면책)\n" +
+    "운영자는 천재지변, 통신 장애 등 불가항력적인 사유로 서비스를 제공할 수 없는 경우 책임을 지지 않습니다.\n\n" +
+    "제6조 (약관의 변경)\n" +
+    "운영자는 필요한 경우 관련 법령을 위반하지 않는 범위에서 이 약관을 개정할 수 있으며, 개정 시 서비스 내 공지합니다.\n\n" +
+    "부칙: 이 약관은 2026년 8월 26일부터 시행합니다.";
+
+  var PRIVACY_TEXT = "1. 수집하는 개인정보 항목\n" +
+    "이메일 주소, 비밀번호(암호화 저장), 이름(선택 입력)\n\n" +
+    "2. 수집 및 이용 목적\n" +
+    "회원 식별 및 로그인, 수강 신청·결제·수업 기록 등 서비스 제공, 비밀번호 재설정 등 계정 관리\n\n" +
+    "3. 보유 및 이용 기간\n" +
+    "회원 탈퇴 시 또는 목적 달성 시까지 보관하며, 관련 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관합니다.\n\n" +
+    "4. 제3자 제공\n" +
+    "수집한 개인정보는 법령에 특별한 규정이 있는 경우를 제외하고 이용자의 동의 없이 제3자에게 제공하지 않습니다.\n\n" +
+    "5. 이용자의 권리\n" +
+    "이용자는 언제든지 자신의 개인정보 열람, 정정, 삭제를 요청할 수 있습니다.\n\n" +
+    "6. 문의처\n" +
+    "개인정보 관련 문의는 서비스 운영자에게 연락해주세요.";
+
   var PAY = {
     paid: { label: "입금 완료", tone: "success" },
     pending: { label: "입금 대기", tone: "warning" },
@@ -343,6 +370,7 @@ button { font-family: var(--font-sans); }
     authPendingVerify: null, authUnverifiedEmail: "",
     authForgot: null, authForgotBusy: false, authForgotError: "",
     authResetToken: null, authResetBusy: false, authResetError: "",
+    authAgreeTerms: false, authTermsModal: null,
     students: [], requests: [], invoices: [], dashboardReady: false,
     materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
     materialsUploadBusy: false, materialsUploadError: "",
@@ -1290,6 +1318,14 @@ button { font-family: var(--font-sans); }
       (tab === "signup" ? '<div><label class="field-label">이름</label><input class="input" id="auth-name" type="text" placeholder="선택 입력" autocomplete="name"></div>' : "") +
       '<div><label class="field-label">이메일</label><input class="input" id="auth-email" type="email" required placeholder="example@naver.com" autocomplete="email"></div>' +
       '<div><label class="field-label">비밀번호</label><input class="input" id="auth-password" type="password" required placeholder="8자 이상" autocomplete="' + (tab === "signup" ? "new-password" : "current-password") + '"></div>' +
+      (tab === "signup" ?
+        '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-agree-terms" style="margin-top:3px"' + (state.authAgreeTerms ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">' +
+        '<a href="#" id="show-terms" style="color:var(--info-500)">이용약관</a> 및 ' +
+        '<a href="#" id="show-privacy" style="color:var(--info-500)">개인정보처리방침</a>에 동의합니다. (필수)' +
+        '</span></label>'
+        : "") +
       (state.authError ? '<div class="auth-error">' + esc(state.authError) + '</div>' : "") +
       (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
       '<button class="btn btn-primary full" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
@@ -1298,7 +1334,17 @@ button { font-family: var(--font-sans); }
       '</form>' +
       renderOAuthButtons() +
       '<div class="auth-hint">' + (tab === "signup" ? "회원가입 시 이메일로 인증 링크가 발송되며, 인증을 완료해야 로그인할 수 있습니다." : "계정이 없다면 회원가입 탭에서 새로 만들 수 있습니다.") + '</div>'
-    );
+    ) + renderAuthTermsModal();
+  }
+
+  function renderAuthTermsModal() {
+    if (!state.authTermsModal) return "";
+    var isTerms = state.authTermsModal === "terms";
+    return '<div class="modal-backdrop" data-close-terms-modal="1"><div class="modal-box" data-stop-terms="1"><div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4);max-height:80vh;overflow-y:auto">' +
+      '<span style="font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong)">' + (isTerms ? "이용약관" : "개인정보처리방침") + '</span>' +
+      '<div style="white-space:pre-wrap;font-size:var(--text-sm);color:var(--text-body);line-height:1.7">' + esc(isTerms ? TERMS_TEXT : PRIVACY_TEXT) + '</div>' +
+      '<button class="btn btn-secondary full" type="button" data-close-terms-modal="1">닫기</button>' +
+      '</div></div></div>';
   }
 
   function renderOAuthButtons() {
@@ -1363,7 +1409,11 @@ button { font-family: var(--font-sans); }
     var email = document.getElementById("auth-email").value.trim();
     var password = document.getElementById("auth-password").value;
     var nameEl = document.getElementById("auth-name");
-    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "" } : { email: email, password: password };
+    if (tab === "signup" && !state.authAgreeTerms) {
+      setState({ authError: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." });
+      return;
+    }
+    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "", agreeTerms: true } : { email: email, password: password };
     setState({ authBusy: true, authError: "", authUnverifiedEmail: "" });
     fetch(tab === "signup" ? "/api/signup" : "/api/login", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
@@ -1463,6 +1513,18 @@ button { font-family: var(--font-sans); }
     if (resetForm) resetForm.addEventListener("submit", submitReset);
     var backBtn = document.getElementById("back-to-login");
     if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authForgot: null, authTab: "login" }); });
+    var agreeBox = document.getElementById("auth-agree-terms");
+    if (agreeBox) agreeBox.addEventListener("change", function () { state.authAgreeTerms = agreeBox.checked; });
+    var showTerms = document.getElementById("show-terms");
+    if (showTerms) showTerms.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "terms" }); });
+    var showPrivacy = document.getElementById("show-privacy");
+    if (showPrivacy) showPrivacy.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "privacy" }); });
+    root.querySelectorAll("[data-close-terms-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ authTermsModal: null }); });
+    });
+    root.querySelectorAll("[data-stop-terms]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
   }
 
   function render() {

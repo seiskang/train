@@ -51,6 +51,7 @@ function ensureSchema() {
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires_at TIMESTAMPTZ");
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS kakao_id TEXT UNIQUE");
       await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS wechat_id TEXT UNIQUE");
+      await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS terms_agreed_at TIMESTAMPTZ");
       await query(`
         CREATE TABLE IF NOT EXISTS students (
           id TEXT PRIMARY KEY,
@@ -135,7 +136,7 @@ async function getUserByToken(token) {
 async function createUser(email, passwordHash, name) {
   await ensureSchema();
   const { rows } = await query(
-    "INSERT INTO users (email, password_hash, name, role, email_verified) VALUES ($1, $2, $3, 'user', 0) RETURNING id",
+    "INSERT INTO users (email, password_hash, name, role, email_verified, terms_agreed_at) VALUES ($1, $2, $3, 'user', 0, now()) RETURNING id",
     [email, passwordHash, name || null]
   );
   return rows[0].id;
