@@ -1464,8 +1464,9 @@ button { font-family: var(--font-sans); }
     state.auth = user;
     if (user.role === "admin") {
       loadDashboard();
-    } else if (ADMIN_ONLY_VIEWS.indexOf(state.view) !== -1) {
-      state.view = "assignments";
+    } else {
+      if (ADMIN_ONLY_VIEWS.indexOf(state.view) !== -1) state.view = "assignments";
+      if (state.view === "assignments") loadAssignmentsView();
     }
   }
 
