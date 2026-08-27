@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- 스마트폰에서도 크게 보이도록 뷰포트 설정 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>홍*자 님의 아름다운 인생 여정</title>
+<style>
+  /* 시니어 배려형 핵심 스타일 정의 */
+  @page { size: A4 portrait; margin: 10mm; }
+  * { box-sizing: border-box; }
+  
+  body {
+    /* 노안을 고려한 기본 고딕체 및 굵은 글씨 계열 설정 */
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    /* 눈의 피로를 줄이는 짙은 회색 배경과 흑백 대비 */
+    color: #111111; 
+    background-color: #F4F4F9;
+    margin: 0;
+    padding: 15px;
+    /* 줄 간격을 넓혀 가독성 확보 */
+    line-height: 1.6;
+    /* 기본 글자 크기를 대폭 확대 (대형 스마트폰/빔프로젝터용) */
+    font-size: 18px; 
+  }
+
+  .page-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border: 3px solid #D1D5DB;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  /* 헤더: 시각적 주목도 향상 */
+  .header {
+    text-align: center;
+    background-color: #E0E7FF;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #C7D2FE;
+  }
+  .badge {
+    background-color: #4F46E5;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 5px 15px;
+    border-radius: 25px;
+    display: inline-block;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .header h1 {
+    margin: 5px 0;
+    /* 제목 크기 대폭 확대 */
+    font-size: 32px; 
+    color: #1E1B4B;
+    letter-spacing: -1px;
+    font-weight: 900;
+  }
+  .header p {
+    margin: 5px 0 0 0;
+    font-size: 18px;
+    color: #4338CA;
+    font-weight: 600;
+  }
+
+  /* 핵심 요약 바: 직관적인 아이콘과 큰 글씨 */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 스마트폰 고려 2열 배치 */
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .summary-item {
+    background-color: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .summary-item strong {
+    display: block;
+    color: #6B7280;
+    font-size: 15px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+
+  /* 본문 카드: 여백을 넓히고 경계선을 명확히 */
+  .grid-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  .card {
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 18px;
+    background-color: #FFFFFF;
+  }
+  .card-title {
+    /* 카드 제목 크기 확대 및 명도 대비 향상 */
+    font-size: 22px; 
+    font-weight: 800;
+    color: #111111;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2.5px solid #F3F4F6;
+    padding-bottom: 8px;
+  }
+  .card-content {
+    /* 본문 글자 크기 확대 */
+    font-size: 18px; 
+    color: #1F2937;
+    font-weight: 500;
+  }
+  .card-content p {
+    margin: 8px 0;
+  }
+  .card-content strong {
+    font-weight: 700;
+    color: #000000;
+  }
+
+  /* 강조 박스: 눈에 띄는 색상과 굵은 글씨 */
+  .quote-box {
+    background-color: #FFFBEB;
+    border-left: 5px solid #F59E0B;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 17px;
+    color: #92400E;
+    margin-top: 10px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* 인생 2막 전용 스타일 */
+  .full-card {
+    border: 2px solid #C7D2FE;
+    background-color: #FAFAFF;
+  }
+
+  /* 하단 격려 박스: 반전 색상으로 시각적 마무리 */
+  .footer-box {
+    background-color: #1E1B4B;
+    color: #FFFFFF;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 15px;
+    border: 2px solid #C7D2FE;
+  }
+  .footer-epitaph {
+    font-size: 24px;
+    font-weight: 900;
+    color: #FDE047; /* 노란색 강조 */
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  .footer-letter {
+    font-size: 17px;
+    color: #E0E7FF;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  /* 인쇄 시 배경색 유지 설정 */
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page-container { border: none; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="badge">AI 인생 자서전 인포그래픽</div>
+    <h1>홍*자 님의 아름다운 인생 여정</h1>
+    <p>“따뜻한 사랑 속에 자라나 성실과 긍지로 피워낸 향기로운 삶의 기록”</p>
+  </div>
+
+  <!-- 핵심 요약 바 (2열 배치) -->
+  <div class="summary-bar">
+    <div class="summary-item"><strong>🌱 출생</strong>1968년 전남 **군</div>
+    <div class="summary-item"><strong>🏡 가족</strong>1남 4녀 중 늦둥이 막내</div>
+    <div class="summary-item"><strong>💼 평생의 업</strong>교육공무원 (급식·영양)</div>
+    <div class="summary-item"><strong>🎶 인생 2막</strong>팬플루트 & 봉사활동</div>
+  </div>
+
+  <!-- 본문 카드 (세로 1열 배치로 가독성 집중) -->
+  <div class="grid-box">
+
+    <!-- 1. 출생과 어린 시절 -->
+    <div class="card">
+      <div class="card-title">🌿 1. 고향의 늦둥이 막내딸</div>
+      <div class="card-content">
+        <p>• <strong>가족:</strong> 과묵하고 성실하신 아버지, 늘 유쾌하셨던 어머니</p>
+        <p>• <strong>기억:</strong> 5살 무렵 주전자 들고 막걸리 심부름 가던 정겨운 길</p>
+        <p>• <strong>추억:</strong> 학교 끝나면 가마솥에 담겨 있던 엄마표 누룽지 간식</p>
+        <div class="quote-box">“비 오던 날 **강 물구경과 돌담길 마을 잔치는 평생 잊지 못할 고향의 풍경입니다.”</div>
+      </div>
+    </div>
+
+    <!-- 2. 학창 시절과 청년기 -->
+    <div class="card">
+      <div class="card-title">🏃‍♀️ 2. 활발했던 소녀와 세상으로의 첫발</div>
+      <div class="card-content">
+        <p>• <strong>학창 시절:</strong> 고무줄놀이 좋아하던 활발한 체육부장, 친구 '**이'</p>
+        <p>• <strong>첫 진로:</strong> 식품영양학 전공 후 **에서 시작한 성실한 사회생활</p>
+        <p>• <strong>은인:</strong> ‘시집보낼 돈으로 학교 보내라’며 길 터주신 동네 어르신</p>
+        <div class="quote-box">“처음엔 낯설고 외로웠지만, 나만의 길을 묵묵히 다져나갔습니다.”</div>
+      </div>
+    </div>
+
+    <!-- 3. 직업과 삶의 보람 -->
+    <div class="card">
+      <div class="card-title">🍲 3. 긍지와 자부심의 교직 생활</div>
+      <div class="card-content">
+        <p>• <strong>경력:</strong> 학교 급식을 책임지며 학생들의 건강을 돌본 교육공무원</p>
+        <p>• <strong>보람:</strong> 모범이 되는 교직원으로서 지역 우수 사례로 인정받은 성취</p>
+        <p>• <strong>가치:</strong> 내 손으로 일하며 사회에 떳떳하게 기여해온 평생의 자긍심</p>
+      </div>
+    </div>
+
+    <!-- 4. 고난 극복과 동반자 -->
+    <div class="card">
+      <div class="card-title">⛰️ 4. 고난을 넘게 해준 버팀목</div>
+      <div class="card-content">
+        <p>• <strong>끈기:</strong> 힘든 고비마다 산(山)을 오르며 다진 마음과 체력</p>
+        <p>• <strong>동반자:</strong> 묵묵히 곁을 지키고 가장 큰 힘이 되어준 남편과의 동행</p>
+        <p>• <strong>가족:</strong> 조용히 기다려주고 믿어준 가족들의 따뜻한 사랑</p>
+      </div>
+    </div>
+
+    <!-- 5. 인생 2막과 다짐 -->
+    <div class="card full-card">
+      <div class="card-title">🎺 5. 인생 2막 - 맑은 소리로 채워갈 내일</div>
+      <div class="card-content">
+        <p>• <strong>새로운 꿈:</strong> 팬플루트 연주와 문화 자원봉사 활동</p>
+        <p>• <strong>건강:</strong> 식단 조절과 걷기 운동으로 가꾸는 활기찬 일상</p>
+        <p>• <strong>가족에게:</strong> “걱정은 덜어내고 하루하루 즐겁고 건강하게 삽시다!”</p>
+        <p>• <strong>요약:</strong> <strong>“역경 속에서도 지혜롭게, 참 잘 살아왔다!”</strong></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 하단 격려 박스 -->
+  <div class="footer-box">
+    <div class="footer-epitaph">🌿 나의 묘비명: "참 좋은 사람, 잘 살다 간다!"</div>
+    <div class="footer-letter">
+      <strong>[미래의 나에게 보내는 편지]</strong><br>
+      "지나고 보면 다 지나갈 일들, 그때 너무 고민하지 않아도 되었을 텐데…<br>
+      수많은 고비마다 지혜롭게 이겨내며 참 잘 살아왔다. 참 고맙고 사랑한다!"
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
