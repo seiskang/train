@@ -1769,7 +1769,7 @@ button { font-family: var(--font-sans); }
       var closeToast = document.querySelector("[data-close-toast]");
       if (closeToast) closeToast.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
       var emailInput = document.getElementById("auth-email");
-      if (emailInput) emailInput.focus();
+      if (emailInput) emailInput.focus({ preventScroll: true });
       return;
     }
 
