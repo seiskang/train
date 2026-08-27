@@ -1539,8 +1539,11 @@ button { font-family: var(--font-sans); }
         : "") +
       (state.authError ? '<div class="auth-error">' + esc(state.authError) + '</div>' : "") +
       (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
-      '<button class="btn btn-primary full" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
-      (state.authBusy ? "처리 중…" : (tab === "signup" ? "회원가입" : "로그인")) + '</button>' +
+      '<div style="display:flex;gap:var(--space-3)">' +
+      '<button class="btn btn-primary" style="flex:1" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
+      (state.authBusy ? "처리 중…" : (tab === "signup" ? "입학하기" : "로그인")) + '</button>' +
+      (tab === "signup" ? '<button class="btn btn-secondary" style="flex:1" type="button" id="auth-complete">수료하기</button>' : "") +
+      '</div>' +
       (tab === "login" ? '<button type="button" id="forgot-link" style="align-self:center;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;font:inherit;text-decoration:underline">비밀번호를 잊으셨나요?</button>' : "") +
       '</form>' +
       renderOAuthButtons() +
@@ -1721,6 +1724,8 @@ button { font-family: var(--font-sans); }
     });
     var form = document.getElementById("auth-form");
     if (form) form.addEventListener("submit", submitAuth);
+    var completeBtn = document.getElementById("auth-complete");
+    if (completeBtn) completeBtn.addEventListener("click", function () { fire("수료하기", "수료 절차는 준비 중입니다.", "info"); });
     var resendBtn = document.getElementById("resend-btn");
     if (resendBtn) resendBtn.addEventListener("click", resendVerification);
     var forgotLink = document.getElementById("forgot-link");
