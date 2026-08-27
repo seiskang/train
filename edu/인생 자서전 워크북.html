@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시니어 맞춤 큰 글씨 자서전 워크북</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    color: #111827;
+    background-color: #F3F4F6;
+    margin: 0;
+    padding: 15px;
+    line-height: 1.6;
+    font-size: 18px;
+  }
+  .page {
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    background: #FFFFFF;
+    border: 2px solid #D1D5DB;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    page-break-after: always;
+  }
+  .header {
+    text-align: center;
+    background-color: #EEF2FF;
+    border: 2px solid #C7D2FE;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 0 0 6px 0;
+    font-size: 28px;
+    color: #1E1B4B;
+    font-weight: 900;
+  }
+  .header p {
+    margin: 0;
+    font-size: 18px;
+    color: #4338CA;
+    font-weight: 600;
+  }
+  .user-info {
+    display: flex;
+    justify-content: space-between;
+    background-color: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .guide-box {
+    background-color: #FFFBEB;
+    border-left: 5px solid #F59E0B;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #92400E;
+    font-weight: 600;
+    margin-bottom: 25px;
+  }
+  .part-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1E1B4B;
+    background-color: #F3F4F6;
+    border-left: 6px solid #4F46E5;
+    padding: 8px 14px;
+    border-radius: 4px;
+    margin: 25px 0 15px 0;
+  }
+  .question-card {
+    border: 1.5px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #FFFFFF;
+  }
+  .question-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+  .question-hint {
+    font-size: 15px;
+    color: #6B7280;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .answer-lines {
+    min-height: 80px;
+    border-bottom: 1.5px dashed #CBD5E1;
+    background-image: linear-gradient(to bottom, transparent 38px, #E2E8F0 39px);
+    background-size: 100% 40px;
+  }
+  .special-box {
+    background-color: #FAFAFF;
+    border: 2px solid #C7D2FE;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .special-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #3730A3;
+    margin-bottom: 10px;
+  }
+  @media print {
+    body { background: #FFF; padding: 0; }
+    .page { border: none; box-shadow: none; padding: 10px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <h1>📖 큰 글씨 인생 자서전 워크북</h1>
+    <p>내 삶의 소중한 발자국을 편안하게 기록합니다</p>
+  </div>
+
+  <div class="user-info">
+    <div>🏷️ 이름 : _______________</div>
+    <div>📅 일시 : 2026년 ___월 ___일</div>
+  </div>
+
+  <div class="guide-box">
+    💡 <strong>어르신을 위한 편안한 작성 안내:</strong><br>
+    • 글씨를 쓰기 힘드시면 스마트폰 마이크 🎙️를 누르고 편하게 말씀만 하세요.<br>
+    • 1번부터 쓰지 않으셔도 되며, 생각나지 않는 질문은 비워두셔도 좋습니다.
+  </div>
+
+  <div class="part-title">🌿 제1장. 출생과 가족 이야기</div>
+  <div class="question-card">
+    <div class="question-title">Q1. 언제, 어디에서 태어나셨나요?</div>
+    <div class="question-hint">(예: 1968년 전남 곡성, 먹고살기 힘들었지만 정이 넘치던 시절)</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-title">Q2. 부모님은 어떤 분이셨나요?</div>
+    <div class="question-hint">(성격, 하시던 일, 가장 또렷하게 떠오르는 얼굴)</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-title">Q3. 내가 기억하는 가장 오래된 첫 기억은 무엇인가요?</div>
+    <div class="question-hint">(예: 대여섯 살 무렵 주전자 들고 심부름 가던 길)</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">🌸 제2장. 어린 시절의 추억</div>
+  <div class="question-card">
+    <div class="question-title">Q1. 동네 친구들과 주로 무슨 놀이를 하며 놀았나요?</div>
+    <div class="question-hint">(고무줄놀이, 구슬치기, 윷놀이, 오징어게임 등)</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-title">Q2. 어릴 때 가장 좋아했던 엄마표 간식이나 음식은?</div>
+    <div class="question-hint">(예: 가마솥에서 긁어주던 바삭한 누룽지 등)</div>
+    <div class="answer-lines"></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="part-title">🎒 제3장. 학창 시절과 청년기</div>
+  <div class="question-card">
+    <div class="question-title">Q1. 지금까지도 마음에 남아있는 친구나 은사님은?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-title">Q2. 젊은 시절, 나를 도와주었던 고마운 은인은 누구인가요?</div>
+    <div class="question-hint">(공부나 첫 직장의 길을 열어주셨던 고마운 분)</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">🏅 제4장. 나의 일과 평생의 긍지</div>
+  <div class="question-card">
+    <div class="question-title">Q1. 평생 동안 내가 해온 일과 가장 자랑스러웠던 순간은?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">⛰️ 제5장. 고난 극복과 가족의 사랑</div>
+  <div class="question-card">
+    <div class="question-title">Q1. 인생의 힘든 고비를 어떻게 이겨내셨나요? 가장 힘이 된 사람은?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="special-box">
+    <div class="special-title">🕊️ 나의 한 줄 묘비명 (희망사항)</div>
+    <div style="font-size: 20px; font-weight: 800; color: #1E1B4B; margin: 15px 0;">
+      “ ____________________________________________________ ”
+    </div>
+    <div style="font-size: 15px; color: #4B5563;">
+      (예: "참 좋은 사람, 지혜롭게 참 잘 살다 간다!")
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
