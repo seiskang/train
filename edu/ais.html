@@ -216,7 +216,7 @@
   }
 </style>
 </head>
-<body>
+<body><div id="ais-lock" style="position:fixed;inset:0;z-index:9999;background:#F3ECE0;display:flex;align-items:center;justify-content:center;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;"><div style="background:#FFFDF9;padding:40px 32px;border-radius:16px;box-shadow:0 10px 30px rgba(60,45,20,0.12);max-width:340px;width:90%;text-align:center;"><div style="font-size:22px;font-weight:700;margin-bottom:6px;color:#2A2420;">디지털 자서전과 내 삶의 노래 만들기</div><div style="font-size:15px;color:#5C5248;margin-bottom:20px;">접속 암호를 입력해주세요</div><input id="ais-pw" type="password" placeholder="암호 입력" style="width:100%;font-size:18px;padding:12px 14px;border:2px solid #E7DFCF;border-radius:10px;box-sizing:border-box;margin-bottom:12px;"><button id="ais-pw-btn" style="width:100%;font-size:17px;font-weight:700;padding:12px;border:none;border-radius:10px;background:#0F766E;color:#fff;cursor:pointer;">입장하기</button><div id="ais-pw-err" style="display:none;color:#BE185D;font-size:14px;margin-top:10px;">암호가 올바르지 않습니다.</div></div></div><script>(function(){try{if(localStorage.getItem('ais-auth')==='ok'){document.getElementById('ais-lock').style.display='none';}}catch(e){}var btn=document.getElementById('ais-pw-btn');var inp=document.getElementById('ais-pw');var err=document.getElementById('ais-pw-err');function tryLogin(){if(inp.value==='youn'){try{localStorage.setItem('ais-auth','ok');}catch(e){}document.getElementById('ais-lock').style.display='none';}else{err.style.display='block';inp.value='';inp.focus();}}btn.addEventListener('click',tryLogin);inp.addEventListener('keydown',function(ev){if(ev.key==='Enter'){tryLogin();}});})();</script>
 
 <div class="topbar">
   <a href="#cover">표지</a>
