@@ -1,0 +1,18 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="스마트폰 QR 친구 맺기 아이콘">
+  <rect x="4" y="4" width="232" height="232" rx="40" fill="#CCFBF1"/>
+  <rect x="78" y="46" width="84" height="150" rx="16" fill="#FFFFFF" stroke="#0F766E" stroke-width="6"/>
+  <g fill="#0F766E">
+    <rect x="94" y="64" width="14" height="14"/>
+    <rect x="116" y="64" width="14" height="14"/>
+    <rect x="138" y="64" width="14" height="14"/>
+    <rect x="94" y="86" width="14" height="14"/>
+    <rect x="138" y="86" width="14" height="14"/>
+    <rect x="94" y="108" width="14" height="14"/>
+    <rect x="116" y="108" width="14" height="14"/>
+    <rect x="138" y="108" width="14" height="14"/>
+    <rect x="116" y="130" width="14" height="14"/>
+  </g>
+  <circle cx="120" cy="176" r="6" fill="#0F766E"/>
+  <circle cx="176" cy="176" r="22" fill="#F2994A"/>
+  <circle cx="196" cy="176" r="22" fill="#F97316" opacity="0.85"/>
+</svg>

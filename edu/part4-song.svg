@@ -1,0 +1,9 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="시화와 노래 만들기 아이콘">
+  <rect x="4" y="4" width="232" height="232" rx="40" fill="#FCE7F3"/>
+  <path d="M70 170 L130 110" stroke="#BE185D" stroke-width="14" stroke-linecap="round"/>
+  <path d="M126 66 L170 110 L150 130 Q136 116 126 106 Z" fill="#FFFFFF" stroke="#BE185D" stroke-width="6"/>
+  <circle cx="62" cy="178" r="12" fill="#F2994A"/>
+  <circle cx="176" cy="176" r="16" fill="#BE185D"/>
+  <rect x="188" y="100" width="8" height="80" fill="#BE185D"/>
+  <path d="M196 100 Q220 108 214 130" stroke="#BE185D" stroke-width="8" fill="none" stroke-linecap="round"/>
+</svg>

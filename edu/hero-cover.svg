@@ -1,0 +1,38 @@
+<svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="네 단계 여정: QR 친구 맺기, AI 캐릭터, 자서전, 시화와 노래">
+  <circle cx="110" cy="110" r="90" fill="#CCFBF1"/>
+  <rect x="80" y="70" width="60" height="90" rx="10" fill="#fff" stroke="#0F766E" stroke-width="5"/>
+  <g fill="#0F766E">
+    <rect x="90" y="82" width="10" height="10"/>
+    <rect x="106" y="82" width="10" height="10"/>
+    <rect x="90" y="98" width="10" height="10"/>
+  </g>
+  <circle cx="145" cy="145" r="16" fill="#F2994A"/>
+
+  <path d="M215 110 h60" stroke="#94A3B8" stroke-width="5" stroke-dasharray="10 10"/>
+  <path d="M270 100 l15 10 l-15 10" fill="none" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="340" cy="110" r="90" fill="#E6E1F5"/>
+  <rect x="310" y="80" width="60" height="52" rx="14" fill="#fff" stroke="#5B4B8A" stroke-width="5"/>
+  <circle cx="325" cy="106" r="6" fill="#5B4B8A"/>
+  <circle cx="355" cy="106" r="6" fill="#5B4B8A"/>
+  <path d="M320 120 Q340 132 360 120" stroke="#5B4B8A" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M400 60 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4 z" fill="#F97316"/>
+
+  <path d="M445 110 h60" stroke="#94A3B8" stroke-width="5" stroke-dasharray="10 10"/>
+  <path d="M500 100 l15 10 l-15 10" fill="none" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="570" cy="110" r="90" fill="#FEF3C7"/>
+  <path d="M530 140 V95 Q555 84 578 95 V140 Q555 130 530 140 Z" fill="#fff" stroke="#B45309" stroke-width="5"/>
+  <path d="M628 140 V95 Q603 84 580 95 V140 Q603 130 628 140 Z" fill="#fff" stroke="#B45309" stroke-width="5"/>
+  <rect x="596" y="118" width="8" height="16" fill="#F2994A"/>
+  <rect x="608" y="110" width="8" height="24" fill="#F97316"/>
+
+  <path d="M675 110 h60" stroke="#94A3B8" stroke-width="5" stroke-dasharray="10 10"/>
+  <path d="M730 100 l15 10 l-15 10" fill="none" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="800" cy="110" r="90" fill="#FCE7F3"/>
+  <path d="M765 145 L800 110" stroke="#BE185D" stroke-width="10" stroke-linecap="round"/>
+  <path d="M797 82 L822 107 L810 119 Q798 108 793 101 Z" fill="#fff" stroke="#BE185D" stroke-width="4"/>
+  <circle cx="835" cy="140" r="10" fill="#BE185D"/>
+  <rect x="842" y="95" width="6" height="46" fill="#BE185D"/>
+</svg>

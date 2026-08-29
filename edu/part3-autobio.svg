@@ -1,0 +1,14 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="자서전 인포그래픽 아이콘">
+  <rect x="4" y="4" width="232" height="232" rx="40" fill="#FEF3C7"/>
+  <path d="M40 170 V90 Q80 74 118 90 V170 Q80 156 40 170 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="6"/>
+  <path d="M200 170 V90 Q160 74 122 90 V170 Q160 156 200 170 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="6"/>
+  <line x1="54" y1="108" x2="104" y2="102" stroke="#B45309" stroke-width="4" stroke-linecap="round"/>
+  <line x1="54" y1="124" x2="104" y2="118" stroke="#B45309" stroke-width="4" stroke-linecap="round"/>
+  <line x1="54" y1="140" x2="104" y2="134" stroke="#B45309" stroke-width="4" stroke-linecap="round"/>
+  <rect x="140" y="130" width="12" height="24" fill="#F2994A"/>
+  <rect x="158" y="118" width="12" height="36" fill="#F97316"/>
+  <rect x="176" y="106" width="12" height="48" fill="#B45309"/>
+  <rect x="108" y="28" width="24" height="40" rx="12" fill="#FFFFFF" stroke="#B45309" stroke-width="6"/>
+  <path d="M96 54 Q96 76 120 76 Q144 76 144 54" stroke="#B45309" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <line x1="120" y1="76" x2="120" y2="88" stroke="#B45309" stroke-width="6" stroke-linecap="round"/>
+</svg>

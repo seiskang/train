@@ -1,0 +1,11 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 캐릭터 생성 아이콘">
+  <rect x="4" y="4" width="232" height="232" rx="40" fill="#E6E1F5"/>
+  <rect x="68" y="70" width="104" height="90" rx="24" fill="#FFFFFF" stroke="#5B4B8A" stroke-width="6"/>
+  <line x1="120" y1="70" x2="120" y2="46" stroke="#5B4B8A" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="120" cy="38" r="9" fill="#F2994A"/>
+  <circle cx="98" cy="112" r="10" fill="#5B4B8A"/>
+  <circle cx="142" cy="112" r="10" fill="#5B4B8A"/>
+  <path d="M96 134 Q120 152 144 134" stroke="#5B4B8A" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M186 66 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6 z" fill="#F97316"/>
+  <path d="M52 150 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4 z" fill="#F2994A"/>
+</svg>

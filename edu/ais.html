@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디지털 자서전과 내 삶의 노래 만들기 | 시니어 AI 체험 교육</title>
+<meta name="description" content="시니어를 위한 4시간 AI 체험 교육 - QR 친구 맺기, AI 캐릭터, 자서전 인포그래픽, 시화와 노래 만들기">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFDF9;
+    --ground:#F3ECE0;
+    --ink:#2A2420;
+    --ink-soft:#5C5248;
+    --teal:#0F766E;      --teal-bg:#CCFBF1;
+    --purple:#5B4B8A;    --purple-bg:#E6E1F5;
+    --amber:#B45309;     --amber-bg:#FEF3C7;
+    --rose:#BE185D;      --rose-bg:#FCE7F3;
+    --line:#E7DFCF;
+    --shadow: 0 10px 30px rgba(60,45,20,0.12);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Noto Sans KR","Malgun Gothic",sans-serif;
+    line-height:1.75;
+    font-size:19px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .headfont{font-family:"Gowun Batang","Noto Sans KR",serif;}
+
+  /* 상단 안내 바 */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,253,249,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:10px 16px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    flex-wrap:wrap;
+  }
+  .topbar a{
+    font-size:15px; font-weight:700; text-decoration:none;
+    color:var(--ink); padding:8px 14px; border-radius:999px;
+    border:2px solid var(--line); background:#fff;
+    white-space:nowrap;
+  }
+  .topbar a:hover{border-color:var(--teal); color:var(--teal);}
+  .topbar button{
+    font-size:15px; font-weight:700; padding:8px 16px; border-radius:999px;
+    border:2px solid var(--ink); background:var(--ink); color:#fff; cursor:pointer;
+  }
+
+  .page{
+    width:210mm;
+    min-height:297mm;
+    max-width:94vw;
+    margin:28px auto;
+    padding:16mm 15mm;
+    background:var(--paper);
+    box-shadow:var(--shadow);
+    border-radius:10px;
+    position:relative;
+  }
+  .page + .page{ margin-top:36px; }
+
+  .badge-org{
+    display:inline-block; font-size:14px; font-weight:700; color:var(--ink-soft);
+    background:#fff; border:2px solid var(--line); border-radius:999px;
+    padding:6px 16px; margin-top:18px;
+  }
+
+  h1.title{
+    font-size:44px; margin:10px 0 6px; line-height:1.3;
+  }
+  h2.subtitle{
+    font-size:22px; font-weight:500; color:var(--ink-soft); margin:0 0 20px;
+  }
+  .hero-wrap{ margin:26px 0; text-align:center; }
+  .hero-wrap svg{ width:100%; max-width:720px; height:auto; }
+  .lead{ font-size:20px; color:var(--ink-soft); max-width:640px; }
+
+  table.schedule{
+    width:100%; border-collapse:collapse; margin-top:22px; font-size:17px;
+  }
+  table.schedule th, table.schedule td{
+    border:1px solid var(--line); padding:12px 14px; text-align:left;
+  }
+  table.schedule th{ background:#FBF4E4; font-weight:700; }
+  table.schedule tr:nth-child(even) td{ background:#FBF8F1; }
+
+  .prep-note{
+    margin-top:22px; padding:16px 18px; border-radius:12px;
+    background:#FBF4E4; border:1px dashed #D9C79A; font-size:17px;
+  }
+
+  /* 부(part) 페이지 */
+  .part-page{ border-top:10px solid var(--part-color, var(--teal)); }
+  .part-icon{ text-align:center; margin-bottom:8px; }
+  .part-icon svg{ width:150px; height:150px; }
+  .part-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:44px; height:44px; border-radius:50%;
+    background:var(--part-color, var(--teal)); color:#fff;
+    font-weight:900; font-size:20px; margin-right:12px; flex:none;
+  }
+  h1.part-title{
+    font-size:34px; text-align:center; margin:6px 0 4px;
+  }
+  .part-lead{
+    text-align:center; color:var(--ink-soft); font-size:19px;
+    max-width:620px; margin:0 auto 26px;
+  }
+  h3.section-h{
+    font-size:21px; margin:26px 0 14px; color:var(--part-color, var(--teal));
+  }
+  ol.steps{ list-style:none; margin:0; padding:0; counter-reset:step; }
+  ol.steps > li{
+    counter-increment: step;
+    display:flex; align-items:flex-start; gap:14px;
+    padding:14px 4px; border-bottom:1px dashed var(--line);
+  }
+  ol.steps > li:last-child{ border-bottom:none; }
+  ol.steps > li::before{
+    content: counter(step);
+    flex:none;
+    width:38px; height:38px; border-radius:50%;
+    background:var(--part-color, var(--teal)); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:18px; margin-top:2px;
+  }
+  ol.steps > li p{ margin:0; font-size:19px; }
+  ol.steps strong{ color:var(--part-color, var(--teal)); }
+
+  .tip{
+    margin-top:22px; padding:16px 20px; border-radius:12px;
+    border-left:8px solid var(--part-color, var(--teal));
+    background: color-mix(in srgb, var(--part-color, var(--teal)) 10%, #fff);
+    font-size:18px;
+  }
+  .tip b{ display:block; margin-bottom:4px; font-size:17px; color:var(--part-color, var(--teal)); }
+  .quote{
+    margin-top:20px; padding:18px 22px; border-radius:12px;
+    background:var(--ink); color:#fff; font-size:19px; font-style:normal;
+    text-align:center;
+  }
+
+  /* 워크시트 */
+  .worksheet-list{ list-style:none; padding:0; margin:20px 0; counter-reset:q; }
+  .worksheet-list li{
+    counter-increment:q; display:flex; gap:14px; align-items:flex-start;
+    padding:16px 6px; border-bottom:1px solid var(--line); font-size:19px;
+  }
+  .worksheet-list li::before{
+    content: counter(q); flex:none;
+    width:34px; height:34px; border-radius:8px;
+    background:var(--purple-bg); color:var(--purple); font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .answer-line{
+    display:block; margin-top:10px; border-bottom:2px solid var(--line); height:26px;
+  }
+
+  /* 체크리스트 */
+  .checklist{ list-style:none; padding:0; margin:22px 0; }
+  .checklist li{
+    display:flex; align-items:center; gap:14px; font-size:20px;
+    padding:14px 16px; margin-bottom:10px; border-radius:12px;
+    background:#FBF8F1; border:2px solid var(--line); cursor:pointer;
+  }
+  .checklist li.done{ background:var(--teal-bg); border-color:var(--teal); text-decoration:line-through; color:var(--ink-soft); }
+  .checklist input{ width:26px; height:26px; accent-color:var(--teal); flex:none; }
+
+  .final-note{
+    margin-top:26px; text-align:center; font-size:22px; font-weight:700; color:var(--teal);
+  }
+
+  footer.page-footer{
+    text-align:center; color:var(--ink-soft); font-size:14px; margin:40px 0 60px;
+  }
+
+  /* 강사 소개 */
+  .instructor-wrap{
+    display:flex; gap:32px; align-items:center; margin-top:20px; flex-wrap:wrap;
+  }
+  .instructor-photo{ flex:0 0 260px; text-align:center; }
+  .instructor-photo img{
+    width:100%; max-width:260px; border-radius:16px; box-shadow:var(--shadow);
+  }
+  .instructor-info{ flex:1 1 320px; min-width:260px; }
+  .instructor-info h3{ font-size:24px; margin:0 0 10px; color:var(--purple); }
+  .instructor-info p{ font-size:19px; margin:0 0 14px; }
+  .instructor-badges{ display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+  .instructor-badges span{
+    background:var(--purple-bg); color:var(--purple); font-weight:700; font-size:15px;
+    padding:6px 14px; border-radius:999px;
+  }
+
+  @media (max-width: 820px){
+    body{ font-size:17px; }
+    .page{ width:100%; max-width:100%; padding:8mm 6mm; border-radius:0; }
+    h1.title{ font-size:32px; }
+    h1.part-title{ font-size:27px; }
+  }
+
+  @media print{
+    body{ background:#fff; }
+    .topbar{ display:none; }
+    .page{ box-shadow:none; margin:0; border-radius:0; width:auto; max-width:none; page-break-after:always; }
+    a[href]:after{ content:""; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="#cover">표지</a>
+  <a href="#instructor">강사소개</a>
+  <a href="#part1">1부·QR친구</a>
+  <a href="#part2">2부·AI캐릭터</a>
+  <a href="#part3">3부·자서전</a>
+  <a href="#part4">4부·시화·노래</a>
+  <a href="#worksheet">워크시트</a>
+  <a href="#checklist">완성목록</a>
+  <button onclick="window.print()">🖨 인쇄하기</button>
+</div>
+
+<!-- 표지 -->
+<section class="page" id="cover">
+  <h1 class="title headfont">디지털 자서전과<br>내 삶의 노래 만들기</h1>
+  <h2 class="subtitle">시니어를 위한 AI 체험 교육 · 4시간 과정</h2>
+
+  <div class="hero-wrap">
+    <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="네 단계 여정: QR 친구 맺기, AI 캐릭터, 자서전, 시화와 노래">
+      <circle cx="110" cy="110" r="90" fill="#CCFBF1"/>
+      <rect x="80" y="70" width="60" height="90" rx="10" fill="#fff" stroke="#0F766E" stroke-width="5"/>
+      <g fill="#0F766E">
+        <rect x="90" y="82" width="10" height="10"/>
+        <rect x="106" y="82" width="10" height="10"/>
+        <rect x="90" y="98" width="10" height="10"/>
+      </g>
+      <circle cx="145" cy="145" r="16" fill="#F2994A"/>
+      <path d="M215 110 h60" stroke="#94A3B8" stroke-width="5" stroke-dasharray="10 10"/>
+      <path d="M270 100 l15 10 l-15 10" fill="none" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="340" cy="110" r="90" fill="#E6E1F5"/>
+      <rect x="310" y="80" width="60" height="52" rx="14" fill="#fff" stroke="#5B4B8A" stroke-width="5"/>
+      <circle cx="325" cy="106" r="6" fill="#5B4B8A"/>
+      <circle cx="355" cy="106" r="6" fill="#5B4B8A"/>
+      <path d="M320 120 Q340 132 360 120" stroke="#5B4B8A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M400 60 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4 z" fill="#F97316"/>
+      <path d="M445 110 h60" stroke="#94A3B8" stroke-width="5" stroke-dasharray="10 10"/>
+      <path d="M500 100 l15 10 l-15 10" fill="none" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="570" cy="110" r="90" fill="#FEF3C7"/>
+      <path d="M530 140 V95 Q555 84 578 95 V140 Q555 130 530 140 Z" fill="#fff" stroke="#B45309" stroke-width="5"/>
+      <path d="M628 140 V95 Q603 84 580 95 V140 Q603 130 628 140 Z" fill="#fff" stroke="#B45309" stroke-width="5"/>
+      <rect x="596" y="118" width="8" height="16" fill="#F2994A"/>
+      <rect x="608" y="110" width="8" height="24" fill="#F97316"/>
+      <path d="M675 110 h60" stroke="#94A3B8" stroke-width="5" stroke-dasharray="10 10"/>
+      <path d="M730 100 l15 10 l-15 10" fill="none" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="800" cy="110" r="90" fill="#FCE7F3"/>
+      <path d="M765 145 L800 110" stroke="#BE185D" stroke-width="10" stroke-linecap="round"/>
+      <path d="M797 82 L822 107 L810 119 Q798 108 793 101 Z" fill="#fff" stroke="#BE185D" stroke-width="4"/>
+      <circle cx="835" cy="140" r="10" fill="#BE185D"/>
+      <rect x="842" y="95" width="6" height="46" fill="#BE185D"/>
+    </svg>
+  </div>
+
+  <p class="lead">스마트폰 하나로 친구를 만들고, AI와 대화하고, 내 인생 이야기를 책으로 만들고, 마지막엔 노래까지 완성합니다. 오늘 하루, 네 가지 놀라운 경험을 함께해요.</p>
+
+  <div><span class="badge-org">강사 · 세이스강(SEISKANG) 이윤재</span></div>
+
+  <h3 class="section-h" style="margin-top:36px;">오늘 하루의 여정</h3>
+  <table class="schedule">
+    <tr><th>시간</th><th>활동</th><th>내가 얻는 것</th></tr>
+    <tr><td>1교시 (40분)</td><td>스마트폰 QR 친구 맺기</td><td>새로운 디지털 친구</td></tr>
+    <tr><td>2교시 (40분)</td><td>AI 캐릭터 만들기</td><td>나만의 캐릭터 그림</td></tr>
+    <tr><td>3교시 (60분)</td><td>말로 쓰는 자서전</td><td>인포그래픽 자서전 1장</td></tr>
+    <tr><td>4교시 (60분)</td><td>시화와 노래 만들기</td><td>나만의 시화 + 인생 노래</td></tr>
+  </table>
+
+  <div class="prep-note"><b>준비물</b>: 스마트폰(카카오톡 설치), 편한 마음. 나머지는 강사님이 다 준비해 두었어요!</div>
+</section>
+
+<!-- 강사 소개 -->
+<section class="page" id="instructor" style="--part-color:#5B4B8A;">
+  <h1 class="part-title headfont">강사 소개</h1>
+  <p class="part-lead">오늘 하루, 이 선생님과 함께 디지털 자서전 여정을 시작합니다.</p>
+
+  <div class="instructor-wrap">
+    <div class="instructor-photo">
+      <img src="images/instructor.jpg" alt="이윤재 강사 프로필">
+    </div>
+    <div class="instructor-info">
+      <h3>이윤재 강사</h3>
+      <p>스마트폰·생성형 AI 활용 전문 강사로, 전국 강의경연대회 국무총리상과 보건복지부·노동부장관 표창을 받은 스마트한 강사입니다. 오늘 하루 여러분의 인생 이야기가 캐릭터·자서전·시화·노래로 완성되도록 처음부터 끝까지 함께합니다.</p>
+      <div class="instructor-badges">
+        <span>한국음악시협회장</span>
+        <span>한국반부패청렴정책연구원장</span>
+        <span>전) 전라남도 도민감사관</span>
+        <span>스마트폰·생성형 AI 전문강사</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 1부 -->
+<section class="page part-page" id="part1" style="--part-color:#0F766E;">
+  <div class="part-icon">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="스마트폰 QR 친구 맺기 아이콘">
+      <rect x="4" y="4" width="232" height="232" rx="40" fill="#CCFBF1"/>
+      <rect x="78" y="46" width="84" height="150" rx="16" fill="#FFFFFF" stroke="#0F766E" stroke-width="6"/>
+      <g fill="#0F766E">
+        <rect x="94" y="64" width="14" height="14"/><rect x="116" y="64" width="14" height="14"/><rect x="138" y="64" width="14" height="14"/>
+        <rect x="94" y="86" width="14" height="14"/><rect x="138" y="86" width="14" height="14"/>
+        <rect x="94" y="108" width="14" height="14"/><rect x="116" y="108" width="14" height="14"/><rect x="138" y="108" width="14" height="14"/>
+        <rect x="116" y="130" width="14" height="14"/>
+      </g>
+      <circle cx="120" cy="176" r="6" fill="#0F766E"/>
+      <circle cx="176" cy="176" r="22" fill="#F2994A"/>
+      <circle cx="196" cy="176" r="22" fill="#F97316" opacity="0.85"/>
+    </svg>
+  </div>
+  <h1 class="part-title headfont">1부. 스마트폰 QR 친구 맺기</h1>
+  <p class="part-lead">전화번호를 몰라도 괜찮아요. 스마트폰 화면에 뜨는 네모난 무늬(QR코드)만 보여주면 순식간에 친구가 됩니다.</p>
+
+  <h3 class="section-h">함께 따라 해요</h3>
+  <ol class="steps">
+    <li><p><strong>짝과 스마트폰을 바꿔 들어요.</strong> 서로의 폰을 잠시 맡깁니다.</p></li>
+    <li><p><strong>짝의 사진을 3장 찍어요.</strong> 정면 1장, 옆모습 2장을 찍고 폰을 돌려줍니다.</p></li>
+    <li><p><strong>나만의 QR코드를 꺼내요.</strong> 카카오톡 → 친구 → 설정(톱니바퀴) → 전체설정 → 관리 → 내 프로필 QR → 다운로드를 누릅니다.</p></li>
+    <li><p><strong>QR코드를 안전하게 손봐요.</strong> 갤러리에서 QR코드 사진을 찾아 편집 → 날짜를 아주 먼 미래로 바꾸고, 위치정보가 없는지 확인한 뒤 저장합니다.</p></li>
+    <li><p><strong>가위바위보로 순서를 정해요.</strong> 이긴 사람이 카메라로 진 사람의 QR코드를 비춰 스캔합니다. 나오는 화면에서 인사말을 남기고, 역할을 바꿔 한 번 더 합니다.</p></li>
+  </ol>
+
+  <div class="tip"><b>꿀팁</b>QR코드는 "네모난 무늬 명함"이라고 생각하면 쉬워요. 스캔이 잘 안 되면 카카오톡의 'QR 스캔' 메뉴를 사용해보세요.</div>
+  <div class="quote">"이제는 전화번호와 이름을 주고받지 않아도,<br>QR코드 하나면 순식간에 친구가 되는 시대입니다."</div>
+</section>
+
+<!-- 2부 -->
+<section class="page part-page" id="part2" style="--part-color:#5B4B8A;">
+  <div class="part-icon">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 캐릭터 생성 아이콘">
+      <rect x="4" y="4" width="232" height="232" rx="40" fill="#E6E1F5"/>
+      <rect x="68" y="70" width="104" height="90" rx="24" fill="#FFFFFF" stroke="#5B4B8A" stroke-width="6"/>
+      <line x1="120" y1="70" x2="120" y2="46" stroke="#5B4B8A" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="120" cy="38" r="9" fill="#F2994A"/>
+      <circle cx="98" cy="112" r="10" fill="#5B4B8A"/>
+      <circle cx="142" cy="112" r="10" fill="#5B4B8A"/>
+      <path d="M96 134 Q120 152 144 134" stroke="#5B4B8A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M186 66 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6 z" fill="#F97316"/>
+      <path d="M52 150 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4 z" fill="#F2994A"/>
+    </svg>
+  </div>
+  <h1 class="part-title headfont">2부. AI 캐릭터 만들기</h1>
+  <p class="part-lead">방금 찍은 사진을 AI에게 보여주면, 나를 닮은 그림 캐릭터를 뚝딱 그려줍니다. 마음에 들 때까지 몇 번이고 다시 부탁할 수 있어요.</p>
+
+  <h3 class="section-h">함께 따라 해요</h3>
+  <ol class="steps">
+    <li><p><strong>제미나이 앱을 열어요.</strong></p></li>
+    <li><p><strong>사진 3장을 올려요.</strong> 채팅창의 '+' → 이미지 만들기 → '+' → 사진 및 파일 추가에서 1부에서 찍은 사진을 고릅니다.</p></li>
+    <li><p><strong>"캐릭터 만들어줘"라고 말해요.</strong> 입력하고 전송을 누르면 AI가 그림을 그려줍니다.</p></li>
+    <li><p><strong>마음에 들 때까지 다듬어요.</strong> "웃는 표정으로 바꿔줘", "안경을 씌워줘"처럼 원하는 대로 이야기하면 됩니다.</p></li>
+    <li><p><strong>캐리커처에도 도전해요.</strong> 마음에 들면 "캐리커처 만들어줘"라고 요청해 재미있는 그림도 만들어봅니다.</p></li>
+    <li><p><strong>완성된 그림은 다운로드해서 저장해요.</strong></p></li>
+  </ol>
+
+  <div class="tip"><b>꿀팁</b>AI에게 부탁할 때는 자세하게 설명할수록 좋아요. "웃는 표정으로", "정장을 입은 모습으로"처럼 구체적으로 말해보세요.</div>
+</section>
+
+<!-- 3부 -->
+<section class="page part-page" id="part3" style="--part-color:#B45309;">
+  <div class="part-icon">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="자서전 인포그래픽 아이콘">
+      <rect x="4" y="4" width="232" height="232" rx="40" fill="#FEF3C7"/>
+      <path d="M40 170 V90 Q80 74 118 90 V170 Q80 156 40 170 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="6"/>
+      <path d="M200 170 V90 Q160 74 122 90 V170 Q160 156 200 170 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="6"/>
+      <line x1="54" y1="108" x2="104" y2="102" stroke="#B45309" stroke-width="4" stroke-linecap="round"/>
+      <line x1="54" y1="124" x2="104" y2="118" stroke="#B45309" stroke-width="4" stroke-linecap="round"/>
+      <line x1="54" y1="140" x2="104" y2="134" stroke="#B45309" stroke-width="4" stroke-linecap="round"/>
+      <rect x="140" y="130" width="12" height="24" fill="#F2994A"/>
+      <rect x="158" y="118" width="12" height="36" fill="#F97316"/>
+      <rect x="176" y="106" width="12" height="48" fill="#B45309"/>
+      <rect x="108" y="28" width="24" height="40" rx="12" fill="#FFFFFF" stroke="#B45309" stroke-width="6"/>
+      <path d="M96 54 Q96 76 120 76 Q144 76 144 54" stroke="#B45309" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <line x1="120" y1="76" x2="120" y2="88" stroke="#B45309" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1 class="part-title headfont">3부. 말로 쓰는 자서전</h1>
+  <p class="part-lead">손으로 쓰지 않고 목소리로만 이야기해도 AI가 멋진 자서전 한 편을 완성해줍니다. 그 다음, 한눈에 보기 좋은 그림 요약본(인포그래픽)까지 만들어봅니다.</p>
+
+  <h3 class="section-h">함께 따라 해요</h3>
+  <ol class="steps">
+    <li><p><strong>음성녹음 앱을 열고 마이크를 눌러요.</strong></p></li>
+    <li><p><strong>워크시트(뒷장 참고)의 질문을 하나씩 소리 내어 읽고 답해요.</strong> 다 이야기했으면 녹음을 멈춥니다.</p></li>
+    <li><p><strong>녹음 파일을 AI에게 보내요.</strong> 파일을 길게 눌러 공유 → 음성 및 텍스트 파일 → 챗GPT 또는 제미나이를 선택합니다.</p></li>
+    <li><p><strong>"내 인생 자서전을 작성해줘"라고 부탁해요.</strong></p></li>
+    <li><p><strong>완성된 글을 함께 읽고 고쳐요.</strong> 빠진 이야기나 바꾸고 싶은 부분을 말해서 다시 써 달라고 합니다.</p></li>
+    <li><p><strong>인포그래픽으로 완성해요.</strong> "A4 1매, 세로로 인포그래픽 자서전으로 만들어줘"라고 요청하고, 한글이 깨진 곳은 없는지 확인합니다.</p></li>
+  </ol>
+
+  <div class="tip"><b>꿀팁</b>마이크에 입을 가까이 대고 또박또박 말하면 더 정확하게 기록됩니다. 글자가 뭉개지면 "글자를 더 크고 선명하게 그려줘"라고 다시 요청하세요.</div>
+</section>
+
+<!-- 4부 -->
+<section class="page part-page" id="part4" style="--part-color:#BE185D;">
+  <div class="part-icon">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="시화와 노래 만들기 아이콘">
+      <rect x="4" y="4" width="232" height="232" rx="40" fill="#FCE7F3"/>
+      <path d="M70 170 L130 110" stroke="#BE185D" stroke-width="14" stroke-linecap="round"/>
+      <path d="M126 66 L170 110 L150 130 Q136 116 126 106 Z" fill="#FFFFFF" stroke="#BE185D" stroke-width="6"/>
+      <circle cx="62" cy="178" r="12" fill="#F2994A"/>
+      <circle cx="176" cy="176" r="16" fill="#BE185D"/>
+      <rect x="188" y="100" width="8" height="80" fill="#BE185D"/>
+      <path d="M196 100 Q220 108 214 130" stroke="#BE185D" stroke-width="8" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1 class="part-title headfont">4부. 시화와 노래 만들기</h1>
+  <p class="part-lead">내 자서전이 한 편의 시가 되고, 그 시가 아름다운 그림(시화)이 되고, 마지막엔 트로트 노래로 완성됩니다. 오늘의 하이라이트예요!</p>
+
+  <h3 class="section-h">함께 따라 해요</h3>
+  <ol class="steps">
+    <li><p><strong>자서전으로 시를 지어요.</strong> "이 자서전 인포그래픽으로 서사적인 시를 작성해줘"라고 요청하고 완성된 시를 읽어봅니다.</p></li>
+    <li><p><strong>수채화 그림으로 꾸며요.</strong> "수채화풍 붓체로 시화를 생성해줘, 제목은 크게"라고 요청합니다.</p></li>
+    <li><p><strong>노래 가사를 뽑아요.</strong> "이 시를 수노를 이용해 트로트로 노래를 만들 거야. 가사와 스타일을 코드블록으로 작성해줘"라고 요청합니다.</p></li>
+    <li><p><strong>수노 앱을 열어요.</strong> 가사와 스타일을 붙여넣고, 제목을 정합니다. [Intro]와 [Outro]가 있는지 확인하고, 좋아하는 가수가 있으면 스타일에 추가로 적어줍니다.</p></li>
+    <li><p><strong>'만들기'를 눌러 완성곡을 감상해요.</strong> 마음에 드는 곡을 선택해서 저장(다운로드)합니다.</p></li>
+    <li><p><strong>오늘의 결과물을 마무리해요.</strong> 시화는 FHD 크기로 저장하고, 완성한 노래는 벨소리로 등록해봅니다.</p></li>
+  </ol>
+
+  <div class="tip"><b>꿀팁</b>[Intro]는 "마음의 준비를 하는 시간", [Outro]는 "여운을 남기는 시간"이라고 생각하면 이해가 쉬워요. 벨소리를 등록했다면 서로에게 전화를 걸어 확인해보세요!</div>
+</section>
+
+<!-- 워크시트 -->
+<section class="page" id="worksheet" style="--part-color:#5B4B8A;">
+  <h1 class="part-title headfont">워크시트: 나의 인생 자서전 가이드</h1>
+  <p class="part-lead">아래 질문을 하나씩 소리 내어 읽고 답해보세요.</p>
+
+  <ul class="worksheet-list">
+    <li>나의 어린 시절은 어땠나요? 태어난 곳, 가족, 기억에 남는 일을 이야기해주세요.<span class="answer-line"></span></li>
+    <li>학창 시절과 청년기에는 어떤 꿈을 꾸었고, 어떤 도전과 우정이 있었나요?<span class="answer-line"></span></li>
+    <li>결혼과 가족 이야기를 들려주세요. 특별한 기억이 있나요?<span class="answer-line"></span></li>
+    <li>평생 해온 일은 무엇이었고, 그 일에서 무엇을 배웠나요?<span class="answer-line"></span></li>
+    <li>살면서 가장 자랑스러웠던 순간은 언제였나요?<span class="answer-line"></span></li>
+    <li>가장 힘들었던 시기는 언제였고, 어떻게 이겨냈나요?<span class="answer-line"></span></li>
+    <li>지금의 삶에서 감사한 것은 무엇인가요?<span class="answer-line"></span></li>
+    <li>자녀와 후손들에게 남기고 싶은 말이 있다면 무엇인가요?<span class="answer-line"></span></li>
+    <li>앞으로 이루고 싶은 소망이나 하고 싶은 일이 있나요?<span class="answer-line"></span></li>
+  </ul>
+</section>
+
+<!-- 완성 목록 -->
+<section class="page" id="checklist" style="--part-color:#0F766E;">
+  <h1 class="part-title headfont">오늘의 완성 목록</h1>
+  <p class="part-lead">체크박스를 눌러 오늘 완성한 것을 표시해보세요.</p>
+
+  <ul class="checklist" id="checklist-items">
+    <li data-key="c1"><input type="checkbox"><span>QR코드로 새로운 친구 만들기</span></li>
+    <li data-key="c2"><input type="checkbox"><span>나만의 AI 캐릭터 저장하기</span></li>
+    <li data-key="c3"><input type="checkbox"><span>인포그래픽 자서전 완성하기</span></li>
+    <li data-key="c4"><input type="checkbox"><span>시화와 인생 노래 완성해서 벨소리로 등록하기</span></li>
+  </ul>
+
+  <p class="final-note">수고하셨습니다! 오늘 만든 이야기와 노래는<br>평생 간직할 나만의 보물입니다.</p>
+</section>
+
+<footer class="page-footer">디지털 자서전과 내 삶의 노래 만들기 · 강사 세이스강(SEISKANG) 이윤재</footer>
+
+<script>
+(function(){
+  var items = document.querySelectorAll('#checklist-items li');
+  items.forEach(function(li){
+    var key = 'ais-check-' + li.dataset.key;
+    var box = li.querySelector('input');
+    try{
+      if(localStorage.getItem(key) === '1'){ box.checked = true; li.classList.add('done'); }
+    }catch(e){}
+    function toggle(){
+      box.checked = !box.checked;
+      li.classList.toggle('done', box.checked);
+      try{ localStorage.setItem(key, box.checked ? '1' : '0'); }catch(e){}
+    }
+    li.addEventListener('click', function(e){
+      if(e.target !== box){ toggle(); }
+    });
+    box.addEventListener('change', function(){
+      li.classList.toggle('done', box.checked);
+      try{ localStorage.setItem(key, box.checked ? '1' : '0'); }catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>
