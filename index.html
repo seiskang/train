@@ -397,7 +397,7 @@ button { font-family: var(--font-sans); }
   .agenda-row { grid-template-columns: auto 8px 1fr; }
   .agenda-row .agenda-session { display: none; }
 }
-</style>
+.btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:64px;padding:0 var(--space-10);border-radius:var(--radius-pill);font:var(--weight-extrabold) var(--text-xl)/1 var(--font-sans);color:#fff;background:linear-gradient(135deg,var(--seal),#e0503a);text-decoration:none;cursor:pointer;border:none;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);animation:btn-cta-pulse 2.2s ease-in-out infinite;transition:transform 0.2s ease;}.btn-cta:hover{transform:translateY(-2px) scale(1.03);}.btn-cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);transform:skewX(-20deg);animation:btn-cta-shine 2.6s ease-in-out infinite;}@keyframes btn-cta-pulse{0%,100%{box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);}50%{box-shadow:0 0 0 16px rgba(179,64,44,0),var(--shadow-lg);}}@keyframes btn-cta-shine{0%{left:-60%;}55%{left:130%;}100%{left:130%;}}@media (prefers-reduced-motion: reduce){.btn-cta{animation:none;}.btn-cta::after{animation:none;display:none;}}</style>
 </head>
 <body>
 
@@ -1429,7 +1429,7 @@ button { font-family: var(--font-sans); }
       '<a href="#auth-form-anchor" class="btn-hero ghost">이미 계정이 있어요</a>' +
       '</div></div></section>' +
 
-      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-hero" style="background:var(--seal);font-size:var(--text-md);height:52px;padding:0 var(--space-8);box-shadow:var(--shadow-md)">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
+      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-cta">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
       '<div class="enroll-steps">' +
       '<div class="enroll-step"><span class="num">1</span><div><div class="title">회원가입 후 로그인</div><div class="desc">아래에서 회원가입하시면 바로 이용하실 수 있습니다.</div></div></div>' +
       '<div class="enroll-step"><span class="num">2</span><div><div class="title">레벨 테스트 상담</div><div class="desc">한국어 실력에 맞는 수업을 위해 먼저 상담을 진행합니다.</div></div></div>' +
