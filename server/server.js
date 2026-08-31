@@ -634,7 +634,7 @@ app.get("/api/dictionary/krdict", async (req, res) => {
   if (!q) return res.status(400).json({ error: "검색어를 입력해주세요." });
   if (!KRDICT_API_KEY) return res.status(503).json({ error: "사전 서비스가 아직 설정되지 않았습니다." });
   try {
-    const url = "https://krdict.korean.go.kr/api/search?" + new URLSearchParams({ key: KRDICT_API_KEY, q, num: "5" });
+    const url = "https://krdict.korean.go.kr/api/search?" + new URLSearchParams({ key: KRDICT_API_KEY, q, num: "10" });
     const apiRes = await fetch(url);
     const xml = await apiRes.text();
     if (/<error_code>/.test(xml)) {
@@ -661,7 +661,7 @@ app.get("/api/dictionary/stdict", async (req, res) => {
   if (!q) return res.status(400).json({ error: "검색어를 입력해주세요." });
   if (!STDICT_API_KEY) return res.status(503).json({ error: "사전 서비스가 아직 설정되지 않았습니다." });
   try {
-    const url = "https://stdict.korean.go.kr/api/search.do?" + new URLSearchParams({ key: STDICT_API_KEY, q, req_type: "json", num: "5" });
+    const url = "https://stdict.korean.go.kr/api/search.do?" + new URLSearchParams({ key: STDICT_API_KEY, q, req_type: "json", num: "10" });
     const apiRes = await fetch(url);
     const data = await apiRes.json();
     if (data.error) return res.status(502).json({ error: data.error.message || "사전 조회에 실패했습니다." });
