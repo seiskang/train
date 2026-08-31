@@ -493,6 +493,7 @@ button { font-family: var(--font-sans); }
     adminStudents: [], adminStudentsLoaded: false, selectedStudentId: null,
     assignmentEditId: null, assignmentEditTitle: "",
     adminUsers: [], adminUsersLoaded: false,
+    adminComments: [], adminCommentsLoaded: false,
     studentEmailEditId: null, studentEmailEditValue: ""
   };
   var pendingRequest = null;
@@ -524,6 +525,7 @@ button { font-family: var(--font-sans); }
     if (view === "settings" && state.auth && state.auth.role === "admin") {
       if (!state.adminStudentsLoaded) loadAdminStudents();
       if (!state.adminUsersLoaded) loadAdminUsers();
+      if (!state.adminCommentsLoaded) loadAdminComments();
     }
   }
 
@@ -705,6 +707,35 @@ button { font-family: var(--font-sans); }
         setState({ adminUsersLoaded: true, adminUsers: r.data.users });
       })
       .catch(function () { setState({ adminUsersLoaded: true }); });
+  }
+
+  function loadAdminComments() {
+    var pages = ["ai", "aiu", "ais"];
+    Promise.all(pages.map(function (p) {
+      return fetch("/api/comments?page=" + encodeURIComponent(p))
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data, page: p }; }); })
+        .catch(function () { return { ok: false, data: null, page: p }; });
+    })).then(function (results) {
+      var all = [];
+      results.forEach(function (r) {
+        if (r.ok && r.data && r.data.comments) {
+          r.data.comments.forEach(function (c) { all.push(Object.assign({ page: r.page }, c)); });
+        }
+      });
+      all.sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+      setState({ adminCommentsLoaded: true, adminComments: all });
+    });
+  }
+
+  function deleteCommentById(id) {
+    fetch("/api/admin/comments/" + id, { method: "DELETE" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({ adminComments: state.adminComments.filter(function (c) { return c.id !== id; }) });
+        fire("삭제 완료", "댓글이 삭제되었습니다.", "success");
+      })
+      .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
   }
 
   function startEditStudentEmail(id, currentEmail) {
@@ -1328,6 +1359,24 @@ button { font-family: var(--font-sans); }
       '</div>';
   }
 
+  function renderCommentModerationPanel() {
+    var comments = state.adminComments;
+    var pageLabel = { ai: "ai.html", aiu: "aiu.html", ais: "ais.html" };
+    return '<div class="card">' +
+      '<div class="card-head"><span class="title">댓글 관리</span><span class="note">' + comments.length + '개</span></div>' +
+      (!comments.length ? '<div style="padding:var(--space-6);color:var(--text-muted)">' + (state.adminCommentsLoaded ? "등록된 댓글이 없습니다." : "불러오는 중…") + '</div>' :
+        comments.map(function (c) {
+          return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+            '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">' +
+            '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(c.name) + '<span style="font-weight:400;color:var(--text-muted)"> · ' + esc(pageLabel[c.page] || c.page) + '</span></span>' +
+            '<span style="font-size:var(--text-xs);color:var(--text-muted);white-space:pre-wrap">' + esc(c.content) + '</span>' +
+            '</span>' +
+            '<button class="btn btn-ghost" type="button" data-del-comment="' + esc(c.id) + '" style="flex:none">삭제</button>' +
+            '</div>';
+        }).join("")) +
+      '</div>';
+  }
+
   function renderSettings() {
     var isAdmin = state.auth && state.auth.role === "admin";
     if (!isAdmin) {
@@ -1342,7 +1391,8 @@ button { font-family: var(--font-sans); }
       '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Settings</span>' +
       '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">설정</h1></div>' +
       renderStudentEmailPanel() +
-      renderMemberListPanel();
+      renderMemberListPanel() +
+      renderCommentModerationPanel();
   }
 
   function modalMap(st) {
@@ -1892,6 +1942,9 @@ button { font-family: var(--font-sans); }
     });
     root.querySelectorAll("[data-cancel-student-email]").forEach(function (el) {
       el.addEventListener("click", cancelEditStudentEmail);
+    });
+    root.querySelectorAll("[data-del-comment]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteCommentById(parseInt(el.getAttribute("data-del-comment"), 10)); });
     });
     root.querySelectorAll("[data-close-toast]").forEach(function (el) {
       el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
