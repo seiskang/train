@@ -626,6 +626,40 @@ app.post("/api/invoices/:id/confirm", requireAdmin, async (req, res) => {
   }
 });
 
+const COMMENT_NAME_MAX = 30;
+const COMMENT_CONTENT_MAX = 500;
+
+app.get("/api/comments", async (req, res) => {
+  const page = (req.query.page || "").trim();
+  if (!page) return res.status(400).json({ error: "page 파라미터가 필요합니다." });
+  try {
+    const comments = await db.listComments(page);
+    res.json({ comments });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.post("/api/comments", async (req, res) => {
+  try {
+    const { page, name, content } = req.body || {};
+    const p = (page || "").trim();
+    const n = (name || "").trim();
+    const c = (content || "").trim();
+    if (!p) return res.status(400).json({ error: "page가 필요합니다." });
+    if (!n) return res.status(400).json({ error: "이름을 입력해주세요." });
+    if (!c) return res.status(400).json({ error: "댓글 내용을 입력해주세요." });
+    if (n.length > COMMENT_NAME_MAX) return res.status(400).json({ error: `이름은 ${COMMENT_NAME_MAX}자 이내로 입력해주세요.` });
+    if (c.length > COMMENT_CONTENT_MAX) return res.status(400).json({ error: `댓글은 ${COMMENT_CONTENT_MAX}자 이내로 입력해주세요.` });
+    const comment = await db.createComment({ page: p, name: n, content: c });
+    res.status(201).json({ comment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 const KRDICT_API_KEY = process.env.KRDICT_API_KEY;
 const STDICT_API_KEY = process.env.STDICT_API_KEY;
 
