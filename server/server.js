@@ -626,6 +626,53 @@ app.post("/api/invoices/:id/confirm", requireAdmin, async (req, res) => {
   }
 });
 
+const KRDICT_API_KEY = process.env.KRDICT_API_KEY;
+const STDICT_API_KEY = process.env.STDICT_API_KEY;
+
+app.get("/api/dictionary/krdict", async (req, res) => {
+  const q = (req.query.q || "").trim();
+  if (!q) return res.status(400).json({ error: "검색어를 입력해주세요." });
+  if (!KRDICT_API_KEY) return res.status(503).json({ error: "사전 서비스가 아직 설정되지 않았습니다." });
+  try {
+    const url = "https://krdict.korean.go.kr/api/search?" + new URLSearchParams({ key: KRDICT_API_KEY, q, num: "5" });
+    const apiRes = await fetch(url);
+    const xml = await apiRes.text();
+    if (/<error_code>/.test(xml)) {
+      const msg = (xml.match(/<message>([^<]*)<\/message>/) || [])[1] || "사전 조회에 실패했습니다.";
+      return res.status(502).json({ error: msg });
+    }
+    const items = [];
+    const blocks = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
+    for (const block of blocks) {
+      const word = (block.match(/<word>([^<]*)<\/word>/) || [])[1] || "";
+      const grade = (block.match(/<word_grade>([^<]*)<\/word_grade>/) || [])[1] || "";
+      const defs = [...block.matchAll(/<definition>([^<]*)<\/definition>/g)].map((m) => m[1]);
+      items.push({ word, grade, definitions: defs });
+    }
+    res.json({ items });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.get("/api/dictionary/stdict", async (req, res) => {
+  const q = (req.query.q || "").trim();
+  if (!q) return res.status(400).json({ error: "검색어를 입력해주세요." });
+  if (!STDICT_API_KEY) return res.status(503).json({ error: "사전 서비스가 아직 설정되지 않았습니다." });
+  try {
+    const url = "https://stdict.korean.go.kr/api/search.do?" + new URLSearchParams({ key: STDICT_API_KEY, q, req_type: "json", num: "5" });
+    const apiRes = await fetch(url);
+    const data = await apiRes.json();
+    if (data.error) return res.status(502).json({ error: data.error.message || "사전 조회에 실패했습니다." });
+    const rawItems = data.channel && data.channel.item ? (Array.isArray(data.channel.item) ? data.channel.item : [data.channel.item]) : [];
+    const items = rawItems.map((it) => ({ word: it.word, definition: it.sense ? it.sense.definition : "" }));
+    res.json({ items });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
 module.exports = app;
 
 if (require.main === module) {
