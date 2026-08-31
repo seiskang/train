@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자서전 워크북 (전체 10장)</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    color: #1F2937;
+    background-color: #F3F4F6;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  .header {
+    text-align: center;
+    background-color: #EEF2FF;
+    border: 2px solid #C7D2FE;
+    border-radius: 10px;
+    padding: 22px 20px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 4px 0;
+    font-size: 26px;
+    color: #1E1B4B;
+    font-weight: 900;
+  }
+  .header p {
+    margin: 0;
+    font-size: 15px;
+    color: #4338CA;
+    font-weight: 600;
+  }
+  .user-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    background-color: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .intro-box {
+    background-color: #FFFBEB;
+    border-left: 5px solid #F59E0B;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 14.5px;
+    color: #92400E;
+    margin-bottom: 25px;
+  }
+  .intro-box p {
+    margin: 0 0 8px 0;
+  }
+  .intro-box p:last-child {
+    margin-bottom: 0;
+  }
+  .toc {
+    background-color: #F9FAFB;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 25px;
+    font-size: 14px;
+    color: #4B5563;
+  }
+  .toc strong {
+    display: block;
+    color: #1E1B4B;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  .toc ol {
+    columns: 2;
+    -webkit-columns: 2;
+    padding-left: 18px;
+    margin: 0;
+  }
+  .toc li {
+    break-inside: avoid;
+    margin-bottom: 3px;
+  }
+  .part-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: #1E1B4B;
+    background-color: #F3F4F6;
+    border-left: 6px solid #4F46E5;
+    padding: 9px 14px;
+    border-radius: 4px;
+    margin: 28px 0 6px 0;
+    page-break-after: avoid;
+  }
+  .part-sub {
+    font-size: 14px;
+    color: #6B7280;
+    font-style: italic;
+    margin: 0 0 16px 4px;
+  }
+  .question-card {
+    border: 1.5px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 15px 16px;
+    margin-bottom: 14px;
+    background-color: #FFFFFF;
+    page-break-inside: avoid;
+  }
+  .question-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .question-hint {
+    font-size: 13.5px;
+    color: #9CA3AF;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .answer-lines {
+    min-height: 60px;
+    background-image: linear-gradient(to bottom, transparent 33px, #E2E8F0 34px);
+    background-size: 100% 34px;
+  }
+  .answer-lines.tall {
+    min-height: 140px;
+  }
+  .special-box {
+    background-color: #FAFAFF;
+    border: 2px solid #C7D2FE;
+    border-radius: 10px;
+    padding: 22px;
+    text-align: center;
+    margin-top: 8px;
+    page-break-inside: avoid;
+  }
+  .special-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #3730A3;
+    margin-bottom: 12px;
+  }
+  .epitaph {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1E1B4B;
+    margin: 16px 0;
+  }
+  .epitaph-line {
+    border-bottom: 2px solid #C7D2FE;
+    display: inline-block;
+    min-width: 320px;
+    max-width: 100%;
+  }
+  .back-link {
+    text-align: center;
+    margin-top: 26px;
+  }
+  .back-link a {
+    color: #4F46E5;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 14.5px;
+  }
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+  @media print {
+    body { background: #FFF; padding: 0; }
+    .page { border: none; box-shadow: none; padding: 10px; }
+    .back-link { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <h1>📖 자서전 워크북</h1>
+    <p>My Autobiography Workbook</p>
+  </div>
+
+  <div class="user-info">
+    <div>🏷️ 이름 : _______________</div>
+    <div>📅 작성 시작일 : 2026년 ___월 ___일</div>
+  </div>
+
+  <div class="intro-box">
+    <p>이 워크북은 인생의 처음부터 지금까지를 열 개의 장(章)으로 나누어 돌아보고, 그 기록을 자서전의 뼈대로 삼을 수 있도록 구성되었습니다. 질문에 순서대로 답하지 않아도 괜찮습니다. 마음이 가는 장부터, 떠오르는 기억부터 자유롭게 적어 내려가세요.</p>
+    <p>6~8번 장(직업과 일의 역사 / 인생의 위기와 극복 / 부모 봉양과 가족 관계)에는 본인의 핵심 경력 — 예를 들어 공직 활동, 문학(글쓰기·창작) 활동, 강사 활동 등 — 을 항목별로 나누어 적을 수 있도록 세부 질문을 넣었습니다. 해당하지 않는 항목은 비워두시고, 본인의 경력에 맞게 자유롭게 바꾸어 사용하셔도 됩니다.</p>
+    <p>털어놓고 싶지 않은 내용은 답하지 않으셔도 됩니다. 이 워크북의 목적은 완벽한 기록이 아니라, 나의 삶을 나의 언어로 정리해보는 데 있습니다.</p>
+  </div>
+
+  <div class="toc">
+    <strong>📑 목차</strong>
+    <ol>
+      <li>출생과 가족 배경</li>
+      <li>어린 시절</li>
+      <li>학창 시절</li>
+      <li>청년기와 첫 사회생활</li>
+      <li>결혼과 가정</li>
+      <li>직업과 일의 역사</li>
+      <li>인생의 위기와 극복</li>
+      <li>부모 봉양과 가족 관계</li>
+      <li>인생 최고의 순간들</li>
+      <li>인생 2막 — 꿈과 다짐</li>
+      <li>특별 질문</li>
+      <li>미래의 나에게 보내는 편지</li>
+      <li>나의 묘비명 (희망사항)</li>
+    </ol>
+  </div>
+
+  <div class="part-title">PART 1. 출생과 가족 배경</div>
+  <div class="part-sub">내가 태어난 순간부터, 나를 둘러싼 첫 세계까지</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 언제, 어디에서 태어나셨나요? 태어날 당시의 시대적·사회적 배경도 함께 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 부모님은 어떤 분이셨나요? (성격, 하시던 일, 가장 또렷하게 남아있는 모습)</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 형제자매는 몇 명이었고, 그중 나는 몇째였나요? 형제자매와의 관계는 어땠나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 우리 집안의 형편과 분위기는 어땠나요? (경제적 상황, 가풍, 집안 어른들)</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 내가 태어나고 자란 고향(동네)은 어떤 곳이었나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q6. 나에 대한 가장 오래된 기억은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q7. 가족에게 전해 들은, 나의 출생에 얽힌 이야기가 있나요? (이름의 유래, 태몽 등)</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 2. 어린 시절</div>
+  <div class="part-sub">아직 세상을 다 알지 못했던, 그러나 가장 순수했던 시절</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 나는 어떤 성격의 아이였나요? (활발함/조용함, 겁이 많음/대담함 등)</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 가장 좋아했던 놀이나 취미는 무엇이었나요? 누구와 주로 놀았나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 어릴 적 꿈은 무엇이었나요? 그 꿈을 갖게 된 계기가 있나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 어린 시절 가장 인상 깊었던 사건은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 내가 자란 동네는 어떤 모습이었나요? (풍경, 이웃, 계절의 기억)</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q6. 가장 무섭거나 슬펐던 기억, 혹은 가장 크게 혼났던 기억이 있나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 3. 학창 시절</div>
+  <div class="part-sub">친구와 배움 속에서 나를 만들어간 시간</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 초·중·고등학교 시절, 학교생활은 전반적으로 어땠나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 잊지 못할 은사님이 계셨나요? 그분과의 일화를 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 가장 친했던 친구는 누구였고, 어떤 추억이 있나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 공부는 잘하는 편이었나요? 특별히 좋아했거나 잘했던 과목이 있나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 학창 시절 겪었던 가장 큰 사건이나 전환점은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q6. 그 시절의 나는 어떤 사람이었나요? 지금 돌아보면 어떤 마음이 드나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 4. 청년기와 첫 사회생활</div>
+  <div class="part-sub">세상에 첫발을 내딛던 순간</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 첫 직업(혹은 첫 사회생활)은 무엇이었고, 어떻게 갖게 되었나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 그 진로를 선택한 이유는 무엇인가요? 다른 선택지는 없었나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 청년 시절 품었던 꿈이나 포부는 무엇이었나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 이 시기에 겪었던 좌절이나 실패의 경험이 있다면 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 내 인생을 바꾼 결정적인 사건이 이 시기에 있었나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 5. 결혼과 가정</div>
+  <div class="part-sub">함께 살아갈 사람을 만나 가정을 이루기까지</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 배우자를 어떻게 만나게 되었나요? 첫인상은 어땠나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 결혼을 결심하게 된 결정적인 계기는 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 결혼생활 중 가장 행복했던 순간은 언제였나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 결혼생활에서 가장 큰 고비는 무엇이었고, 어떻게 지나왔나요?</div>
+    <div class="question-hint">(숨기고 싶은 내용은 답하지 않으셔도 됩니다.)</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 자녀 양육 과정에서 특히 기억에 남는 순간이 있나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 6. 직업과 일의 역사</div>
+  <div class="part-sub">내가 평생을 바쳐 해온 일들에 대하여</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 나의 주요 경력을 시기별로 정리해보세요. (예: 공직 활동 / 문학·창작 활동 / 강사 활동 등)</div>
+    <div class="question-hint">각 활동별로 나누어 적어보세요. 해당하지 않는 항목은 자유롭게 바꾸어 사용하세요.</div>
+    <div class="answer-lines tall"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 공직(혹은 조직) 생활 중 가장 큰 성취나 보람 있었던 일은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 문학·글쓰기 활동을 해오셨다면, 그 계기와 대표작(혹은 대표 활동)에 대해 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 강사·교육 활동을 해오셨다면, 어떤 내용을 가르치셨고 가장 기억에 남는 제자나 순간은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 일을 통해 배운 가장 큰 교훈은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q6. 잊지 못할 동료, 상사, 혹은 은인이 있다면 그 인연을 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 7. 인생의 위기와 극복</div>
+  <div class="part-sub">가장 어두웠던 시기를 지나온 힘</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 경제적으로 가장 힘들었던 시기는 언제였고, 어떤 상황이었나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 건강 문제로 힘들었던 적이 있다면 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 관계(가족, 동료, 지인)에서 힘들었던 시기가 있었다면 적어보세요.</div>
+    <div class="question-hint">(숨기고 싶은 내용은 답하지 않으셔도 됩니다.)</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 그 위기를 어떻게 극복하셨나요? 누구의 도움을 받았나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 그 경험은 지금의 나에게 어떤 의미가 있나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 8. 부모 봉양과 가족 관계</div>
+  <div class="part-sub">받은 사랑을 돌려드리고, 곁을 지켜준 이들에게</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 부모님께 효도했던 기억, 혹은 함께한 소중한 순간이 있다면 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 부모님께 가장 후회되는 일이 있다면 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 배우자, 자녀, 형제자매에게 가장 고마운 점은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 가족 관계를 통해 배운 것이 있다면 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 9. 인생 최고의 순간들</div>
+  <div class="part-sub">돌이켜보면 빛나는 그 장면들</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 내 인생에서 가장 행복했던 날은 언제였나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 가장 자랑스러웠던 일은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 가장 많이 울었던 날은 언제였고, 왜였나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 내 인생 최고의 선택은 무엇이었다고 생각하나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">PART 10. 인생 2막 — 꿈과 다짐</div>
+  <div class="part-sub">지금부터, 다시 시작되는 이야기</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 퇴직(혹은 인생의 새로운 전환점) 이후, 앞으로의 목표는 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 건강 관리를 위해 어떤 계획을 세우고 계신가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 후손(자녀, 손주)에게 남기고 싶은 말이 있다면 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 다시 태어난다면, 어떤 삶을 살고 싶으신가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">SPECIAL. 특별 질문</div>
+  <div class="part-sub">짧지만 깊은, 나를 가장 잘 보여주는 질문들</div>
+
+  <div class="question-card">
+    <div class="question-title">Q1. 내 인생을 바꾼 결정적 순간은 언제였나요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q2. 내 인생의 은인은 누구인가요? 그 이유도 함께 적어보세요.</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q3. 내가 가장 후회하는 일은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q4. 내가 가장 잘한 일은 무엇인가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q5. 내 인생을 한 줄로 요약한다면?</div>
+    <div class="answer-lines"></div>
+  </div>
+  <div class="question-card">
+    <div class="question-title">Q6. 나는 어떤 사람으로 기억되고 싶은가요?</div>
+    <div class="answer-lines"></div>
+  </div>
+
+  <div class="part-title">SPECIAL. 미래의 나에게 보내는 편지</div>
+  <div class="part-sub">지금 이 순간의 마음을 담아</div>
+
+  <div class="question-card">
+    <div class="question-title">지금의 나에게 하고 싶은 말, 미래의 나에게 전하고 싶은 다짐이나 바람을 편지 형식으로 자유롭게 적어보세요.</div>
+    <div class="answer-lines tall"></div>
+  </div>
+
+  <div class="part-title">SPECIAL. 나의 묘비명 (희망사항)</div>
+  <div class="part-sub">내 삶을 한 문장으로 남긴다면</div>
+
+  <div class="special-box">
+    <div class="epitaph">“ <span class="epitaph-line">&nbsp;</span> ”</div>
+  </div>
+
+  <div class="back-link">
+    <a href="./ai.html">← 강의 교안으로 돌아가기</a>
+  </div>
+</div>
+
+</body>
+</html>
+
