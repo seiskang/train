@@ -1715,8 +1715,7 @@ button { font-family: var(--font-sans); }
 
       var dictBtn = document.getElementById("dict-search-btn");
     if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
-  function bindAuthEvents() {
-    var root = document.getElementById("app");
+  function bindAuthEvents() { var root = document.getElementById("app"); var dictBtn = document.getElementById("dict-search-btn"); if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
     root.querySelectorAll("[data-auth-tab]").forEach(function (el) {
       el.addEventListener("click", function () { setState({ authTab: el.getAttribute("data-auth-tab"), authError: "", authUnverifiedEmail: "" }); });
     });
