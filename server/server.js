@@ -660,6 +660,92 @@ app.post("/api/comments", async (req, res) => {
   }
 });
 
+// ── 잠금 강의(ai.html / aiu.html) 서버측 인증 ──────────────────────────────
+// 콘텐츠(content_html)와 비밀번호 해시는 DB(lesson_pages)에만 저장되며,
+// 올바른 비밀번호를 서버가 확인한 뒤에만 /api/lesson-content가 본문을 내려준다.
+// 정적 파일(ai.html/aiu.html)에는 잠금화면 UI만 남고 실제 본문은 포함되지 않는다.
+const LESSON_PAGES = ["ai", "aiu"];
+const LESSON_TTL_MS = 180 * 24 * 60 * 60 * 1000; // 180일
+
+function lessonCookieName(page) {
+  return `lesson_${page}`;
+}
+
+app.post("/api/lesson-auth", async (req, res) => {
+  try {
+    const { page, password } = req.body || {};
+    const p = (page || "").trim();
+    if (!LESSON_PAGES.includes(p)) return res.status(400).json({ error: "잘못된 페이지입니다." });
+    if (typeof password !== "string" || !password) {
+      return res.status(400).json({ error: "비밀번호를 입력해주세요." });
+    }
+    const lesson = await db.getLessonPage(p);
+    if (!lesson || !bcrypt.compareSync(password, lesson.password_hash)) {
+      return res.status(401).json({ error: "비밀번호가 올바르지 않습니다." });
+    }
+    const token = jwt.sign({ page: p }, JWT_SECRET, { expiresIn: "180d" });
+    res.cookie(lessonCookieName(p), token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: LESSON_TTL_MS
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+app.get("/api/lesson-content", async (req, res) => {
+  try {
+    const p = (req.query.page || "").trim();
+    if (!LESSON_PAGES.includes(p)) return res.status(400).json({ error: "잘못된 페이지입니다." });
+    const token = req.cookies[lessonCookieName(p)];
+    if (!token) return res.status(401).json({ error: "인증이 필요합니다." });
+    let payload;
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch {
+      return res.status(401).json({ error: "인증이 만료되었거나 올바르지 않습니다." });
+    }
+    if (payload.page !== p) return res.status(401).json({ error: "인증이 올바르지 않습니다." });
+    const lesson = await db.getLessonPage(p);
+    if (!lesson) return res.status(404).json({ error: "콘텐츠를 찾을 수 없습니다." });
+    res.json({ html: lesson.content_html });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
+// 관리자 전용: 잠금 강의 본문/비밀번호 등록 및 교체 (justice11419@naver.com 로그인 세션 필요)
+app.post("/api/admin/lesson-content", requireAdmin, async (req, res) => {
+  try {
+    const { page, password, html } = req.body || {};
+    const p = (page || "").trim();
+    if (!LESSON_PAGES.includes(p)) return res.status(400).json({ error: "잘못된 페이지입니다." });
+    if (typeof html !== "string" || !html.trim()) {
+      return res.status(400).json({ error: "콘텐츠(html)가 필요합니다." });
+    }
+    let passwordHash;
+    if (typeof password === "string" && password) {
+      passwordHash = bcrypt.hashSync(password, 10);
+    } else {
+      const existingLesson = await db.getLessonPage(p);
+      if (!existingLesson) {
+        return res.status(400).json({ error: "최초 등록 시 password가 필요합니다." });
+      }
+      passwordHash = existingLesson.password_hash;
+    }
+    const result = await db.upsertLessonPage({ page: p, passwordHash, contentHtml: html });
+    res.json({ ok: true, page: result.page, updatedAt: result.updated_at });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 const KRDICT_API_KEY = process.env.KRDICT_API_KEY;
 const STDICT_API_KEY = process.env.STDICT_API_KEY;
 
