@@ -100,6 +100,15 @@ function ensureSchema() {
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
       `);
+      await query(`
+        CREATE TABLE IF NOT EXISTS comments (
+          id SERIAL PRIMARY KEY,
+          page TEXT NOT NULL,
+          name TEXT NOT NULL,
+          content TEXT NOT NULL,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `);
       const existing = await query("SELECT id FROM users WHERE email = $1", [ADMIN_EMAIL]);
       if (existing.rows.length === 0 && ADMIN_PASSWORD) {
         const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
@@ -315,6 +324,29 @@ async function deleteAssignment(id) {
   await query("DELETE FROM assignments WHERE id = $1", [id]);
 }
 
+async function listComments(page) {
+  await ensureSchema();
+  const { rows } = await query(
+    "SELECT id, name, content, created_at FROM comments WHERE page = $1 ORDER BY created_at DESC",
+    [page]
+  );
+  return rows;
+}
+
+async function createComment({ page, name, content }) {
+  await ensureSchema();
+  const { rows } = await query(
+    "INSERT INTO comments (page, name, content) VALUES ($1, $2, $3) RETURNING id, name, content, created_at",
+    [page, name, content]
+  );
+  return rows[0];
+}
+
+async function deleteComment(id) {
+  await ensureSchema();
+  await query("DELETE FROM comments WHERE id = $1", [id]);
+}
+
 module.exports = {
   ensureSchema,
   getUserByEmail,
@@ -345,6 +377,9 @@ module.exports = {
   getAssignmentById,
   renameAssignment,
   deleteAssignment,
+  listComments,
+  createComment,
+  deleteComment,
   query,
   ensureSchema
 };
