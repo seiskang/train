@@ -397,7 +397,15 @@ button { font-family: var(--font-sans); }
   .agenda-row { grid-template-columns: auto 8px 1fr; }
   .agenda-row .agenda-session { display: none; }
 }
-.btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:64px;padding:0 var(--space-10);border-radius:var(--radius-pill);font:var(--weight-extrabold) var(--text-xl)/1 var(--font-sans);color:#fff;background:linear-gradient(135deg,var(--seal),#e0503a);text-decoration:none;cursor:pointer;border:none;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);animation:btn-cta-pulse 2.2s ease-in-out infinite;transition:transform 0.2s ease;}.btn-cta:hover{transform:translateY(-2px) scale(1.03);}.btn-cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);transform:skewX(-20deg);animation:btn-cta-shine 2.6s ease-in-out infinite;}@keyframes btn-cta-pulse{0%,100%{box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);}50%{box-shadow:0 0 0 16px rgba(179,64,44,0),var(--shadow-lg);}}@keyframes btn-cta-shine{0%{left:-60%;}55%{left:130%;}100%{left:130%;}}@media (prefers-reduced-motion: reduce){.btn-cta{animation:none;}.btn-cta::after{animation:none;display:none;}}</style>
+.btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:64px;padding:0 var(--space-10);border-radius:var(--radius-pill);font:var(--weight-extrabold) var(--text-xl)/1 var(--font-sans);color:#fff;background:linear-gradient(135deg,var(--seal),#e0503a);text-decoration:none;cursor:pointer;border:none;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);animation:btn-cta-pulse 2.2s ease-in-out infinite;transition:transform 0.2s ease;}.btn-cta:hover{transform:translateY(-2px) scale(1.03);}.btn-cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);transform:skewX(-20deg);animation:btn-cta-shine 2.6s ease-in-out infinite;}@keyframes btn-cta-pulse{0%,100%{box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);}50%{box-shadow:0 0 0 16px rgba(179,64,44,0),var(--shadow-lg);}}@keyframes btn-cta-shine{0%{left:-60%;}55%{left:130%;}100%{left:130%;}}@media (prefers-reduced-motion: reduce){.btn-cta{animation:none;}.btn-cta::after{animation:none;display:none;}}.dict-widget { background:#fff; border:1px solid var(--hanji-line); border-radius:var(--radius-lg); padding:var(--space-6); display:flex; flex-direction:column; gap:var(--space-4); box-shadow:var(--shadow-sm); }
+.dict-widget .dict-row { display:flex; gap:var(--space-3); }
+.dict-widget input { flex:1; height:40px; padding:0 var(--space-3); border:1px solid var(--hanji-line); border-radius:var(--radius-md); font:var(--weight-regular) var(--text-sm)/1 var(--font-sans); }
+.dict-widget button { height:40px; padding:0 var(--space-5); border-radius:var(--radius-md); border:none; background:var(--seal); color:#fff; font:var(--weight-bold) var(--text-sm)/1 var(--font-sans); cursor:pointer; }
+.dict-result { border:1px solid var(--hanji-line); border-radius:var(--radius-md); padding:var(--space-4); background:var(--surface-page); margin-top:var(--space-3); }
+.dict-result .w { font:var(--weight-bold) var(--text-md)/1 var(--font-serif-kr); color:var(--ink); }
+.dict-result .g { font-size:var(--text-2xs); color:var(--seal); border:1px solid var(--seal); border-radius:var(--radius-sm); padding:1px 6px; margin-left:6px; }
+.dict-result p { margin:6px 0 0; font-size:var(--text-sm); color:var(--text-muted); }
+.dict-note { font-size:var(--text-2xs); color:var(--text-subtle); }</style>
 </head>
 <body>
 
@@ -1413,7 +1421,30 @@ button { font-family: var(--font-sans); }
       '</g></svg>';
   }
 
-  function renderLandingPage(authFormHtml) {
+    function searchDictionary() {
+    var input = document.getElementById("dict-q");
+    var box = document.getElementById("dict-result");
+    if (!input || !box) return;
+    var q = input.value.trim();
+    if (!q) return;
+    box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">찾는 중…</span>';
+    fetch("/api/dictionary/krdict?q=" + encodeURIComponent(q))
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok || !r.data.items || !r.data.items.length) {
+          box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">검색 결과가 없습니다.</span>';
+          return;
+        }
+        box.innerHTML = r.data.items.map(function (item) {
+          return '<div class="dict-result"><span class="w">' + esc(item.word) + '</span>' +
+            (item.grade ? '<span class="g">' + esc(item.grade) + '</span>' : "") +
+            '<p>' + esc((item.definitions || []).join(" / ")) + '</p></div>';
+        }).join("");
+      })
+      .catch(function () {
+        box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">서버에 연결할 수 없습니다.</span>';
+      });
+  }function renderLandingPage(authFormHtml) {
     var roles = ["한국어 강사", "장애인 인식개선 강사", "자원봉사 기본교육 전문강사", "스마트폰 활용 강사", "생성형 AI 활용 전문강사", "한국반부패청렴정책연구원장", "한국음악시협회장", "한국시각장애인연합회 순천시지회 감사", "국민권익위원회 청렴도평가 심의위원", "한국산업인력공단 국가기술자격검정위원", "경찰청 운전면허 문제검토위원", "전) 전라남도 도민감사관", "시사랑시낭송 대표", "(사)세계문학예술작가협회 정회원", "(사)구암문학회 정회원", "한국철도공사 청렴조사처장", "철도공무원교육원 교수", "철도공무원교육원 전문교육처장", "중앙공무원교육원 우수강사 선정", "국립 한국철도대학 운수경영과·경영정보과 출강", "병점승무사업소장 역임", "한국철도공사 부산교육원장 역임"];
     return '' +
       '<div class="landing-page">' +
@@ -1436,6 +1467,11 @@ button { font-family: var(--font-sans); }
       '<div class="enroll-step"><span class="num">3</span><div><div class="title">주 1~2회, 회당 50분</div><div class="desc">보이스톡으로 1:1 맞춤 수업을 진행합니다.</div></div></div>' +
       '</div>' +
 
+            '<section class="landing-section">' +
+      '<div class="landing-head"><span class="eyebrow-seal">Dictionary</span><h2>한국어 단어를 바로 찾아보세요</h2></div>' +
+      '<p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:480px;margin:0 auto">국립국어원 한국어기초사전 데이터로, 회원가입 없이도 궁금한 단어를 바로 찾아볼 수 있습니다.</p>' +
+      '<div class="dict-widget"><div class="dict-row"><input type="text" id="dict-q" placeholder="예: 나무, 되다" value="나무"><button type="button" id="dict-search-btn">찾기</button></div>' +
+      '<div id="dict-result"></div><span class="dict-note">데이터 제공: 국립국어원 한국어기초사전</span></div></section>' +
       '<section class="landing-section">' +
       '<div class="landing-head"><span class="eyebrow-seal">Pricing</span><h2>수강료 및 환불 규정</h2></div>' +
       '<div class="price-card">' +
@@ -1445,7 +1481,7 @@ button { font-family: var(--font-sans); }
       '<tr><td>수업 30% 진행 후</td><td>50%</td></tr>' +
       '<tr><td>수업 50% 진행 후</td><td>환불 불가</td></tr>' +
       '</table></div></section>' +
-
+      
       '<div class="landing-auth-wrap" id="auth-form-anchor">' +
       '<div class="auth-brand" style="margin-bottom:var(--space-6)"><span class="brand-mark">한</span>' +
       '<span><span class="brand-name" style="display:block;color:var(--text-strong)">한국어 수업 관리</span>' +
@@ -1677,6 +1713,8 @@ button { font-family: var(--font-sans); }
     fetch("/api/logout", { method: "POST" }).then(function () { setState({ auth: null, view: "dash", modal: null }); });
   }
 
+      var dictBtn = document.getElementById("dict-search-btn");
+    if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
   function bindAuthEvents() {
     var root = document.getElementById("app");
     root.querySelectorAll("[data-auth-tab]").forEach(function (el) {
