@@ -664,7 +664,7 @@ app.post("/api/comments", async (req, res) => {
 // 콘텐츠(content_html)와 비밀번호 해시는 DB(lesson_pages)에만 저장되며,
 // 올바른 비밀번호를 서버가 확인한 뒤에만 /api/lesson-content가 본문을 내려준다.
 // 정적 파일(ai.html/aiu.html)에는 잠금화면 UI만 남고 실제 본문은 포함되지 않는다.
-const LESSON_PAGES = ["ai", "aiu"];
+const LESSON_PAGES = ["ai", "aiu", "ais"];
 const LESSON_TTL_MS = 180 * 24 * 60 * 60 * 1000; // 180일
 
 function lessonCookieName(page) {
