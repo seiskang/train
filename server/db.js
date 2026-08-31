@@ -109,6 +109,14 @@ function ensureSchema() {
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
       `);
+      await query(`
+        CREATE TABLE IF NOT EXISTS lesson_pages (
+          page TEXT PRIMARY KEY,
+          password_hash TEXT NOT NULL,
+          content_html TEXT NOT NULL,
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `);
       const existing = await query("SELECT id FROM users WHERE email = $1", [ADMIN_EMAIL]);
       if (existing.rows.length === 0 && ADMIN_PASSWORD) {
         const hash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
@@ -347,6 +355,30 @@ async function deleteComment(id) {
   await query("DELETE FROM comments WHERE id = $1", [id]);
 }
 
+async function getLessonPage(page) {
+  await ensureSchema();
+  const { rows } = await query(
+    "SELECT page, password_hash, content_html, updated_at FROM lesson_pages WHERE page = $1",
+    [page]
+  );
+  return rows[0] || null;
+}
+
+async function upsertLessonPage({ page, passwordHash, contentHtml }) {
+  await ensureSchema();
+  const { rows } = await query(
+    `INSERT INTO lesson_pages (page, password_hash, content_html, updated_at)
+     VALUES ($1, $2, $3, now())
+     ON CONFLICT (page) DO UPDATE SET
+       password_hash = EXCLUDED.password_hash,
+       content_html = EXCLUDED.content_html,
+       updated_at = now()
+     RETURNING page, updated_at`,
+    [page, passwordHash, contentHtml]
+  );
+  return rows[0];
+}
+
 module.exports = {
   ensureSchema,
   getUserByEmail,
@@ -380,6 +412,8 @@ module.exports = {
   listComments,
   createComment,
   deleteComment,
+  getLessonPage,
+  upsertLessonPage,
   query,
   ensureSchema
 };
