@@ -660,6 +660,20 @@ app.post("/api/comments", async (req, res) => {
   }
 });
 
+app.delete("/api/admin/comments/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ error: "올바르지 않은 댓글 id입니다." });
+    }
+    await db.deleteComment(id);
+    res.json({ ok: true, id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 // ── 잠금 강의(ai.html / aiu.html) 서버측 인증 ──────────────────────────────
 // 콘텐츠(content_html)와 비밀번호 해시는 DB(lesson_pages)에만 저장되며,
 // 올바른 비밀번호를 서버가 확인한 뒤에만 /api/lesson-content가 본문을 내려준다.
