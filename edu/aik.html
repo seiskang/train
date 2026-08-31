@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시니어를 위한 키오스크 사용법</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    color: #1F2937;
+    background-color: #F3F4F6;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.7;
+    font-size: 18px;
+  }
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .header {
+    text-align: center;
+    background-color: #EEF2FF;
+    border: 2px solid #C7D2FE;
+    border-radius: 14px;
+    padding: 30px 20px;
+    margin-bottom: 22px;
+  }
+  .header h1 {
+    margin: 6px 0;
+    font-size: 30px;
+    color: #1E1B4B;
+    font-weight: 900;
+  }
+  .header p {
+    margin: 0;
+    font-size: 17px;
+    color: #4338CA;
+    font-weight: 700;
+  }
+  .intro-box {
+    background-color: #FFFFFF;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  }
+  .intro-box h2 {
+    font-size: 21px;
+    color: #1E1B4B;
+    margin: 0 0 10px 0;
+  }
+  .intro-box p {
+    margin: 0 0 10px 0;
+    color: #374151;
+  }
+  .intro-box p:last-child {
+    margin-bottom: 0;
+  }
+  .why-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .why-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background-color: #F9FAFB;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .why-item .num {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #4F46E5;
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .toc {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 26px;
+  }
+  .toc strong {
+    display: block;
+    color: #1E1B4B;
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .toc ol {
+    columns: 2;
+    -webkit-columns: 2;
+    padding-left: 20px;
+    margin: 0;
+    font-size: 15.5px;
+  }
+  .toc li {
+    break-inside: avoid;
+    margin-bottom: 6px;
+  }
+  .toc a {
+    color: #4338CA;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+  }
+  .venue {
+    background-color: #FFFFFF;
+    border: 2px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    scroll-margin-top: 16px;
+  }
+  .venue-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 23px;
+    font-weight: 900;
+    color: #1E1B4B;
+    background-color: #F3F4F6;
+    border-left: 7px solid #4F46E5;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 0 0 18px 0;
+  }
+  .venue-title .icon {
+    font-size: 28px;
+  }
+  .venue-desc {
+    font-size: 15.5px;
+    color: #6B7280;
+    margin: -8px 0 16px 4px;
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .steps li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background-color: #F9FAFB;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .steps .step-num {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #4F46E5;
+    color: #fff;
+    font-weight: 800;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps .step-text {
+    font-size: 16.5px;
+    color: #111827;
+    padding-top: 4px;
+  }
+  .steps .step-text b {
+    color: #1E1B4B;
+  }
+  .venue-tip {
+    background-color: #FFFBEB;
+    border-left: 5px solid #F59E0B;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #92400E;
+    margin-top: 14px;
+  }
+  .venue-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .method-block {
+    border: 1.5px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .method-block .method-title {
+    font-size: 16.5px;
+    font-weight: 800;
+    color: #1E1B4B;
+    margin-bottom: 10px;
+  }
+  .tips-section {
+    background-color: #FAFAFF;
+    border: 2px solid #C7D2FE;
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+  }
+  .tips-section .venue-title {
+    background: none;
+    border-left: none;
+    padding: 0 0 4px 0;
+    margin-bottom: 16px;
+  }
+  .tip-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tip-grid .tip {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 16px;
+    color: #3730A3;
+  }
+  .tip .mark {
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+  .footer-msg {
+    text-align: center;
+    padding: 22px 10px 10px 10px;
+    color: #6B7280;
+    font-size: 14.5px;
+  }
+  @media (max-width: 560px) {
+    body { font-size: 17px; padding: 12px; }
+    .header h1 { font-size: 24px; }
+    .venue { padding: 18px; }
+    .venue-title { font-size: 19px; }
+    .toc ol { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <h1>🖥️ 키오스크, 이제 두렵지 않아요!</h1>
+    <p>시니어를 위한 쉬운 키오스크 사용법 안내</p>
+  </div>
+
+  <div class="intro-box" id="what">
+    <h2>💬 키오스크란?</h2>
+    <p>키오스크(kiosk)는 매장 입구나 계산대에 놓여 있는 <b>터치스크린 화면 기계</b>입니다. 직원 대신 화면을 손가락으로 눌러서 직접 주문하거나 결제할 수 있도록 만든 무인 안내 기계예요.</p>
+    <p>은행의 현금인출기(ATM)를 사용해 보신 적이 있다면 원리는 비슷합니다. 화면에 나오는 안내를 따라 순서대로 누르기만 하면 되고, 잘못 누르면 '취소'나 '이전' 버튼으로 언제든 되돌릴 수 있습니다.</p>
+  </div>
+
+  <div class="intro-box" id="why">
+    <h2>🤔 왜 키오스크를 사용해야 하는가?</h2>
+    <p>요즘은 많은 매장에서 카운터에 직원이 아예 없거나, 있어도 조리에만 집중하고 주문은 키오스크로만 받는 경우가 크게 늘었습니다. 그래서 키오스크 사용법을 모르면 원하는 것을 주문하는 것 자체가 어려워질 수 있습니다.</p>
+    <div class="why-list">
+      <div class="why-item">
+        <div class="num">1</div>
+        <div>매장에 직원이 줄어들면서, 키오스크가 <b>유일한 주문 방법</b>인 곳이 많아졌습니다.</div>
+      </div>
+      <div class="why-item">
+        <div class="num">2</div>
+        <div>화면에 사진과 가격이 크게 나와서, 말로 설명하기 어려운 메뉴도 <b>눈으로 확인하며</b> 정확히 고를 수 있습니다.</div>
+      </div>
+      <div class="why-item">
+        <div class="num">3</div>
+        <div>줄을 서서 기다리는 시간이 줄고, 원하는 옵션(맵기, 사이즈 등)을 <b>천천히 눌러가며</b> 편하게 고를 수 있습니다.</div>
+      </div>
+      <div class="why-item">
+        <div class="num">4</div>
+        <div>주유소, 마트 주차장, 고속도로 휴게소 등 <b>일상 곳곳</b>에서 이미 키오스크가 사용되고 있어, 한 번 배워두면 여러 곳에서 두루 쓸 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <strong>📑 이 안내서에서 배울 내용</strong>
+    <ol>
+      <li><a href="#mcdonald">맥도날드 매장에서</a></li>
+      <li><a href="#lotteria">롯데리아에서</a></li>
+      <li><a href="#restaurant">식당에서</a></li>
+      <li><a href="#bigcafe">대형 카페에서</a></li>
+      <li><a href="#unmanned-cafe">무인 카페에서</a></li>
+      <li><a href="#gas">주유소에서</a></li>
+      <li><a href="#restarea">고속도로 휴게소에서</a></li>
+      <li><a href="#emart">대형 할인마트(이마트) 주차비 정산</a></li>
+      <li><a href="#tips">키오스크를 잘 쓰는 공통 비법</a></li>
+    </ol>
+  </div>
+
+  <div class="venue" id="mcdonald">
+    <div class="venue-title"><span class="icon">🍔</span> 맥도날드 매장에서</div>
+    <div class="venue-desc">햄버거 세트 주문의 대표적인 예시입니다. 다른 패스트푸드점도 순서가 거의 같습니다.</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span><span class="step-text">화면을 터치해서 <b>"주문하기"</b>를 누릅니다. (화면이 꺼져 있어도 한 번 누르면 켜집니다.)</span></li>
+      <li><span class="step-num">2</span><span class="step-text"><b>"매장에서 식사"</b> 또는 <b>"포장"</b> 중 하나를 선택합니다.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">먹고 싶은 메뉴 사진을 눌러 선택합니다. (예: 빅맥, 상하이버거 등)</span></li>
+      <li><span class="step-num">4</span><span class="step-text"><b>단품</b>으로 할지 <b>세트</b>(감자튀김+음료 포함)로 할지 고른 뒤, 세트라면 음료와 사이드를 선택합니다.</span></li>
+      <li><span class="step-num">5</span><span class="step-text">수량이 필요하면 <b>+ / −</b> 버튼으로 개수를 맞추고, <b>"담기"</b>를 눌러 장바구니에 넣습니다.</span></li>
+      <li><span class="step-num">6</span><span class="step-text">더 주문할 게 없으면 <b>"결제하기"</b>를 누르고, 카드를 꽂거나(또는 갖다 대고) 결제를 완료합니다.</span></li>
+      <li><span class="step-num">7</span><span class="step-text">화면에 나오는 <b>주문번호</b>를 꼭 확인하고, 영수증을 챙겨 자리에서 기다립니다. 번호가 불리거나 화면에 뜨면 픽업대에서 받아옵니다.</span></li>
+    </ul>
+    <div class="venue-tip">💡 세트 메뉴는 가격이 조금 더 비싸도 음료와 사이드가 포함되어 있어 오히려 이득인 경우가 많습니다.</div>
+  </div>
+
+  <div class="venue" id="lotteria">
+    <div class="venue-title"><span class="icon">🍗</span> 롯데리아에서</div>
+    <div class="venue-desc">맥도날드와 순서가 거의 동일합니다. 버거킹, KFC 등 다른 패스트푸드점도 마찬가지입니다.</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span><span class="step-text">화면 터치 후 <b>매장/포장</b>을 선택합니다.</span></li>
+      <li><span class="step-num">2</span><span class="step-text">메뉴 화면에서 <b>버거, 치킨, 사이드</b> 등 카테고리를 먼저 고르면 메뉴를 찾기 쉽습니다.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">메뉴 선택 후 <b>세트 구성</b>(음료·사이드 변경)을 원하면 화면에서 직접 바꿀 수 있습니다.</span></li>
+      <li><span class="step-num">4</span><span class="step-text">장바구니에서 주문 내역과 <b>총 금액</b>을 한 번 더 확인합니다.</span></li>
+      <li><span class="step-num">5</span><span class="step-text">결제 방법(카드/현금/간편결제)을 선택해 결제를 마칩니다.</span></li>
+      <li><span class="step-num">6</span><span class="step-text">진동벨을 받는 매장도 있습니다. <b>진동벨이 울리면</b> 픽업대로 가서 벨을 반납하고 음식을 받습니다.</span></li>
+    </ul>
+  </div>
+
+  <div class="venue" id="restaurant">
+    <div class="venue-title"><span class="icon">🍽️</span> 식당에서</div>
+    <div class="venue-desc">식당은 매장마다 방식이 조금씩 다릅니다. 크게 두 가지 경우로 나눠 안내합니다.</div>
+    <div class="venue-methods">
+      <div class="method-block">
+        <div class="method-title">① 입구 키오스크에서 먼저 주문·결제하는 식당</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span><span class="step-text">입구 키오스크에서 <b>메뉴를 선택</b>하고 인원수를 입력합니다.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">먼저 <b>결제를 완료</b>한 뒤, 화면에 나오는 <b>테이블(자리) 번호</b> 또는 대기번호를 확인합니다.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">안내받은 자리에 앉아서 음식을 기다립니다.</span></li>
+        </ul>
+      </div>
+      <div class="method-block">
+        <div class="method-title">② 자리에 앉아 주문하고, 나갈 때 키오스크에서 계산하는 식당</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span><span class="step-text">자리에 앉아 직원을 부르거나 테이블의 태블릿으로 주문합니다.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">식사가 끝나면 계산대의 키오스크에서 <b>테이블 번호</b>를 입력하거나 <b>영수증 바코드</b>를 찍습니다.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">화면에 뜬 금액을 확인하고 카드로 결제합니다.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="venue-tip">💡 어떤 방식인지 헷갈리면 매장에 들어가자마자 직원에게 "먼저 계산하나요?"라고 한 번 물어보는 것이 가장 빠릅니다.</div>
+  </div>
+
+  <div class="venue" id="bigcafe">
+    <div class="venue-title"><span class="icon">☕</span> 대형 카페에서</div>
+    <div class="venue-desc">스타벅스, 투썸플레이스 등 규모가 큰 카페의 일반적인 키오스크 이용 순서입니다.</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span><span class="step-text">화면에서 <b>음료</b>, <b>디저트/베이커리</b> 등 카테고리를 선택합니다.</span></li>
+      <li><span class="step-num">2</span><span class="step-text">음료를 고른 뒤 <b>따뜻하게(HOT)</b> 또는 <b>차갑게(ICE)</b>, 사이즈(톨/그란데 등)를 선택합니다.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">개인 컵을 가져왔다면 <b>"개인컵 사용"</b> 항목을 선택하면 할인을 받을 수 있습니다.</span></li>
+      <li><span class="step-num">4</span><span class="step-text">매장에서 마실지, 포장할지(테이크아웃) 선택합니다.</span></li>
+      <li><span class="step-num">5</span><span class="step-text">결제를 완료하면 <b>진동벨</b>을 받거나 화면에 <b>대기번호</b>가 나옵니다. 벨이 울리거나 번호가 불리면 픽업대에서 음료를 받습니다.</span></li>
+    </ul>
+  </div>
+
+  <div class="venue" id="unmanned-cafe">
+    <div class="venue-title"><span class="icon">🤖</span> 무인 카페에서</div>
+    <div class="venue-desc">직원이 아예 없이 기계가 음료까지 직접 만들어 주는 카페입니다. <b>결제를 먼저</b> 하는 것이 가장 큰 차이점입니다.</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span><span class="step-text">화면에서 원하는 음료를 선택하고, 온도(HOT/ICE)와 샷 추가 여부를 고릅니다.</span></li>
+      <li><span class="step-num">2</span><span class="step-text"><b>카드, 현금, 또는 QR결제</b> 중 하나로 먼저 결제합니다. (음식을 받기 전에 결제부터 합니다.)</span></li>
+      <li><span class="step-num">3</span><span class="step-text">결제 후 화면이나 영수증에 나오는 <b>제조번호</b>를 확인합니다.</span></li>
+      <li><span class="step-num">4</span><span class="step-text">잠시 기다리면 기계가 자동으로 음료를 만들어 <b>수령구(꺼내는 곳)</b>로 내보내 줍니다. 번호를 확인하고 직접 꺼냅니다.</span></li>
+    </ul>
+    <div class="venue-tip">🛎️ 직원이 없어도 걱정하지 마세요. 매장 벽면이나 기계 옆에 <b>고객센터 전화번호</b>가 붙어 있어서, 기계가 이상하거나 음료가 안 나오면 그 번호로 전화하면 바로 도움을 받을 수 있습니다.</div>
+  </div>
+
+  <div class="venue" id="gas">
+    <div class="venue-title"><span class="icon">⛽</span> 주유소에서</div>
+    <div class="venue-desc">직원 없이 운전자가 직접 주유하는 <b>셀프 주유소</b>의 이용 순서입니다.</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span><span class="step-text">주유구 위치에 맞춰 차를 세우고, <b>시동을 끈 뒤</b> 주유구 뚜껑을 엽니다.</span></li>
+      <li><span class="step-num">2</span><span class="step-text">주유기 옆의 <b>정전기 제거 패드</b>에 손을 잠깐 대어 정전기를 없앱니다.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">화면을 터치해 시작하고, <b>휘발유·고급휘발유·경유</b> 중 내 차에 맞는 유종을 선택합니다.</span></li>
+      <li><span class="step-num">4</span><span class="step-text">결제 방법(카드)을 선택하고, <b>금액을 정해서 주유</b>할지 <b>가득 채울지</b>를 선택합니다. (카드 결제는 먼저 금액이 임시로 결제된 뒤, 실제 사용한 만큼만 최종 청구되고 나머지는 자동으로 취소됩니다.)</span></li>
+      <li><span class="step-num">5</span><span class="step-text">노즐(주유 손잡이)을 꺼내 주유구에 꽂고 손잡이를 당겨 주유를 시작합니다.</span></li>
+      <li><span class="step-num">6</span><span class="step-text">주유가 끝나면 노즐을 제자리에 걸고, 주유구 뚜껑을 닫은 뒤 <b>영수증</b>을 받습니다.</span></li>
+    </ul>
+    <div class="venue-tip">💡 처음이라면 옆 주유기나 사무실의 직원에게 "카드 결제 도와주세요"라고 요청해도 됩니다. 셀프 주유소에도 대부분 직원이 상주하고 있습니다.</div>
+  </div>
+
+  <div class="venue" id="restarea">
+    <div class="venue-title"><span class="icon">🛣️</span> 고속도로 휴게소에서</div>
+    <div class="venue-desc">휴게소는 <b>키오스크 주문</b> 외에도 스마트폰으로 미리 주문하는 방법이 함께 운영되는 경우가 많습니다.</div>
+    <div class="venue-methods">
+      <div class="method-block">
+        <div class="method-title">① 매장 키오스크로 직접 주문</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span><span class="step-text">매장 입구의 키오스크에서 원하는 메뉴를 선택합니다.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">결제를 마치면 <b>대기번호</b>가 나오고, 화면에 조리 완료 안내가 뜨면 수령대에서 받습니다.</span></li>
+        </ul>
+      </div>
+      <div class="method-block">
+        <div class="method-title">② 스마트폰 앱 또는 QR코드로 미리 주문 (일부 휴게소)</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span><span class="step-text">네이버, 페이코 등 앱에서 <b>휴게소를 검색</b>하거나, 테이블·배너의 <b>QR코드</b>를 스마트폰 카메라로 비춥니다.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">화면에서 메뉴를 선택하고 결제하면, <b>조리 완료 알림</b>이 스마트폰으로 도착합니다.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">알림을 받은 뒤 매장에 가서 음식을 받으면 됩니다.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="venue-tip">💡 도착하기 전에 미리 앱으로 주문해 두면 휴게소에서 줄을 서지 않아도 되어 훨씬 편리합니다.</div>
+  </div>
+
+  <div class="venue" id="emart">
+    <div class="venue-title"><span class="icon">🅿️</span> 대형 할인마트(이마트)에서 주차비 정산하는 법</div>
+    <div class="venue-desc">마트마다 방식이 조금씩 다르지만, 크게 두 가지 방식이 있습니다.</div>
+    <div class="venue-methods">
+      <div class="method-block">
+        <div class="method-title">① 차량번호 자동 인식 방식 (입차 시 번호판을 카메라가 자동 촬영)</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span><span class="step-text">정산기 화면에서 <b>"차량번호로 조회"</b>를 누르고, 내 차의 <b>번호 뒷자리(4자리)</b>를 입력합니다.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">화면에 <b>남은 주차 요금</b>이 나옵니다. (구매 금액에 따라 일정 시간이 무료로 처리되어 있을 수 있습니다.)</span></li>
+          <li><span class="step-num">3</span><span class="step-text">요금이 있으면 카드를 꽂아 결제합니다. 요금이 0원이면 결제 없이 <b>"확인"</b>만 누릅니다.</span></li>
+        </ul>
+      </div>
+      <div class="method-block">
+        <div class="method-title">② 주차권(발급 카드) 또는 영수증 바코드 방식</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span><span class="step-text">입차할 때 받은 <b>주차권</b>을 정산기에 넣거나, 장을 본 <b>영수증 바코드</b>를 스캔합니다.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">화면에 나온 요금을 확인하고 카드로 결제합니다.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">결제가 끝나면 <b>정산 확인증(영수증)</b>이 나옵니다. 이 확인증을 챙겨두면 출차 시 도움이 됩니다.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="venue-tip">🚗 정산을 마친 뒤에는 <b>30분 이내</b>에 출차해야 하는 경우가 많습니다. 정산 후 너무 오래 매장에 머물지 않도록 주의하세요. 출차 차단기 앞에서는 번호판이 자동으로 인식되어 문이 열리는 경우가 대부분입니다.</div>
+  </div>
+
+  <div class="tips-section" id="tips">
+    <div class="venue-title"><span class="icon">🌟</span> 키오스크를 잘 쓰는 공통 비법</div>
+    <div class="tip-grid">
+      <div class="tip"><span class="mark">🙆</span><span>"나는 기계를 잘 못 다룬다"는 부담은 잠시 내려놓으세요. 순서만 알면 스마트폰보다 훨씬 간단합니다.</span></div>
+      <div class="tip"><span class="mark">🐢</span><span>뒤에 사람이 기다려도 서두르지 마세요. 급하게 아무 버튼이나 누르는 것이 오히려 더 늦어지는 지름길입니다.</span></div>
+      <div class="tip"><span class="mark">↩️</span><span>잘못 눌렀다면 당황하지 말고 화면의 <b>'이전'</b> 또는 <b>'취소'</b> 버튼을 누르면 됩니다. 결제 전이라면 언제든 되돌릴 수 있습니다.</span></div>
+      <div class="tip"><span class="mark">⏱️</span><span>한동안 화면을 누르지 않으면 자동으로 처음 화면으로 돌아가는데, 이는 고장이 아니라 <b>정상 작동</b>입니다. 다시 처음부터 누르면 됩니다.</span></div>
+      <div class="tip"><span class="mark">🔍</span><span>글씨가 작아 보이면 화면 구석에 <b>돋보기 아이콘</b>이나 <b>'화면 확대'</b> 버튼이 있는지 찾아보세요.</span></div>
+      <div class="tip"><span class="mark">🙋</span><span>직원에게 도움을 요청하는 것은 전혀 부끄러운 일이 아닙니다. 손님을 돕는 것은 직원의 정당한 업무입니다.</span></div>
+      <div class="tip"><span class="mark">🧾</span><span>결제 후에는 항상 <b>주문번호(또는 영수증)</b>를 확인하는 습관을 들이면, 물건을 받을 때 헷갈리지 않습니다.</span></div>
+    </div>
+  </div>
+
+  <div class="footer-msg">
+    처음엔 낯설어도 몇 번만 눌러보면 금방 익숙해집니다. 천천히, 자신 있게 눌러보세요. 😊
+  </div>
+
+</div>
+
+</body>
+</html>
+
