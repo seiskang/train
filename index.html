@@ -397,7 +397,66 @@ button { font-family: var(--font-sans); }
   .agenda-row { grid-template-columns: auto 8px 1fr; }
   .agenda-row .agenda-session { display: none; }
 }
-.btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:64px;padding:0 var(--space-10);border-radius:var(--radius-pill);font:var(--weight-extrabold) var(--text-xl)/1 var(--font-sans);color:#fff;background:linear-gradient(135deg,var(--seal),#e0503a);text-decoration:none;cursor:pointer;border:none;position:relative;overflow:hidden;box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);animation:btn-cta-pulse 2.2s ease-in-out infinite;transition:transform 0.2s ease;}.btn-cta:hover{transform:translateY(-2px) scale(1.03);}.btn-cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);transform:skewX(-20deg);animation:btn-cta-shine 2.6s ease-in-out infinite;}@keyframes btn-cta-pulse{0%,100%{box-shadow:0 0 0 0 rgba(179,64,44,0.55),var(--shadow-lg);}50%{box-shadow:0 0 0 16px rgba(179,64,44,0),var(--shadow-lg);}}@keyframes btn-cta-shine{0%{left:-60%;}55%{left:130%;}100%{left:130%;}}@media (prefers-reduced-motion: reduce){.btn-cta{animation:none;}.btn-cta::after{animation:none;display:none;}}.dict-widget { background:#fff; border:1px solid var(--hanji-line); border-radius:var(--radius-lg); padding:var(--space-6); display:flex; flex-direction:column; gap:var(--space-4); box-shadow:var(--shadow-sm); }
+
+/* ===== CTA Button (프로필 보기 반짝임 애니메이션 - PC & 모바일 공통 상시 작동) ===== */
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 64px;
+  padding: 0 var(--space-10);
+  border-radius: var(--radius-pill);
+  font: var(--weight-extrabold) var(--text-xl)/1 var(--font-sans);
+  color: #fff;
+  background: linear-gradient(135deg, var(--seal), #e0503a, #ff7b5c, var(--seal));
+  background-size: 300% 300%;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 rgba(179, 64, 44, 0.55), var(--shadow-lg);
+  animation: btn-cta-pulse 2.2s ease-in-out infinite, btn-cta-bg 4s ease infinite;
+  transition: transform 0.2s ease;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+.btn-cta:hover { transform: translateY(-2px) scale(1.03); }
+.btn-cta:active { transform: scale(0.98); }
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.75) 50%, transparent 100%);
+  transform: rotate(25deg);
+  animation: btn-cta-shine 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-cta-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes btn-cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(179, 64, 44, 0.55), var(--shadow-lg); }
+  50% { box-shadow: 0 0 0 16px rgba(179, 64, 44, 0), var(--shadow-lg); }
+}
+@keyframes btn-cta-shine {
+  0% { left: -80%; }
+  45% { left: 140%; }
+  100% { left: 140%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-cta { animation: none; }
+  .btn-cta::after { animation: none; display: none; }
+}
+
+.dict-widget { background:#fff; border:1px solid var(--hanji-line); border-radius:var(--radius-lg); padding:var(--space-6); display:flex; flex-direction:column; gap:var(--space-4); box-shadow:var(--shadow-sm); }
 .dict-widget .dict-row { display:flex; gap:var(--space-3); }
 .dict-widget input { flex:1; height:40px; padding:0 var(--space-3); border:1px solid var(--hanji-line); border-radius:var(--radius-md); font:var(--weight-regular) var(--text-sm)/1 var(--font-sans); }
 .dict-widget button { height:40px; padding:0 var(--space-5); border-radius:var(--radius-md); border:none; background:var(--seal); color:#fff; font:var(--weight-bold) var(--text-sm)/1 var(--font-sans); cursor:pointer; }
@@ -405,7 +464,8 @@ button { font-family: var(--font-sans); }
 .dict-result .w { font:var(--weight-bold) var(--text-md)/1 var(--font-serif-kr); color:var(--ink); }
 .dict-result .g { font-size:var(--text-2xs); color:var(--seal); border:1px solid var(--seal); border-radius:var(--radius-sm); padding:1px 6px; margin-left:6px; }
 .dict-result p { margin:6px 0 0; font-size:var(--text-sm); color:var(--text-muted); }
-.dict-note { font-size:var(--text-2xs); color:var(--text-subtle); }</style>
+.dict-note { font-size:var(--text-2xs); color:var(--text-subtle); }
+</style>
 </head>
 <body>
 
@@ -460,7 +520,6 @@ button { font-family: var(--font-sans); }
       else localStorage.removeItem("savedEmail");
     } catch (e) { /* 저장소 접근 불가 — 무시 */ }
   }
-
 
   var ADMIN_ONLY_VIEWS = ["dash", "requests", "students", "student", "payments"];
   var NAV_DEFS = [
@@ -859,8 +918,8 @@ button { font-family: var(--font-sans); }
   function navHtml(kind) {
     var isAdmin = state.auth && state.auth.role === "admin";
     var active = state.view === "student" ? "students" : state.view;
-    return NAV_DEFS.filter(function (d) { return !d[3] || isAdmin; }).map(function (d) {
-      var ko = d[0], en = d[1], key = d[2];
+    return NAV_DEFS.filter(function (d) { return !d || isAdmin; }).map(function (d) {
+      var ko = d[0], en = d, key = d;
       var on = key === active;
       var countMap = { requests: state.requests.length, students: state.students.length, payments: state.invoices.filter(function (v) { return v.status !== "paid"; }).length };
       var count = countMap[key] || "";
@@ -947,19 +1006,20 @@ button { font-family: var(--font-sans); }
 
     var lowBalance = lowList.concat(students.filter(function (x) { return remainOf(x) > 2; }).slice(0, 1));
     var dueInvoices = invoices.filter(function (v) { return v.status !== "paid"; });
+    var uniqueStudentNames = students.map(function (x) { return x.name; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(" · ");
 
     return '' +
       '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
       '<div style="display:flex;flex-direction:column;gap:var(--space-2)">' +
       '<span class="eyebrow">' + esc(clockText()) + '</span>' +
-      '<h1 style="font:var(--weight-extrabold) var(--text-3xl)/1.15 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">안녕, ' + esc(state.auth.name || state.auth.email) + '님</h1>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-3xl)/1.15 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">안녕하세요, ' + esc(state.auth.name || state.auth.email) + '님</h1>' +
       '<p style="font:var(--weight-semibold) var(--text-lg)/1.3 var(--font-sans);color:var(--text-body)">등록 학생 ' + students.length + '명, 미수금 ' + esc(unpaidLabel) + '</p>' +
       '<p style="color:var(--text-muted)">신청을 승인하면 주 2회 8회차와 인보이스가 자동으로 만들어집니다.</p></div>' +
       '<div style="display:flex;gap:var(--space-3)"><button class="btn btn-secondary" data-nav="payments">결제 관리</button>' +
       '<button class="btn btn-primary" data-nav="requests">수강 신청 ' + state.requests.length + '건</button></div></div>' +
 
       '<div class="stat-grid">' +
-      statCard("등록 학생 / Students", String(students.length), "명", students.map(function (x) { return x.name; }).join(" · ") || "등록된 학생이 없습니다") +
+      statCard("등록 학생 / Students", String(students.length), "명", uniqueStudentNames || "등록된 학생이 없습니다") +
       statCard("누적 수업 / Lessons", String(monthDone), "회", "수업 기록에 저장된 회차 합계") +
       statCard("미수금 / Unpaid", unpaidLabel, "", "대기 " + pendingCount + "건 · 연체 " + overdueCount + "건") +
       statCard("회차 소진 임박 / Low", String(lowList.length), "명", "잔여 2회 이하 — 재결제 안내 필요") +
@@ -984,7 +1044,7 @@ button { font-family: var(--font-sans); }
       '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">잔여 회차 · 재결제 안내</span>' +
       lowBalance.map(function (x) {
         return '<div data-goto-student="' + x.id + '" style="cursor:pointer;display:flex;flex-direction:column;gap:var(--space-2)">' +
-          '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3)">' +
+          '<div style="display:align-items:baseline;justify-content:space-between;gap:var(--space-3);display:flex">' +
           '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-body)">' + esc(x.name) + '</span>' +
           '<span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:' + colorVar(x) + '">' + remainOf(x) + '/' + x.total + '회</span></div>' +
           bar(Math.round((remainOf(x) / x.total) * 100), colorVar(x)) + '</div>';
@@ -1015,7 +1075,7 @@ button { font-family: var(--font-sans); }
           '<span style="display:block;color:var(--text-muted)">' + esc(r.region + " · " + r.offset) + '</span></span>' +
           badge(r.state, r.tone, true) + '</div>' +
           '<div class="field-grid field-grid-2">' + fields.map(function (f) {
-            return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v" style="font-size:var(--text-sm)">' + esc(f[1]) + '</span></span>';
+            return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v" style="font-size:var(--text-sm)">' + esc(f) + '</span></span>';
           }).join("") + '</div>' +
           '<span style="font-size:var(--text-sm);color:var(--text-body);padding:var(--space-3) var(--space-4);background:var(--neutral-50);border-radius:var(--radius-md)">' + esc(r.note) + '</span>' +
           '<div style="display:flex;gap:var(--space-3);justify-content:flex-end">' +
@@ -1109,7 +1169,7 @@ button { font-family: var(--font-sans); }
       '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
       '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">수강 정보</span>' +
       '<div class="field-grid">' + st.fields.map(function (f) {
-        return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v">' + esc(f[1]) + '</span></span>';
+        return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v">' + esc(f) + '</span></span>';
       }).join("") + '</div></div>' +
 
       '<div class="card"><div class="card-head"><span class="title">학습 기록 · 보이스톡 50분</span>' +
@@ -1428,7 +1488,7 @@ button { font-family: var(--font-sans); }
       '<span style="font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong);letter-spacing:-0.01em">' + esc(mm.title) + '</span>' +
       '<span style="color:var(--text-muted)">' + esc(mm.subtitle) + '</span></div>' +
       (mm.rows ? '<div class="modal-rows">' + mm.rows.map(function (r) {
-        return '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v tabular">' + esc(r[1]) + '</span></div>';
+        return '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v tabular">' + esc(r) + '</span></div>';
       }).join("") + '</div>' : "") +
       (mm.needsNote ? '<div><label class="field-label">수업 메모</label><textarea class="textarea" id="lesson-note" rows="3" placeholder="예: 종결어미 발음 교정, 사무실 표현 12개, 과제 — 자기소개 음성 녹음">' + esc(state.note) + '</textarea></div>' : "") +
       '<div style="display:flex;justify-content:flex-end;gap:var(--space-3)">' +
@@ -1471,7 +1531,7 @@ button { font-family: var(--font-sans); }
       '</g></svg>';
   }
 
-    function searchDictionary() {
+  function searchDictionary() {
     var input = document.getElementById("dict-q");
     var box = document.getElementById("dict-result");
     if (!input || !box) return;
@@ -1494,8 +1554,9 @@ button { font-family: var(--font-sans); }
       .catch(function () {
         box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">서버에 연결할 수 없습니다.</span>';
       });
-  }function renderLandingPage(authFormHtml) {
-    var roles = ["한국어 강사", "장애인 인식개선 강사", "자원봉사 기본교육 전문강사", "스마트폰 활용 강사", "생성형 AI 활용 전문강사", "한국반부패청렴정책연구원장", "한국음악시협회장", "한국시각장애인연합회 순천시지회 감사", "국민권익위원회 청렴도평가 심의위원", "한국산업인력공단 국가기술자격검정위원", "경찰청 운전면허 문제검토위원", "전) 전라남도 도민감사관", "시사랑시낭송 대표", "(사)세계문학예술작가협회 정회원", "(사)구암문학회 정회원", "한국철도공사 청렴조사처장", "철도공무원교육원 교수", "철도공무원교육원 전문교육처장", "중앙공무원교육원 우수강사 선정", "국립 한국철도대학 운수경영과·경영정보과 출강", "병점승무사업소장 역임", "한국철도공사 부산교육원장 역임"];
+  }
+
+  function renderLandingPage(authFormHtml) {
     return '' +
       '<div class="landing-page">' +
 
@@ -1517,7 +1578,7 @@ button { font-family: var(--font-sans); }
       '<div class="enroll-step"><span class="num">3</span><div><div class="title">주 1~2회, 회당 50분</div><div class="desc">보이스톡으로 1:1 맞춤 수업을 진행합니다.</div></div></div>' +
       '</div>' +
 
-            '<section class="landing-section">' +
+      '<section class="landing-section">' +
       '<div class="landing-head"><span class="eyebrow-seal">Dictionary</span><h2>한국어 단어를 바로 찾아보세요</h2></div>' +
       '<p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:480px;margin:0 auto">국립국어원 한국어기초사전 데이터로, 회원가입 없이도 궁금한 단어를 바로 찾아볼 수 있습니다.</p>' +
       '<div class="dict-widget"><div class="dict-row"><input type="text" id="dict-q" placeholder="예: 나무, 되다" value="나무"><button type="button" id="dict-search-btn">찾기</button></div>' +
@@ -1763,9 +1824,10 @@ button { font-family: var(--font-sans); }
     fetch("/api/logout", { method: "POST" }).then(function () { setState({ auth: null, view: "dash", modal: null }); });
   }
 
-      var dictBtn = document.getElementById("dict-search-btn");
+  function bindAuthEvents() {
+    var root = document.getElementById("app");
+    var dictBtn = document.getElementById("dict-search-btn");
     if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
-  function bindAuthEvents() { var root = document.getElementById("app"); var dictBtn = document.getElementById("dict-search-btn"); if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
     root.querySelectorAll("[data-auth-tab]").forEach(function (el) {
       el.addEventListener("click", function () { setState({ authTab: el.getAttribute("data-auth-tab"), authError: "", authUnverifiedEmail: "" }); });
     });
@@ -1955,7 +2017,7 @@ button { font-family: var(--font-sans); }
 
   var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
   if (resetTokenMatch) {
-    state.authResetToken = decodeURIComponent(resetTokenMatch[1]);
+    state.authResetToken = decodeURIComponent(resetTokenMatch);
     history.replaceState(null, "", location.pathname);
   }
   render();
