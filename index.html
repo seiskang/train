@@ -2132,69 +2132,338 @@ button { font-family: var(--font-sans); }
   }, 30000);
 })();
 </script>
-  <!-- ========================================== -->
-<!-- [언론 보도 및 뉴스룸 모달 HTML] -->
+</script>
+
 <!-- ========================================== -->
-<div id="pressModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-60 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden transform transition-all">
-    
-    <!-- 모달 헤더 -->
-    <div class="px-6 py-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white flex justify-between items-center">
+<!-- [세이스강 프리미엄 언론 보도 및 뉴스룸 모달] -->
+<!-- ========================================== -->
+<style>
+#pressModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
+}
+#pressModal.active {
+  display: flex !important;
+}
+.sk-modal-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: skFadeUp 0.25s ease-out;
+}
+@keyframes skFadeUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.sk-modal-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: #ffffff;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sk-badge-top {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  color: #bfdbfe;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sk-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+.sk-modal-desc {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #93c5fd;
+}
+.sk-close-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+.sk-close-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+.sk-tab-bar {
+  background: #f8fafc;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+.sk-tab-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.sk-tab-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.sk-tab-btn.active {
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  border-color: #1e3a8a !important;
+}
+.sk-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  background: #f8fafc;
+  flex: 1;
+}
+.sk-article-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.sk-article-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 20px rgba(30, 58, 138, 0.08);
+  transform: translateY(-2px);
+}
+.sk-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.sk-cat-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+.sk-media-name {
+  color: #64748b;
+  font-weight: 600;
+}
+.sk-card-date {
+  color: #94a3b8;
+}
+.sk-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+.sk-card-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e40af;
+  margin: 0 0 8px 0;
+}
+.sk-card-summary {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+.sk-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.sk-read-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+}
+.sk-detail-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+}
+.sk-back-btn {
+  background: none;
+  border: none;
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sk-back-btn:hover {
+  text-decoration: underline;
+}
+.sk-detail-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.4;
+  margin: 10px 0 6px 0;
+}
+.sk-detail-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+  margin: 0 0 16px 0;
+}
+.sk-quote-box {
+  background: #eff6ff;
+  border-left: 4px solid #1d4ed8;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 14px 0;
+}
+.sk-detail-text p {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 12px;
+}
+.sk-meta-box {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 18px;
+}
+.sk-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.sk-tag-pill {
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.sk-modal-footer {
+  background: #ffffff;
+  padding: 12px 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #64748b;
+}
+.sk-footer-close {
+  background: #e2e8f0;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sk-footer-close:hover {
+  background: #cbd5e1;
+}
+</style>
+
+<!-- 모달 HTML -->
+<div id="pressModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header">
       <div>
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 text-xs font-semibold bg-blue-700 text-blue-100 rounded-md">Press & Media</span>
-          <h3 class="text-lg font-bold">세이스강 언론 보도 및 대외 활동</h3>
-        </div>
-        <p class="text-xs text-blue-200 mt-1">청랑 이윤재 원장의 공직 32년, 반부패 정책 및 대외 언론 보도 아카이브</p>
+        <span class="sk-badge-top">Press & Media</span>
+        <h3 class="sk-modal-title">세이스강 언론 보도 및 대외 활동</h3>
+        <p class="sk-modal-desc">청랑 이윤재 원장의 공직 32년, 반부패 정책 및 대외 언론 보도 아카이브</p>
       </div>
-      <button onclick="closePressModal()" class="text-gray-300 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      <button onclick="closePressModal()" class="sk-close-btn" aria-label="닫기">✕</button>
     </div>
 
-    <!-- 카테고리 필터 탭 -->
-    <div class="px-6 py-3 bg-gray-50 border-b border-gray-200 flex gap-2 overflow-x-auto text-xs font-medium">
-      <button onclick="filterPressCategory('ALL')" id="tab-ALL" class="press-tab px-3 py-1.5 rounded-full bg-blue-900 text-white font-semibold transition">전체</button>
-      <button onclick="filterPressCategory('INTEGRITY')" id="tab-INTEGRITY" class="press-tab px-3 py-1.5 rounded-full bg-white text-gray-600 border border-gray-300 hover:bg-gray-100 transition">반부패·청렴 정책</button>
-      <button onclick="filterPressCategory('EDU')" id="tab-EDU" class="press-tab px-3 py-1.5 rounded-full bg-white text-gray-600 border border-gray-300 hover:bg-gray-100 transition">한국어·디지털 교육</button>
-      <button onclick="filterPressCategory('LIT')" id="tab-LIT" class="press-tab px-3 py-1.5 rounded-full bg-white text-gray-600 border border-gray-300 hover:bg-gray-100 transition">문학·문화예술</button>
+    <div class="sk-tab-bar">
+      <button onclick="filterPressCategory('ALL')" id="tab-ALL" class="sk-tab-btn active">전체</button>
+      <button onclick="filterPressCategory('INTEGRITY')" id="tab-INTEGRITY" class="sk-tab-btn">반부패·청렴 정책</button>
+      <button onclick="filterPressCategory('EDU')" id="tab-EDU" class="sk-tab-btn">한국어·디지털 교육</button>
+      <button onclick="filterPressCategory('LIT')" id="tab-LIT" class="sk-tab-btn">문학·문화예술</button>
     </div>
 
-    <!-- 모달 본문 (목록 뷰 & 상세 뷰) -->
-    <div class="p-6 overflow-y-auto flex-1 bg-gray-50/50">
-      
-      <!-- 목록 뷰 -->
-      <div id="pressListView" class="space-y-4">
-        <!-- JS로 카드가 자동 렌더링됩니다 -->
-      </div>
-
-      <!-- 상세 뷰 (기사 전문) -->
-      <div id="pressDetailView" class="hidden bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-        <button onclick="backToPressList()" class="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-blue-700 hover:underline">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          목록으로 돌아가기
-        </button>
-        <div id="pressDetailContent">
-          <!-- JS로 기사 전문이 주입됩니다 -->
+    <div class="sk-modal-body">
+      <div id="pressListView"></div>
+      <div id="pressDetailView" style="display: none;">
+        <div class="sk-detail-box">
+          <button onclick="backToPressList()" class="sk-back-btn">← 목록으로 돌아가기</button>
+          <div id="pressDetailContent"></div>
         </div>
       </div>
-
     </div>
 
-    <!-- 모달 푸터 -->
-    <div class="px-6 py-3 bg-white border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
-      <span>총 <strong id="pressTotalCount" class="text-blue-900 font-bold">1</strong>건의 보도자료</span>
-      <button onclick="closePressModal()" class="px-4 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md font-medium transition">닫기</button>
+    <div class="sk-modal-footer">
+      <span>총 <strong id="pressTotalCount" style="color: #1e3a8a;">1</strong>건의 보도자료</span>
+      <button onclick="closePressModal()" class="sk-footer-close">닫기</button>
     </div>
-
   </div>
 </div>
-  <script>
-// 보도자료 데이터 목록
+
+<!-- 모달 동작 스크립트 -->
+<script>
 const pressArticles = [
   {
     id: 1,
@@ -2206,12 +2475,12 @@ const pressArticles = [
     subtitle: "반부패 공기업 이미지 선도, 국내외에서 긍정적 평가",
     summary: "한국반부패정책학회 전문가 세미나에서 공공부문 대표로 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표를 진행했습니다.",
     content: `
-      <p class="mb-4">코레일은 11월 5일 한국반부패정책학회가 주관하는 전문가그룹 세미나에서 청렴 우수사례를 발표한다고 밝혔다.</p>
-      <p class="mb-4">이번 세미나는 ‘공직부패 척결방안은 없는가’를 주제로 열리며, 정치계, 대학교수, 시민단체 등 각계 전문가들이 참여해 부패 방지를 위한 정책 대안을 모색하는 자리로 마련됐다. 세미나는 총 3개 세션으로 진행되며, 주요 토론자로는 안민석 민주당 국회의원, 김창문 변호사, 강성구 한국투명성기구 사무총장 등이 참석한다.</p>
-      <p class="mb-4 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-800 text-blue-950 font-medium">코레일은 공공부문 대표 자격으로 세미나에 참석해 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표할 예정이다.</p>
-      <p class="mb-4">앞서 코레일은 지난 10월 30일부터 11월 2일까지 그리스 아테네에서 열린 제13차 국제반부패회의(IACC)에서 국내 공기업 최초로 청렴 우수사례를 발표해 각국 참가자들로부터 관심을 받은 바 있다.</p>
-      <p class="mb-4">이기택 코레일 감사실장은 “청렴·투명경영은 이제 기업의 생존전략이 되고 있다”며 “앞으로 코레일은 청렴하고 깨끗한 공기업, 국민으로부터 신뢰받는 공기업, 나아가 반부패를 선도하는 공기업으로 거듭나겠다”고 말했다.</p>
-      <p class="mb-4">한편 코레일은 지난해 공공기관 청렴도 상승률 1위, 부패방지시책평가 최우수기관 선정, 대통령표창 수상 등의 성과를 거뒀다. 또한 지난 10월에는 ‘2008년 클린 코레일 페스티벌’을 개최해 외부위원들로부터 청렴 우수사례에 대한 긍정적인 평가를 받았다.</p>
+      <p>코레일은 11월 5일 한국반부패정책학회가 주관하는 전문가그룹 세미나에서 청렴 우수사례를 발표한다고 밝혔다.</p>
+      <p>이번 세미나는 ‘공직부패 척결방안은 없는가’를 주제로 열리며, 정치계, 대학교수, 시민단체 등 각계 전문가들이 참여해 부패 방지를 위한 정책 대안을 모색하는 자리로 마련됐다. 세미나는 총 3개 세션으로 진행되며, 주요 토론자로는 안민석 민주당 국회의원, 김창문 변호사, 강성구 한국투명성기구 사무총장 등이 참석한다.</p>
+      <div class="sk-quote-box">코레일은 공공부문 대표 자격으로 세미나에 참석해 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표할 예정이다.</div>
+      <p>앞서 코레일은 지난 10월 30일부터 11월 2일까지 그리스 아테네에서 열린 제13차 국제반부패회의(IACC)에서 국내 공기업 최초로 청렴 우수사례를 발표해 각국 참가자들로부터 관심을 받은 바 있다.</p>
+      <p>이기택 코레일 감사실장은 “청렴·투명경영은 이제 기업의 생존전략이 되고 있다”며 “앞으로 코레일은 청렴하고 깨끗한 공기업, 국민으로부터 신뢰받는 공기업, 나아가 반부패를 선도하는 공기업으로 거듭나겠다”고 말했다.</p>
+      <p>한편 코레일은 지난해 공공기관 청렴도 상승률 1위, 부패방지시책평가 최우수기관 선정, 대통령표창 수상 등의 성과를 거뒀다. 또한 지난 10월에는 ‘2008년 클린 코레일 페스티벌’을 개최해 외부위원들로부터 청렴 우수사례에 대한 긍정적인 평가를 받았다.</p>
     `,
     meta: "문의: 코레일 감사실 / 청렴조사팀 | 자료 출처: 프라임경제 (2008.11.05)",
     tags: ["코레일", "한국철도공사", "청렴정책", "이윤재", "한국반부패청렴정책연구원", "세이스강"]
@@ -2223,7 +2492,7 @@ let currentPressCategory = 'ALL';
 function openPressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
-    modal.classList.remove('hidden');
+    modal.classList.add('active');
     filterPressCategory('ALL');
   }
 }
@@ -2231,7 +2500,7 @@ function openPressModal() {
 function closePressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
-    modal.classList.add('hidden');
+    modal.classList.remove('active');
     backToPressList();
   }
 }
@@ -2239,12 +2508,12 @@ function closePressModal() {
 function filterPressCategory(category) {
   currentPressCategory = category;
   
-  document.querySelectorAll('.press-tab').forEach(tab => {
-    tab.className = "press-tab px-3 py-1.5 rounded-full bg-white text-gray-600 border border-gray-300 hover:bg-gray-100 transition";
+  document.querySelectorAll('.sk-tab-btn').forEach(tab => {
+    tab.classList.remove('active');
   });
   const activeTab = document.getElementById(`tab-${category}`);
   if (activeTab) {
-    activeTab.className = "press-tab px-3 py-1.5 rounded-full bg-blue-900 text-white font-semibold transition";
+    activeTab.classList.add('active');
   }
 
   const filtered = category === 'ALL' 
@@ -2263,33 +2532,26 @@ function renderPressList(articles) {
 
   if (articles.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-12 text-gray-500 bg-white rounded-xl border border-gray-200">
-        <p>등록된 보도자료가 없습니다.</p>
+      <div style="text-align: center; padding: 40px; color: #94a3b8; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;">
+        등록된 보도자료가 없습니다.
       </div>`;
     return;
   }
 
   container.innerHTML = articles.map(item => `
-    <div class="bg-white p-5 rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-md transition duration-200">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-2 text-xs">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-semibold rounded">${item.categoryName}</span>
-          <span class="font-medium text-gray-700">${item.media}</span>
+    <div class="sk-article-card" onclick="viewPressDetail(${item.id})">
+      <div class="sk-card-meta">
+        <div>
+          <span class="sk-cat-tag">${item.categoryName}</span>
+          <span class="sk-media-name">${item.media}</span>
         </div>
-        <span class="text-gray-400">${item.date}</span>
+        <span class="sk-card-date">${item.date}</span>
       </div>
-      <h4 class="text-base font-bold text-gray-900 mb-1 hover:text-blue-700 cursor-pointer" onclick="viewPressDetail(${item.id})">
-        ${item.title}
-      </h4>
-      <p class="text-xs text-blue-900 font-medium mb-2">${item.subtitle}</p>
-      <p class="text-xs text-gray-600 line-clamp-2 mb-3 leading-relaxed">${item.summary}</p>
-      <div class="flex justify-end">
-        <button onclick="viewPressDetail(${item.id})" class="text-xs font-semibold text-blue-800 hover:text-blue-950 inline-flex items-center gap-1">
-          기사 전문 보기
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+      <h4 class="sk-card-title">${item.title}</h4>
+      <p class="sk-card-sub">${item.subtitle}</p>
+      <p class="sk-card-summary">${item.summary}</p>
+      <div class="sk-card-footer">
+        <span class="sk-read-btn">기사 전문 보기 →</span>
       </div>
     </div>
   `).join('');
@@ -2303,39 +2565,39 @@ function viewPressDetail(id) {
   if (!contentEl) return;
 
   contentEl.innerHTML = `
-    <div class="border-b border-gray-200 pb-4 mb-4">
-      <div class="flex items-center gap-2 mb-2 text-xs">
-        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-semibold rounded">${item.categoryName}</span>
-        <span class="font-medium text-gray-600">${item.media}</span>
-        <span class="text-gray-400">|</span>
-        <span class="text-gray-400">${item.date}</span>
+    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
+      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 11px;">
+        <span class="sk-cat-tag">${item.categoryName}</span>
+        <span class="sk-media-name">${item.media}</span>
+        <span style="color: #cbd5e1;">|</span>
+        <span style="color: #94a3b8;">${item.date}</span>
       </div>
-      <h3 class="text-xl font-bold text-gray-900 leading-snug mb-2">${item.title}</h3>
-      <p class="text-sm font-semibold text-blue-900">${item.subtitle}</p>
+      <h3 class="sk-detail-title">${item.title}</h3>
+      <p class="sk-detail-sub">${item.subtitle}</p>
     </div>
     
-    <div class="text-sm text-gray-800 leading-relaxed space-y-3 mb-6">
+    <div class="sk-detail-text">
       ${item.content}
     </div>
 
-    <div class="bg-gray-50 p-3 rounded-lg text-xs text-gray-500 border border-gray-100 mb-4">
+    <div class="sk-meta-box">
       ${item.meta}
     </div>
 
-    <div class="flex flex-wrap gap-1.5 pt-2">
-      ${item.tags.map(t => `<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">#${t}</span>`).join('')}
+    <div class="sk-tags-wrap">
+      ${item.tags.map(t => `<span class="sk-tag-pill">#${t}</span>`).join('')}
     </div>
   `;
 
-  document.getElementById('pressListView').classList.add('hidden');
-  document.getElementById('pressDetailView').classList.remove('hidden');
+  document.getElementById('pressListView').style.display = 'none';
+  document.getElementById('pressDetailView').style.display = 'block';
 }
 
 function backToPressList() {
   const detail = document.getElementById('pressDetailView');
   const list = document.getElementById('pressListView');
-  if (detail) detail.classList.add('hidden');
-  if (list) list.classList.remove('hidden');
+  if (detail) detail.style.display = 'none';
+  if (list) list.style.display = 'block';
 }
 
 window.addEventListener('click', function(e) {
