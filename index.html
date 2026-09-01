@@ -2133,13 +2133,10 @@ button { font-family: var(--font-sans); }
   }, 30000);
 })();
 </script>
-</script>
-
 <!-- ========================================== -->
 <!-- [세이스강 프리미엄 언론 보도 & 뉴스룸 CMS 시스템] -->
 <!-- ========================================== -->
 <style>
-/* 모달 배경 오버레이 */
 #pressModal, #pressWriteModal {
   display: none;
   position: fixed;
@@ -2160,8 +2157,6 @@ button { font-family: var(--font-sans); }
 #pressModal.active, #pressWriteModal.active {
   display: flex !important;
 }
-
-/* 모달 컨테이너 */
 .sk-modal-box {
   background: #ffffff;
   width: 100%;
@@ -2178,8 +2173,6 @@ button { font-family: var(--font-sans); }
   from { opacity: 0; transform: translateY(20px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
-/* 헤더 */
 .sk-modal-header {
   background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
   color: #ffffff;
@@ -2229,29 +2222,25 @@ button { font-family: var(--font-sans); }
 .sk-close-btn:hover {
   background: rgba(255,255,255,0.3);
 }
-
-/* 관리자 헤더 버튼 */
 .sk-admin-write-btn {
-  background: #3b82f6;
+  background: #2563eb;
   color: #ffffff;
   border: none;
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 4px;
   margin-right: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   transition: all 0.2s;
 }
 .sk-admin-write-btn:hover {
-  background: #2563eb;
+  background: #1d4ed8;
 }
-
-/* 검색 바 & 탭 영역 */
 .sk-filter-panel {
   background: #f8fafc;
   padding: 14px 20px 10px 20px;
@@ -2313,16 +2302,12 @@ button { font-family: var(--font-sans); }
   color: #ffffff !important;
   border-color: #1e3a8a !important;
 }
-
-/* 본문 */
 .sk-modal-body {
   padding: 18px 20px;
   overflow-y: auto;
   background: #f8fafc;
   flex: 1;
 }
-
-/* 기사 카드 */
 .sk-article-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -2397,10 +2382,10 @@ button { font-family: var(--font-sans); }
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
   color: #334155;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -2414,8 +2399,6 @@ button { font-family: var(--font-sans); }
 .sk-action-btn.del:hover {
   background: #fee2e2;
 }
-
-/* 기사 상세 뷰 */
 .sk-detail-box {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -2491,8 +2474,6 @@ button { font-family: var(--font-sans); }
   padding: 3px 8px;
   border-radius: 4px;
 }
-
-/* 푸터 */
 .sk-modal-footer {
   background: #ffffff;
   padding: 12px 20px;
@@ -2513,8 +2494,6 @@ button { font-family: var(--font-sans); }
   cursor: pointer;
   transition: all 0.2s;
 }
-
-/* 관리자 글쓰기 폼 */
 .sk-form-group {
   margin-bottom: 14px;
 }
@@ -2577,12 +2556,9 @@ button { font-family: var(--font-sans); }
 }
 </style>
 
-<!-- ========================================== -->
-<!-- 1. [언론 보도 및 뉴스룸 메인 모달] -->
-<!-- ========================================== -->
+<!-- 메인 모달 -->
 <div id="pressModal">
   <div class="sk-modal-box">
-    <!-- 헤더 -->
     <div class="sk-modal-header">
       <div>
         <span class="sk-badge-top">Press & Media</span>
@@ -2590,14 +2566,13 @@ button { font-family: var(--font-sans); }
         <p class="sk-modal-desc">청랑 이윤재 원장의 공직 32년, 반부패 정책 및 대외 언론 보도 아카이브</p>
       </div>
       <div style="display: flex; align-items: center;">
-        <button id="adminWriteBtn" onclick="openPressWriteModal()" class="sk-admin-write-btn" style="display: none;">
+        <button id="adminWriteBtn" onclick="openPressWriteModal()" class="sk-admin-write-btn">
           ✏️ 새 기사 등록
         </button>
         <button onclick="closePressModal()" class="sk-close-btn" aria-label="닫기">✕</button>
       </div>
     </div>
 
-    <!-- 검색 & 말머리 탭 -->
     <div class="sk-filter-panel">
       <div class="sk-search-wrap">
         <span class="sk-search-icon">🔍</span>
@@ -2612,7 +2587,6 @@ button { font-family: var(--font-sans); }
       </div>
     </div>
 
-    <!-- 모달 본문 (목록 및 상세 뷰) -->
     <div class="sk-modal-body">
       <div id="pressListView"></div>
       <div id="pressDetailView" style="display: none;">
@@ -2626,7 +2600,6 @@ button { font-family: var(--font-sans); }
       </div>
     </div>
 
-    <!-- 푸터 -->
     <div class="sk-modal-footer">
       <span>총 <strong id="pressTotalCount" style="color: #1e3a8a;">0</strong>건의 보도자료</span>
       <button onclick="closePressModal()" class="sk-footer-close">닫기</button>
@@ -2634,9 +2607,7 @@ button { font-family: var(--font-sans); }
   </div>
 </div>
 
-<!-- ========================================== -->
-<!-- 2. [관리자 전용 기사 작성/수정 모달] -->
-<!-- ========================================== -->
+<!-- 글쓰기 및 수정 모달 -->
 <div id="pressWriteModal">
   <div class="sk-modal-box">
     <div class="sk-modal-header">
@@ -2711,11 +2682,8 @@ button { font-family: var(--font-sans); }
   </div>
 </div>
 
-<!-- ========================================== -->
-<!-- 3. [보도자료 시스템 자바스크립트 엔진] -->
-<!-- ========================================== -->
+<!-- 자바스크립트 엔진 -->
 <script>
-// 기본 1호 보도자료 데이터
 const defaultPressData = [
   {
     id: 1,
@@ -2733,11 +2701,18 @@ const defaultPressData = [
   }
 ];
 
-const PRESS_STORAGE_KEY = 'seiskang_press_articles_v2';
+const PRESS_STORAGE_KEY = 'seiskang_press_articles_v5';
 let currentPressCategory = 'ALL';
 let currentSearchKeyword = '';
 
-// 데이터 가져오기 (로컬 스토리지 연동)
+function isUserAdmin() {
+  if (typeof state !== 'undefined' && state.auth && state.auth.role === 'admin') {
+    return true;
+  }
+  const logoutBtn = document.getElementById('logout-btn');
+  return logoutBtn !== null;
+}
+
 function getPressArticles() {
   const saved = localStorage.getItem(PRESS_STORAGE_KEY);
   if (!saved) {
@@ -2745,29 +2720,22 @@ function getPressArticles() {
     return defaultPressData;
   }
   try {
-    return JSON.parse(saved);
+    const parsed = JSON.parse(saved);
+    return (Array.isArray(parsed) && parsed.length > 0) ? parsed : defaultPressData;
   } catch (e) {
     return defaultPressData;
   }
 }
 
-// 데이터 저장
 function savePressArticles(articles) {
   localStorage.setItem(PRESS_STORAGE_KEY, JSON.stringify(articles));
 }
 
-// 관리자 여부 확인 함수
-function isUserAdmin() {
-  return typeof state !== 'undefined' && state.auth && state.auth.role === 'admin';
-}
-
-// 모달 열기
 function openPressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
     modal.classList.add('active');
     
-    // 관리자 버튼 표시 여부
     const adminBtn = document.getElementById('adminWriteBtn');
     if (adminBtn) {
       adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
@@ -2781,7 +2749,6 @@ function openPressModal() {
   }
 }
 
-// 모달 닫기
 function closePressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
@@ -2790,14 +2757,12 @@ function closePressModal() {
   }
 }
 
-// 검색 핸들러
 function handlePressSearch() {
   const input = document.getElementById('pressSearchInput');
   currentSearchKeyword = input ? input.value.trim().toLowerCase() : '';
   renderPressListFiltered();
 }
 
-// 카테고리 필터
 function filterPressCategory(category) {
   currentPressCategory = category;
   
@@ -2812,7 +2777,6 @@ function filterPressCategory(category) {
   renderPressListFiltered();
 }
 
-// 필터 및 검색 적용 후 목록 렌더링
 function renderPressListFiltered() {
   const allArticles = getPressArticles();
   
@@ -2837,7 +2801,6 @@ function renderPressListFiltered() {
   renderPressList(filtered);
 }
 
-// 목록 HTML 생성
 function renderPressList(articles) {
   const container = document.getElementById('pressListView');
   const countEl = document.getElementById('pressTotalCount');
@@ -2880,7 +2843,6 @@ function renderPressList(articles) {
   `).join('');
 }
 
-// 기사 상세 보기
 function viewPressDetail(id) {
   const articles = getPressArticles();
   const item = articles.find(a => a.id === id);
@@ -2901,7 +2863,6 @@ function viewPressDetail(id) {
     }
   }
 
-  // 본문 문단 처리
   const paragraphs = (item.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
 
   contentEl.innerHTML = `
@@ -2942,10 +2903,12 @@ function backToPressList() {
   if (list) list.style.display = 'block';
 }
 
-// ==========================================
-// 관리자 글쓰기 및 수정 기능
-// ==========================================
 function openPressWriteModal(editId = null) {
+  if (!isUserAdmin()) {
+    alert("관리자만 기사를 등록하거나 수정할 수 있습니다.");
+    return;
+  }
+
   const modal = document.getElementById('pressWriteModal');
   const form = document.getElementById('pressWriteForm');
   const titleEl = document.getElementById('writeModalTitle');
@@ -2990,6 +2953,10 @@ function closePressWriteModal() {
 
 function handleSavePressArticle(e) {
   e.preventDefault();
+  if (!isUserAdmin()) {
+    alert("관리자만 저장할 수 있습니다.");
+    return;
+  }
   
   const editId = document.getElementById('writeArticleId').value;
   const category = document.getElementById('writeCategory').value;
@@ -3023,7 +2990,7 @@ function handleSavePressArticle(e) {
   if (editId) {
     articles = articles.map(a => a.id === parseInt(editId, 10) ? articleData : a);
   } else {
-    articles.unshift(articleData); // 최신글을 맨 위에 추가
+    articles.unshift(articleData);
   }
 
   savePressArticles(articles);
@@ -3036,6 +3003,10 @@ function handleSavePressArticle(e) {
 }
 
 function deletePressArticle(id) {
+  if (!isUserAdmin()) {
+    alert("관리자만 삭제할 수 있습니다.");
+    return;
+  }
   if (!confirm('정말 이 보도자료를 삭제하시겠습니까?')) return;
 
   let articles = getPressArticles();
@@ -3046,7 +3017,6 @@ function deletePressArticle(id) {
   renderPressListFiltered();
 }
 
-// 모달 외부 클릭 시 닫기
 window.addEventListener('click', function(e) {
   const pressModal = document.getElementById('pressModal');
   const writeModal = document.getElementById('pressWriteModal');
