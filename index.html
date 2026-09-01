@@ -2113,7 +2113,7 @@ button { font-family: var(--font-sans); }
 
   var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
   if (resetTokenMatch) {
-    state.authResetToken = decodeURIComponent(resetTokenMatch);
+    state.authResetToken = decodeURIComponent(resetTokenMatch[1]);
     history.replaceState(null, "", location.pathname);
   }
   render();
