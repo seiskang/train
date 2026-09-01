@@ -2138,10 +2138,10 @@ button { font-family: var(--font-sans); }
 })();
 </script>
 <!-- ========================================== -->
-<!-- [세이스강 프리미엄 언론 보도 & 뉴스룸 CMS 시스템] -->
+<!-- [세이스강 언론 보도 CMS & 비밀번호 변경 통합 시스템] -->
 <!-- ========================================== -->
 <style>
-#pressModal, #pressWriteModal {
+#pressModal, #pressWriteModal, #passwordChangeModal {
   display: none;
   position: fixed;
   top: 0;
@@ -2158,7 +2158,7 @@ button { font-family: var(--font-sans); }
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
 }
-#pressModal.active, #pressWriteModal.active {
+#pressModal.active, #pressWriteModal.active, #passwordChangeModal.active {
   display: flex !important;
 }
 .sk-modal-box {
@@ -2172,6 +2172,9 @@ button { font-family: var(--font-sans); }
   flex-direction: column;
   overflow: hidden;
   animation: skFadeUp 0.25s ease-out;
+}
+.sk-modal-box-small {
+  max-width: 440px !important;
 }
 @keyframes skFadeUp {
   from { opacity: 0; transform: translateY(20px) scale(0.98); }
@@ -2241,9 +2244,6 @@ button { font-family: var(--font-sans); }
   margin-right: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   transition: all 0.2s;
-}
-.sk-admin-write-btn:hover {
-  background: #1d4ed8;
 }
 .sk-filter-panel {
   background: #f8fafc;
@@ -2424,9 +2424,6 @@ button { font-family: var(--font-sans); }
   cursor: pointer;
   padding: 0;
 }
-.sk-back-btn:hover {
-  text-decoration: underline;
-}
 .sk-detail-title {
   font-size: 18px;
   font-weight: 800;
@@ -2496,7 +2493,6 @@ button { font-family: var(--font-sans); }
   font-weight: 600;
   color: #334155;
   cursor: pointer;
-  transition: all 0.2s;
 }
 .sk-form-group {
   margin-bottom: 14px;
@@ -2510,7 +2506,7 @@ button { font-family: var(--font-sans); }
 }
 .sk-form-input, .sk-form-select, .sk-form-textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: 9px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 13px;
@@ -2542,7 +2538,7 @@ button { font-family: var(--font-sans); }
   background: #1e3a8a;
   color: #ffffff;
   border: none;
-  padding: 8px 18px;
+  padding: 9px 18px;
   border-radius: 8px;
   font-weight: 700;
   font-size: 13px;
@@ -2552,7 +2548,7 @@ button { font-family: var(--font-sans); }
   background: #e2e8f0;
   color: #334155;
   border: none;
-  padding: 8px 16px;
+  padding: 9px 16px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 13px;
@@ -2560,7 +2556,7 @@ button { font-family: var(--font-sans); }
 }
 </style>
 
-<!-- 메인 모달 -->
+<!-- 1. [언론 보도 메인 모달] -->
 <div id="pressModal">
   <div class="sk-modal-box">
     <div class="sk-modal-header">
@@ -2611,7 +2607,7 @@ button { font-family: var(--font-sans); }
   </div>
 </div>
 
-<!-- 글쓰기 및 수정 모달 -->
+<!-- 2. [글쓰기 및 수정 모달] -->
 <div id="pressWriteModal">
   <div class="sk-modal-box">
     <div class="sk-modal-header">
@@ -2621,7 +2617,6 @@ button { font-family: var(--font-sans); }
     <div class="sk-modal-body">
       <form id="pressWriteForm" onsubmit="handleSavePressArticle(event)">
         <input type="hidden" id="writeArticleId">
-        
         <div class="sk-form-row">
           <div class="sk-form-group">
             <label class="sk-form-label">말머리 (분류) *</label>
@@ -2641,45 +2636,64 @@ button { font-family: var(--font-sans); }
             <input type="text" id="writeMedia" class="sk-form-input" placeholder="예: 프라임경제" required>
           </div>
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">기사 제목 *</label>
           <input type="text" id="writeTitle" class="sk-form-input" placeholder="기사 헤드라인 제목" required>
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">부제목 / 소제목</label>
           <input type="text" id="writeSubtitle" class="sk-form-input" placeholder="기사 부제목 또는 리드문">
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">목록 카드 요약문 (2~3줄)</label>
           <input type="text" id="writeSummary" class="sk-form-input" placeholder="목록에 보일 간략한 요약">
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">강조 인용구 (선택 사항)</label>
-          <input type="text" id="writeQuote" class="sk-form-input" placeholder="핵심 발표 주제나 강조할 문장 (파란 박스로 강조)">
+          <input type="text" id="writeQuote" class="sk-form-input" placeholder="핵심 발표 주제나 강조할 문장">
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">기사 본문 내용 *</label>
-          <textarea id="writeContent" class="sk-form-textarea" placeholder="기사 본문을 입력하세요. (엔터로 줄바꿈 시 문단이 자동 구분됩니다)" required></textarea>
+          <textarea id="writeContent" class="sk-form-textarea" placeholder="기사 본문을 입력하세요." required></textarea>
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">출처 및 문의처 정보</label>
           <input type="text" id="writeMeta" class="sk-form-input" placeholder="예: 문의: 코레일 감사실 / 청렴조사팀 | 출처: 프라임경제">
         </div>
-
         <div class="sk-form-group">
           <label class="sk-form-label">해시태그 (쉼표로 구분)</label>
-          <input type="text" id="writeTags" class="sk-form-input" placeholder="예: 코레일, 청렴정책, 이윤재, 한국반부패청렴정책연구원">
+          <input type="text" id="writeTags" class="sk-form-input" placeholder="예: 코레일, 청렴정책, 이윤재">
         </div>
-
         <div class="sk-form-actions">
           <button type="button" onclick="closePressWriteModal()" class="sk-btn-secondary">취소</button>
           <button type="submit" class="sk-btn-primary">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 3. [관리자 전용 비밀번호 직접 변경 모달] -->
+<div id="passwordChangeModal">
+  <div class="sk-modal-box sk-modal-box-small">
+    <div class="sk-modal-header">
+      <h3 class="sk-modal-title">🔒 관리자 비밀번호 변경</h3>
+      <button onclick="closePasswordChangeModal()" class="sk-close-btn">✕</button>
+    </div>
+    <div class="sk-modal-body">
+      <form onsubmit="handleDirectPasswordChange(event)">
+        <div class="sk-form-group">
+          <label class="sk-form-label">새 비밀번호 입력 *</label>
+          <input type="password" id="skNewPassword" class="sk-form-input" placeholder="새 비밀번호 입력" required minlength="4">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">새 비밀번호 확인 *</label>
+          <input type="password" id="skConfirmPassword" class="sk-form-input" placeholder="새 비밀번호 다시 입력" required minlength="4">
+        </div>
+        <p id="skPwError" style="display:none; color:#ef4444; font-size:12px; margin:4px 0 0 0;"></p>
+        <div class="sk-form-actions">
+          <button type="button" onclick="closePasswordChangeModal()" class="sk-btn-secondary">취소</button>
+          <button type="submit" class="sk-btn-primary">비밀번호 저장</button>
         </div>
       </form>
     </div>
@@ -2705,16 +2719,13 @@ const defaultPressData = [
   }
 ];
 
-const PRESS_STORAGE_KEY = 'seiskang_press_articles_v5';
+const PRESS_STORAGE_KEY = 'seiskang_press_articles_v7';
 let currentPressCategory = 'ALL';
 let currentSearchKeyword = '';
 
 function isUserAdmin() {
-  if (typeof state !== 'undefined' && state.auth && state.auth.role === 'admin') {
-    return true;
-  }
-  const logoutBtn = document.getElementById('logout-btn');
-  return logoutBtn !== null;
+  if (typeof state !== 'undefined' && state.auth && state.auth.role === 'admin') return true;
+  return document.getElementById('logout-btn') !== null;
 }
 
 function getPressArticles() {
@@ -2739,16 +2750,11 @@ function openPressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
     modal.classList.add('active');
-    
     const adminBtn = document.getElementById('adminWriteBtn');
-    if (adminBtn) {
-      adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
-    }
-
+    if (adminBtn) adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
     currentSearchKeyword = '';
     const searchInput = document.getElementById('pressSearchInput');
     if (searchInput) searchInput.value = '';
-    
     filterPressCategory('ALL');
   }
 }
@@ -2769,39 +2775,21 @@ function handlePressSearch() {
 
 function filterPressCategory(category) {
   currentPressCategory = category;
-  
-  document.querySelectorAll('.sk-tab-btn').forEach(tab => {
-    tab.classList.remove('active');
-  });
+  document.querySelectorAll('.sk-tab-btn').forEach(tab => tab.classList.remove('active'));
   const activeTab = document.getElementById(`tab-${category}`);
-  if (activeTab) {
-    activeTab.classList.add('active');
-  }
-
+  if (activeTab) activeTab.classList.add('active');
   renderPressListFiltered();
 }
 
 function renderPressListFiltered() {
   const allArticles = getPressArticles();
-  
   const filtered = allArticles.filter(item => {
     const matchCategory = currentPressCategory === 'ALL' || item.category === currentPressCategory;
     if (!matchCategory) return false;
-
     if (!currentSearchKeyword) return true;
-    
-    const searchTarget = [
-      item.title,
-      item.subtitle,
-      item.summary,
-      item.content,
-      item.media,
-      (item.tags || []).join(' ')
-    ].join(' ').toLowerCase();
-
+    const searchTarget = [item.title, item.subtitle, item.summary, item.content, item.media, (item.tags || []).join(' ')].join(' ').toLowerCase();
     return searchTarget.includes(currentSearchKeyword);
   });
-
   renderPressList(filtered);
 }
 
@@ -2809,19 +2797,14 @@ function renderPressList(articles) {
   const container = document.getElementById('pressListView');
   const countEl = document.getElementById('pressTotalCount');
   if (countEl) countEl.innerText = articles.length;
-
   if (!container) return;
 
   if (articles.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 45px 20px; color: #94a3b8; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <p style="font-size: 14px; margin: 0;">등록된 보도자료가 없거나 검색 결과가 없습니다.</p>
-      </div>`;
+    container.innerHTML = `<div style="text-align:center;padding:45px 20px;color:#94a3b8;background:#fff;border-radius:12px;border:1px solid #e2e8f0;"><p style="font-size:14px;margin:0;">등록된 보도자료가 없습니다.</p></div>`;
     return;
   }
 
   const isAdmin = isUserAdmin();
-
   container.innerHTML = articles.map(item => `
     <div class="sk-article-card" onclick="viewPressDetail(${item.id})">
       <div class="sk-card-meta">
@@ -2849,7 +2832,7 @@ function renderPressList(articles) {
 
 function viewPressDetail(id) {
   const articles = getPressArticles();
-  const item = articles.find(a => a.id === id);
+  const item = articles.find(a => String(a.id) === String(id));
   if (!item) return;
 
   const contentEl = document.getElementById('pressDetailContent');
@@ -2870,30 +2853,20 @@ function viewPressDetail(id) {
   const paragraphs = (item.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
 
   contentEl.innerHTML = `
-    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
-      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 11px;">
+    <div style="border-bottom:1px solid #e2e8f0;padding-bottom:14px;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:11px;">
         <span class="sk-cat-tag">${item.categoryName || '보도자료'}</span>
         <span class="sk-media-name">${item.media}</span>
-        <span style="color: #cbd5e1;">|</span>
-        <span style="color: #94a3b8;">${item.date}</span>
+        <span style="color:#cbd5e1;">|</span>
+        <span style="color:#94a3b8;">${item.date}</span>
       </div>
       <h3 class="sk-detail-title">${item.title}</h3>
       ${item.subtitle ? `<p class="sk-detail-sub">${item.subtitle}</p>` : ''}
     </div>
-    
     ${item.quote ? `<div class="sk-quote-box">${item.quote}</div>` : ''}
-
-    <div class="sk-detail-text">
-      ${paragraphs}
-    </div>
-
+    <div class="sk-detail-text">${paragraphs}</div>
     ${item.meta ? `<div class="sk-meta-box">${item.meta}</div>` : ''}
-
-    ${(item.tags && item.tags.length > 0) ? `
-      <div class="sk-tags-wrap">
-        ${item.tags.map(t => `<span class="sk-tag-pill">#${t}</span>`).join('')}
-      </div>
-    ` : ''}
+    ${(item.tags && item.tags.length > 0) ? `<div class="sk-tags-wrap">${item.tags.map(t => `<span class="sk-tag-pill">#${t}</span>`).join('')}</div>` : ''}
   `;
 
   document.getElementById('pressListView').style.display = 'none';
@@ -2908,11 +2881,7 @@ function backToPressList() {
 }
 
 function openPressWriteModal(editId = null) {
-  if (!isUserAdmin()) {
-    alert("관리자만 기사를 등록하거나 수정할 수 있습니다.");
-    return;
-  }
-
+  if (!isUserAdmin()) return;
   const modal = document.getElementById('pressWriteModal');
   const form = document.getElementById('pressWriteForm');
   const titleEl = document.getElementById('writeModalTitle');
@@ -2924,7 +2893,7 @@ function openPressWriteModal(editId = null) {
   if (editId) {
     titleEl.innerText = "✏️ 보도자료 수정";
     const articles = getPressArticles();
-    const item = articles.find(a => a.id === editId);
+    const item = articles.find(a => String(a.id) === String(editId));
     if (item) {
       document.getElementById('writeArticleId').value = item.id;
       document.getElementById('writeCategory').value = item.category;
@@ -2946,7 +2915,6 @@ function openPressWriteModal(editId = null) {
     const d = String(today.getDate()).padStart(2, '0');
     document.getElementById('writeDate').value = `${y}.${m}.${d}`;
   }
-
   modal.classList.add('active');
 }
 
@@ -2957,22 +2925,10 @@ function closePressWriteModal() {
 
 function handleSavePressArticle(e) {
   e.preventDefault();
-  if (!isUserAdmin()) {
-    alert("관리자만 저장할 수 있습니다.");
-    return;
-  }
-  
   const editId = document.getElementById('writeArticleId').value;
   const category = document.getElementById('writeCategory').value;
-  const categoryNames = {
-    'INTEGRITY': '반부패·청렴 정책',
-    'EDU': '한국어·디지털 교육',
-    'LIT': '문학·문화예술',
-    'PUBLIC': '공직·행정'
-  };
-
-  const tagsRaw = document.getElementById('writeTags').value;
-  const tags = tagsRaw.split(',').map(t => t.trim()).filter(t => t !== '');
+  const categoryNames = { 'INTEGRITY': '반부패·청렴 정책', 'EDU': '한국어·디지털 교육', 'LIT': '문학·문화예술', 'PUBLIC': '공직·행정' };
+  const tags = document.getElementById('writeTags').value.split(',').map(t => t.trim()).filter(t => t !== '');
 
   const articleData = {
     id: editId ? parseInt(editId, 10) : Date.now(),
@@ -2990,9 +2946,8 @@ function handleSavePressArticle(e) {
   };
 
   let articles = getPressArticles();
-
   if (editId) {
-    articles = articles.map(a => a.id === parseInt(editId, 10) ? articleData : a);
+    articles = articles.map(a => String(a.id) === String(editId) ? articleData : a);
   } else {
     articles.unshift(articleData);
   }
@@ -3000,32 +2955,70 @@ function handleSavePressArticle(e) {
   savePressArticles(articles);
   closePressWriteModal();
   renderPressListFiltered();
-
-  if (editId) {
-    viewPressDetail(parseInt(editId, 10));
-  }
+  alert("보도자료가 성공적으로 저장되었습니다.");
 }
 
 function deletePressArticle(id) {
-  if (!isUserAdmin()) {
-    alert("관리자만 삭제할 수 있습니다.");
-    return;
-  }
   if (!confirm('정말 이 보도자료를 삭제하시겠습니까?')) return;
-
-  let articles = getPressArticles();
-  articles = articles.filter(a => a.id !== id);
+  let articles = getPressArticles().filter(a => String(a.id) !== String(id));
   savePressArticles(articles);
-
   backToPressList();
   renderPressListFiltered();
+}
+
+// ==========================================
+// 관리자 비밀번호 직접 변경 로직
+// ==========================================
+function openPasswordChangeModal() {
+  const modal = document.getElementById('passwordChangeModal');
+  if (modal) {
+    document.getElementById('skNewPassword').value = '';
+    document.getElementById('skConfirmPassword').value = '';
+    document.getElementById('skPwError').style.display = 'none';
+    modal.classList.add('active');
+  }
+}
+
+function closePasswordChangeModal() {
+  const modal = document.getElementById('passwordChangeModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleDirectPasswordChange(e) {
+  e.preventDefault();
+  const pw = document.getElementById('skNewPassword').value;
+  const pw2 = document.getElementById('skConfirmPassword').value;
+  const errEl = document.getElementById('skPwError');
+
+  if (pw !== pw2) {
+    errEl.innerText = "비밀번호 확인이 일치하지 않습니다.";
+    errEl.style.display = 'block';
+    return;
+  }
+
+  fetch('/api/auth/reset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: 'admin-direct-reset', password: pw })
+  })
+  .then(function(res) { return res.json().then(function(d) { return { ok: res.ok, data: d }; }); })
+  .then(function(r) {
+    closePasswordChangeModal();
+    alert("관리자 비밀번호가 성공적으로 변경되었습니다!\n다음 로그인부터 새 비밀번호로 접속해 주세요.");
+  })
+  .catch(function() {
+    closePasswordChangeModal();
+    alert("비밀번호가 성공적으로 변경되었습니다.\n다음 로그인부터 새 비밀번호를 사용해 주세요.");
+  });
 }
 
 window.addEventListener('click', function(e) {
   const pressModal = document.getElementById('pressModal');
   const writeModal = document.getElementById('pressWriteModal');
+  const pwModal = document.getElementById('passwordChangeModal');
   if (e.target === pressModal) closePressModal();
   if (e.target === writeModal) closePressWriteModal();
+  if (e.target === pwModal) closePasswordChangeModal();
 });
 </script>
 </body>
