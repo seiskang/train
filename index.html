@@ -2135,10 +2135,11 @@ button { font-family: var(--font-sans); }
 </script>
 
 <!-- ========================================== -->
-<!-- [세이스강 프리미엄 언론 보도 및 뉴스룸 모달] -->
+<!-- [세이스강 프리미엄 언론 보도 & 뉴스룸 CMS 시스템] -->
 <!-- ========================================== -->
 <style>
-#pressModal {
+/* 모달 배경 오버레이 */
+#pressModal, #pressWriteModal {
   display: none;
   position: fixed;
   top: 0;
@@ -2155,16 +2156,18 @@ button { font-family: var(--font-sans); }
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
 }
-#pressModal.active {
+#pressModal.active, #pressWriteModal.active {
   display: flex !important;
 }
+
+/* 모달 컨테이너 */
 .sk-modal-box {
   background: #ffffff;
   width: 100%;
-  max-width: 680px;
-  max-height: 88vh;
+  max-width: 720px;
+  max-height: 90vh;
   border-radius: 20px;
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -2174,10 +2177,12 @@ button { font-family: var(--font-sans); }
   from { opacity: 0; transform: translateY(20px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* 헤더 */
 .sk-modal-header {
   background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
   color: #ffffff;
-  padding: 20px 24px;
+  padding: 18px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2190,10 +2195,9 @@ button { font-family: var(--font-sans); }
   color: #bfdbfe;
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: 6px;
   letter-spacing: 0.5px;
-  text-transform: uppercase;
   margin-bottom: 4px;
 }
 .sk-modal-title {
@@ -2201,10 +2205,9 @@ button { font-family: var(--font-sans); }
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.3px;
 }
 .sk-modal-desc {
-  margin: 4px 0 0 0;
+  margin: 3px 0 0 0;
   font-size: 12px;
   color: #93c5fd;
 }
@@ -2219,25 +2222,80 @@ button { font-family: var(--font-sans); }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   transition: all 0.2s;
 }
 .sk-close-btn:hover {
   background: rgba(255,255,255,0.3);
 }
-.sk-tab-bar {
+
+/* 관리자 헤더 버튼 */
+.sk-admin-write-btn {
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.2s;
+}
+.sk-admin-write-btn:hover {
+  background: #2563eb;
+}
+
+/* 검색 바 & 탭 영역 */
+.sk-filter-panel {
   background: #f8fafc;
-  padding: 12px 20px;
+  padding: 14px 20px 10px 20px;
   border-bottom: 1px solid #e2e8f0;
+}
+.sk-search-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+.sk-search-input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #1e293b;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s;
+}
+.sk-search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.sk-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #64748b;
+  pointer-events: none;
+}
+.sk-tab-bar {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
+  padding-bottom: 4px;
 }
 .sk-tab-btn {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   color: #475569;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -2254,39 +2312,43 @@ button { font-family: var(--font-sans); }
   color: #ffffff !important;
   border-color: #1e3a8a !important;
 }
+
+/* 본문 */
 .sk-modal-body {
-  padding: 20px;
+  padding: 18px 20px;
   overflow-y: auto;
   background: #f8fafc;
   flex: 1;
 }
+
+/* 기사 카드 */
 .sk-article-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 .sk-article-card:hover {
   border-color: #3b82f6;
-  box-shadow: 0 8px 20px rgba(30, 58, 138, 0.08);
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.08);
   transform: translateY(-2px);
 }
 .sk-card-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 11px;
 }
 .sk-cat-tag {
   background: #eff6ff;
   color: #1d4ed8;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 6px;
   margin-right: 6px;
 }
@@ -2301,38 +2363,69 @@ button { font-family: var(--font-sans); }
   font-size: 15px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   line-height: 1.4;
 }
 .sk-card-sub {
   font-size: 12px;
   font-weight: 600;
   color: #1e40af;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 .sk-card-summary {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #475569;
   line-height: 1.5;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
 }
 .sk-card-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 }
 .sk-read-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   color: #1d4ed8;
   font-size: 12px;
   font-weight: 700;
 }
+.sk-admin-actions {
+  display: flex;
+  gap: 6px;
+}
+.sk-action-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sk-action-btn:hover {
+  background: #e2e8f0;
+}
+.sk-action-btn.del {
+  color: #ef4444;
+  border-color: #fca5a5;
+}
+.sk-action-btn.del:hover {
+  background: #fee2e2;
+}
+
+/* 기사 상세 뷰 */
 .sk-detail-box {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
   padding: 22px;
+}
+.sk-detail-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
 }
 .sk-back-btn {
   background: none;
@@ -2342,10 +2435,6 @@ button { font-family: var(--font-sans); }
   font-weight: 700;
   cursor: pointer;
   padding: 0;
-  margin-bottom: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
 }
 .sk-back-btn:hover {
   text-decoration: underline;
@@ -2361,7 +2450,7 @@ button { font-family: var(--font-sans); }
   font-size: 13px;
   font-weight: 600;
   color: #1d4ed8;
-  margin: 0 0 16px 0;
+  margin: 0 0 14px 0;
 }
 .sk-quote-box {
   background: #eff6ff;
@@ -2401,6 +2490,8 @@ button { font-family: var(--font-sans); }
   padding: 3px 8px;
   border-radius: 4px;
 }
+
+/* 푸터 */
 .sk-modal-footer {
   background: #ffffff;
   padding: 12px 20px;
@@ -2421,50 +2512,210 @@ button { font-family: var(--font-sans); }
   cursor: pointer;
   transition: all 0.2s;
 }
-.sk-footer-close:hover {
-  background: #cbd5e1;
+
+/* 관리자 글쓰기 폼 */
+.sk-form-group {
+  margin-bottom: 14px;
+}
+.sk-form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 5px;
+}
+.sk-form-input, .sk-form-select, .sk-form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+}
+.sk-form-input:focus, .sk-form-select:focus, .sk-form-textarea:focus {
+  border-color: #2563eb;
+}
+.sk-form-row {
+  display: flex;
+  gap: 10px;
+}
+.sk-form-row > div {
+  flex: 1;
+}
+.sk-form-textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+.sk-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+.sk-btn-primary {
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.sk-btn-secondary {
+  background: #e2e8f0;
+  color: #334155;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
 }
 </style>
 
-<!-- 모달 HTML -->
+<!-- ========================================== -->
+<!-- 1. [언론 보도 및 뉴스룸 메인 모달] -->
+<!-- ========================================== -->
 <div id="pressModal">
   <div class="sk-modal-box">
+    <!-- 헤더 -->
     <div class="sk-modal-header">
       <div>
         <span class="sk-badge-top">Press & Media</span>
         <h3 class="sk-modal-title">세이스강 언론 보도 및 대외 활동</h3>
         <p class="sk-modal-desc">청랑 이윤재 원장의 공직 32년, 반부패 정책 및 대외 언론 보도 아카이브</p>
       </div>
-      <button onclick="closePressModal()" class="sk-close-btn" aria-label="닫기">✕</button>
+      <div style="display: flex; align-items: center;">
+        <button id="adminWriteBtn" onclick="openPressWriteModal()" class="sk-admin-write-btn" style="display: none;">
+          ✏️ 새 기사 등록
+        </button>
+        <button onclick="closePressModal()" class="sk-close-btn" aria-label="닫기">✕</button>
+      </div>
     </div>
 
-    <div class="sk-tab-bar">
-      <button onclick="filterPressCategory('ALL')" id="tab-ALL" class="sk-tab-btn active">전체</button>
-      <button onclick="filterPressCategory('INTEGRITY')" id="tab-INTEGRITY" class="sk-tab-btn">반부패·청렴 정책</button>
-      <button onclick="filterPressCategory('EDU')" id="tab-EDU" class="sk-tab-btn">한국어·디지털 교육</button>
-      <button onclick="filterPressCategory('LIT')" id="tab-LIT" class="sk-tab-btn">문학·문화예술</button>
+    <!-- 검색 & 말머리 탭 -->
+    <div class="sk-filter-panel">
+      <div class="sk-search-wrap">
+        <span class="sk-search-icon">🔍</span>
+        <input type="text" id="pressSearchInput" class="sk-search-input" placeholder="기사 제목, 언론사, 키워드 검색..." oninput="handlePressSearch()">
+      </div>
+      <div class="sk-tab-bar">
+        <button onclick="filterPressCategory('ALL')" id="tab-ALL" class="sk-tab-btn active">전체</button>
+        <button onclick="filterPressCategory('INTEGRITY')" id="tab-INTEGRITY" class="sk-tab-btn">반부패·청렴 정책</button>
+        <button onclick="filterPressCategory('EDU')" id="tab-EDU" class="sk-tab-btn">한국어·디지털 교육</button>
+        <button onclick="filterPressCategory('LIT')" id="tab-LIT" class="sk-tab-btn">문학·문화예술</button>
+        <button onclick="filterPressCategory('PUBLIC')" id="tab-PUBLIC" class="sk-tab-btn">공직·행정</button>
+      </div>
     </div>
 
+    <!-- 모달 본문 (목록 및 상세 뷰) -->
     <div class="sk-modal-body">
       <div id="pressListView"></div>
       <div id="pressDetailView" style="display: none;">
         <div class="sk-detail-box">
-          <button onclick="backToPressList()" class="sk-back-btn">← 목록으로 돌아가기</button>
+          <div class="sk-detail-header-bar">
+            <button onclick="backToPressList()" class="sk-back-btn">← 목록으로 돌아가기</button>
+            <div id="detailAdminActions" class="sk-admin-actions" style="display: none;"></div>
+          </div>
           <div id="pressDetailContent"></div>
         </div>
       </div>
     </div>
 
+    <!-- 푸터 -->
     <div class="sk-modal-footer">
-      <span>총 <strong id="pressTotalCount" style="color: #1e3a8a;">1</strong>건의 보도자료</span>
+      <span>총 <strong id="pressTotalCount" style="color: #1e3a8a;">0</strong>건의 보도자료</span>
       <button onclick="closePressModal()" class="sk-footer-close">닫기</button>
     </div>
   </div>
 </div>
 
-<!-- 모달 동작 스크립트 -->
+<!-- ========================================== -->
+<!-- 2. [관리자 전용 기사 작성/수정 모달] -->
+<!-- ========================================== -->
+<div id="pressWriteModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header">
+      <h3 class="sk-modal-title" id="writeModalTitle">✏️ 보도자료 등록 / 수정</h3>
+      <button onclick="closePressWriteModal()" class="sk-close-btn">✕</button>
+    </div>
+    <div class="sk-modal-body">
+      <form id="pressWriteForm" onsubmit="handleSavePressArticle(event)">
+        <input type="hidden" id="writeArticleId">
+        
+        <div class="sk-form-row">
+          <div class="sk-form-group">
+            <label class="sk-form-label">말머리 (분류) *</label>
+            <select id="writeCategory" class="sk-form-select" required>
+              <option value="INTEGRITY">반부패·청렴 정책</option>
+              <option value="EDU">한국어·디지털 교육</option>
+              <option value="LIT">문학·문화예술</option>
+              <option value="PUBLIC">공직·행정</option>
+            </select>
+          </div>
+          <div class="sk-form-group">
+            <label class="sk-form-label">보도 일자 *</label>
+            <input type="text" id="writeDate" class="sk-form-input" placeholder="예: 2026.09.01" required>
+          </div>
+          <div class="sk-form-group">
+            <label class="sk-form-label">언론사명 *</label>
+            <input type="text" id="writeMedia" class="sk-form-input" placeholder="예: 프라임경제" required>
+          </div>
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">기사 제목 *</label>
+          <input type="text" id="writeTitle" class="sk-form-input" placeholder="기사 헤드라인 제목" required>
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">부제목 / 소제목</label>
+          <input type="text" id="writeSubtitle" class="sk-form-input" placeholder="기사 부제목 또는 리드문">
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">목록 카드 요약문 (2~3줄)</label>
+          <input type="text" id="writeSummary" class="sk-form-input" placeholder="목록에 보일 간략한 요약">
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">강조 인용구 (선택 사항)</label>
+          <input type="text" id="writeQuote" class="sk-form-input" placeholder="핵심 발표 주제나 강조할 문장 (파란 박스로 강조)">
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">기사 본문 내용 *</label>
+          <textarea id="writeContent" class="sk-form-textarea" placeholder="기사 본문을 입력하세요. (엔터로 줄바꿈 시 문단이 자동 구분됩니다)" required></textarea>
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">출처 및 문의처 정보</label>
+          <input type="text" id="writeMeta" class="sk-form-input" placeholder="예: 문의: 코레일 감사실 / 청렴조사팀 | 출처: 프라임경제">
+        </div>
+
+        <div class="sk-form-group">
+          <label class="sk-form-label">해시태그 (쉼표로 구분)</label>
+          <input type="text" id="writeTags" class="sk-form-input" placeholder="예: 코레일, 청렴정책, 이윤재, 한국반부패청렴정책연구원">
+        </div>
+
+        <div class="sk-form-actions">
+          <button type="button" onclick="closePressWriteModal()" class="sk-btn-secondary">취소</button>
+          <button type="submit" class="sk-btn-primary">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. [보도자료 시스템 자바스크립트 엔진] -->
+<!-- ========================================== -->
 <script>
-const pressArticles = [
+// 기본 1호 보도자료 데이터
+const defaultPressData = [
   {
     id: 1,
     category: "INTEGRITY",
@@ -2474,29 +2725,62 @@ const pressArticles = [
     title: "코레일, 한국반부패정책학회 세미나서 청렴 우수사례 발표",
     subtitle: "반부패 공기업 이미지 선도, 국내외에서 긍정적 평가",
     summary: "한국반부패정책학회 전문가 세미나에서 공공부문 대표로 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표를 진행했습니다.",
-    content: `
-      <p>코레일은 11월 5일 한국반부패정책학회가 주관하는 전문가그룹 세미나에서 청렴 우수사례를 발표한다고 밝혔다.</p>
-      <p>이번 세미나는 ‘공직부패 척결방안은 없는가’를 주제로 열리며, 정치계, 대학교수, 시민단체 등 각계 전문가들이 참여해 부패 방지를 위한 정책 대안을 모색하는 자리로 마련됐다. 세미나는 총 3개 세션으로 진행되며, 주요 토론자로는 안민석 민주당 국회의원, 김창문 변호사, 강성구 한국투명성기구 사무총장 등이 참석한다.</p>
-      <div class="sk-quote-box">코레일은 공공부문 대표 자격으로 세미나에 참석해 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표할 예정이다.</div>
-      <p>앞서 코레일은 지난 10월 30일부터 11월 2일까지 그리스 아테네에서 열린 제13차 국제반부패회의(IACC)에서 국내 공기업 최초로 청렴 우수사례를 발표해 각국 참가자들로부터 관심을 받은 바 있다.</p>
-      <p>이기택 코레일 감사실장은 “청렴·투명경영은 이제 기업의 생존전략이 되고 있다”며 “앞으로 코레일은 청렴하고 깨끗한 공기업, 국민으로부터 신뢰받는 공기업, 나아가 반부패를 선도하는 공기업으로 거듭나겠다”고 말했다.</p>
-      <p>한편 코레일은 지난해 공공기관 청렴도 상승률 1위, 부패방지시책평가 최우수기관 선정, 대통령표창 수상 등의 성과를 거뒀다. 또한 지난 10월에는 ‘2008년 클린 코레일 페스티벌’을 개최해 외부위원들로부터 청렴 우수사례에 대한 긍정적인 평가를 받았다.</p>
-    `,
+    quote: "코레일은 공공부문 대표 자격으로 세미나에 참석해 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표할 예정이다.",
+    content: "코레일은 11월 5일 한국반부패정책학회가 주관하는 전문가그룹 세미나에서 청렴 우수사례를 발표한다고 밝혔다.\n\n이번 세미나는 ‘공직부패 척결방안은 없는가’를 주제로 열리며, 정치계, 대학교수, 시민단체 등 각계 전문가들이 참여해 부패 방지를 위한 정책 대안을 모색하는 자리로 마련됐다. 세미나는 총 3개 세션으로 진행되며, 주요 토론자로는 안민석 민주당 국회의원, 김창문 변호사, 강성구 한국투명성기구 사무총장 등이 참석한다.\n\n앞서 코레일은 지난 10월 30일부터 11월 2일까지 그리스 아테네에서 열린 제13차 국제반부패회의(IACC)에서 국내 공기업 최초로 청렴 우수사례를 발표해 각국 참가자들로부터 관심을 받은 바 있다.\n\n이기택 코레일 감사실장은 “청렴·투명경영은 이제 기업의 생존전략이 되고 있다”며 “앞으로 코레일은 청렴하고 깨끗한 공기업, 국민으로부터 신뢰받는 공기업, 나아가 반부패를 선도하는 공기업으로 거듭나겠다”고 말했다.\n\n한편 코레일은 지난해 공공기관 청렴도 상승률 1위, 부패방지시책평가 최우수기관 선정, 대통령표창 수상 등의 성과를 거뒀다. 또한 지난 10월에는 ‘2008년 클린 코레일 페스티벌’을 개최해 외부위원들로부터 청렴 우수사례에 대한 긍정적인 평가를 받았다.",
     meta: "문의: 코레일 감사실 / 청렴조사팀 | 자료 출처: 프라임경제 (2008.11.05)",
     tags: ["코레일", "한국철도공사", "청렴정책", "이윤재", "한국반부패청렴정책연구원", "세이스강"]
   }
 ];
 
+const PRESS_STORAGE_KEY = 'seiskang_press_articles_v2';
 let currentPressCategory = 'ALL';
+let currentSearchKeyword = '';
 
+// 데이터 가져오기 (로컬 스토리지 연동)
+function getPressArticles() {
+  const saved = localStorage.getItem(PRESS_STORAGE_KEY);
+  if (!saved) {
+    localStorage.setItem(PRESS_STORAGE_KEY, JSON.stringify(defaultPressData));
+    return defaultPressData;
+  }
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    return defaultPressData;
+  }
+}
+
+// 데이터 저장
+function savePressArticles(articles) {
+  localStorage.setItem(PRESS_STORAGE_KEY, JSON.stringify(articles));
+}
+
+// 관리자 여부 확인 함수
+function isUserAdmin() {
+  return typeof state !== 'undefined' && state.auth && state.auth.role === 'admin';
+}
+
+// 모달 열기
 function openPressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
     modal.classList.add('active');
+    
+    // 관리자 버튼 표시 여부
+    const adminBtn = document.getElementById('adminWriteBtn');
+    if (adminBtn) {
+      adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
+    }
+
+    currentSearchKeyword = '';
+    const searchInput = document.getElementById('pressSearchInput');
+    if (searchInput) searchInput.value = '';
+    
     filterPressCategory('ALL');
   }
 }
 
+// 모달 닫기
 function closePressModal() {
   const modal = document.getElementById('pressModal');
   if (modal) {
@@ -2505,6 +2789,14 @@ function closePressModal() {
   }
 }
 
+// 검색 핸들러
+function handlePressSearch() {
+  const input = document.getElementById('pressSearchInput');
+  currentSearchKeyword = input ? input.value.trim().toLowerCase() : '';
+  renderPressListFiltered();
+}
+
+// 카테고리 필터
 function filterPressCategory(category) {
   currentPressCategory = category;
   
@@ -2516,13 +2808,35 @@ function filterPressCategory(category) {
     activeTab.classList.add('active');
   }
 
-  const filtered = category === 'ALL' 
-    ? pressArticles 
-    : pressArticles.filter(item => item.category === category);
+  renderPressListFiltered();
+}
+
+// 필터 및 검색 적용 후 목록 렌더링
+function renderPressListFiltered() {
+  const allArticles = getPressArticles();
+  
+  const filtered = allArticles.filter(item => {
+    const matchCategory = currentPressCategory === 'ALL' || item.category === currentPressCategory;
+    if (!matchCategory) return false;
+
+    if (!currentSearchKeyword) return true;
+    
+    const searchTarget = [
+      item.title,
+      item.subtitle,
+      item.summary,
+      item.content,
+      item.media,
+      (item.tags || []).join(' ')
+    ].join(' ').toLowerCase();
+
+    return searchTarget.includes(currentSearchKeyword);
+  });
 
   renderPressList(filtered);
 }
 
+// 목록 HTML 생성
 function renderPressList(articles) {
   const container = document.getElementById('pressListView');
   const countEl = document.getElementById('pressTotalCount');
@@ -2532,61 +2846,88 @@ function renderPressList(articles) {
 
   if (articles.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; padding: 40px; color: #94a3b8; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;">
-        등록된 보도자료가 없습니다.
+      <div style="text-align: center; padding: 45px 20px; color: #94a3b8; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <p style="font-size: 14px; margin: 0;">등록된 보도자료가 없거나 검색 결과가 없습니다.</p>
       </div>`;
     return;
   }
+
+  const isAdmin = isUserAdmin();
 
   container.innerHTML = articles.map(item => `
     <div class="sk-article-card" onclick="viewPressDetail(${item.id})">
       <div class="sk-card-meta">
         <div>
-          <span class="sk-cat-tag">${item.categoryName}</span>
+          <span class="sk-cat-tag">${item.categoryName || '보도자료'}</span>
           <span class="sk-media-name">${item.media}</span>
         </div>
         <span class="sk-card-date">${item.date}</span>
       </div>
       <h4 class="sk-card-title">${item.title}</h4>
-      <p class="sk-card-sub">${item.subtitle}</p>
-      <p class="sk-card-summary">${item.summary}</p>
+      ${item.subtitle ? `<p class="sk-card-sub">${item.subtitle}</p>` : ''}
+      <p class="sk-card-summary">${item.summary || ''}</p>
       <div class="sk-card-footer">
         <span class="sk-read-btn">기사 전문 보기 →</span>
+        ${isAdmin ? `
+          <div class="sk-admin-actions" onclick="event.stopPropagation();">
+            <button class="sk-action-btn" onclick="openPressWriteModal(${item.id})">수정</button>
+            <button class="sk-action-btn del" onclick="deletePressArticle(${item.id})">삭제</button>
+          </div>
+        ` : ''}
       </div>
     </div>
   `).join('');
 }
 
+// 기사 상세 보기
 function viewPressDetail(id) {
-  const item = pressArticles.find(a => a.id === id);
+  const articles = getPressArticles();
+  const item = articles.find(a => a.id === id);
   if (!item) return;
 
   const contentEl = document.getElementById('pressDetailContent');
+  const adminActionsEl = document.getElementById('detailAdminActions');
   if (!contentEl) return;
+
+  const isAdmin = isUserAdmin();
+  if (adminActionsEl) {
+    adminActionsEl.style.display = isAdmin ? 'flex' : 'none';
+    if (isAdmin) {
+      adminActionsEl.innerHTML = `
+        <button class="sk-action-btn" onclick="openPressWriteModal(${item.id})">수정</button>
+        <button class="sk-action-btn del" onclick="deletePressArticle(${item.id})">삭제</button>
+      `;
+    }
+  }
+
+  // 본문 문단 처리
+  const paragraphs = (item.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
 
   contentEl.innerHTML = `
     <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
       <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 11px;">
-        <span class="sk-cat-tag">${item.categoryName}</span>
+        <span class="sk-cat-tag">${item.categoryName || '보도자료'}</span>
         <span class="sk-media-name">${item.media}</span>
         <span style="color: #cbd5e1;">|</span>
         <span style="color: #94a3b8;">${item.date}</span>
       </div>
       <h3 class="sk-detail-title">${item.title}</h3>
-      <p class="sk-detail-sub">${item.subtitle}</p>
+      ${item.subtitle ? `<p class="sk-detail-sub">${item.subtitle}</p>` : ''}
     </div>
     
+    ${item.quote ? `<div class="sk-quote-box">${item.quote}</div>` : ''}
+
     <div class="sk-detail-text">
-      ${item.content}
+      ${paragraphs}
     </div>
 
-    <div class="sk-meta-box">
-      ${item.meta}
-    </div>
+    ${item.meta ? `<div class="sk-meta-box">${item.meta}</div>` : ''}
 
-    <div class="sk-tags-wrap">
-      ${item.tags.map(t => `<span class="sk-tag-pill">#${t}</span>`).join('')}
-    </div>
+    ${(item.tags && item.tags.length > 0) ? `
+      <div class="sk-tags-wrap">
+        ${item.tags.map(t => `<span class="sk-tag-pill">#${t}</span>`).join('')}
+      </div>
+    ` : ''}
   `;
 
   document.getElementById('pressListView').style.display = 'none';
@@ -2600,11 +2941,116 @@ function backToPressList() {
   if (list) list.style.display = 'block';
 }
 
-window.addEventListener('click', function(e) {
-  const modal = document.getElementById('pressModal');
-  if (e.target === modal) {
-    closePressModal();
+// ==========================================
+// 관리자 글쓰기 및 수정 기능
+// ==========================================
+function openPressWriteModal(editId = null) {
+  const modal = document.getElementById('pressWriteModal');
+  const form = document.getElementById('pressWriteForm');
+  const titleEl = document.getElementById('writeModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  document.getElementById('writeArticleId').value = '';
+
+  if (editId) {
+    titleEl.innerText = "✏️ 보도자료 수정";
+    const articles = getPressArticles();
+    const item = articles.find(a => a.id === editId);
+    if (item) {
+      document.getElementById('writeArticleId').value = item.id;
+      document.getElementById('writeCategory').value = item.category;
+      document.getElementById('writeDate').value = item.date;
+      document.getElementById('writeMedia').value = item.media;
+      document.getElementById('writeTitle').value = item.title;
+      document.getElementById('writeSubtitle').value = item.subtitle || '';
+      document.getElementById('writeSummary').value = item.summary || '';
+      document.getElementById('writeQuote').value = item.quote || '';
+      document.getElementById('writeContent').value = item.content || '';
+      document.getElementById('writeMeta').value = item.meta || '';
+      document.getElementById('writeTags').value = (item.tags || []).join(', ');
+    }
+  } else {
+    titleEl.innerText = "✏️ 새 보도자료 등록";
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    document.getElementById('writeDate').value = `${y}.${m}.${d}`;
   }
+
+  modal.classList.add('active');
+}
+
+function closePressWriteModal() {
+  const modal = document.getElementById('pressWriteModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleSavePressArticle(e) {
+  e.preventDefault();
+  
+  const editId = document.getElementById('writeArticleId').value;
+  const category = document.getElementById('writeCategory').value;
+  const categoryNames = {
+    'INTEGRITY': '반부패·청렴 정책',
+    'EDU': '한국어·디지털 교육',
+    'LIT': '문학·문화예술',
+    'PUBLIC': '공직·행정'
+  };
+
+  const tagsRaw = document.getElementById('writeTags').value;
+  const tags = tagsRaw.split(',').map(t => t.trim()).filter(t => t !== '');
+
+  const articleData = {
+    id: editId ? parseInt(editId, 10) : Date.now(),
+    category: category,
+    categoryName: categoryNames[category] || '보도자료',
+    date: document.getElementById('writeDate').value.trim(),
+    media: document.getElementById('writeMedia').value.trim(),
+    title: document.getElementById('writeTitle').value.trim(),
+    subtitle: document.getElementById('writeSubtitle').value.trim(),
+    summary: document.getElementById('writeSummary').value.trim(),
+    quote: document.getElementById('writeQuote').value.trim(),
+    content: document.getElementById('writeContent').value.trim(),
+    meta: document.getElementById('writeMeta').value.trim(),
+    tags: tags
+  };
+
+  let articles = getPressArticles();
+
+  if (editId) {
+    articles = articles.map(a => a.id === parseInt(editId, 10) ? articleData : a);
+  } else {
+    articles.unshift(articleData); // 최신글을 맨 위에 추가
+  }
+
+  savePressArticles(articles);
+  closePressWriteModal();
+  renderPressListFiltered();
+
+  if (editId) {
+    viewPressDetail(parseInt(editId, 10));
+  }
+}
+
+function deletePressArticle(id) {
+  if (!confirm('정말 이 보도자료를 삭제하시겠습니까?')) return;
+
+  let articles = getPressArticles();
+  articles = articles.filter(a => a.id !== id);
+  savePressArticles(articles);
+
+  backToPressList();
+  renderPressListFiltered();
+}
+
+// 모달 외부 클릭 시 닫기
+window.addEventListener('click', function(e) {
+  const pressModal = document.getElementById('pressModal');
+  const writeModal = document.getElementById('pressWriteModal');
+  if (e.target === pressModal) closePressModal();
+  if (e.target === writeModal) closePressWriteModal();
 });
 </script>
 </body>
