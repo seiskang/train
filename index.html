@@ -459,6 +459,79 @@ button { font-family: var(--font-sans); }
 .dict-result .g { font-size:var(--text-2xs); color:var(--seal); border:1px solid var(--seal); border-radius:var(--radius-sm); padding:1px 6px; margin-left:6px; }
 .dict-result p { margin:6px 0 0; font-size:var(--text-sm); color:var(--text-muted); }
 .dict-note { font-size:var(--text-2xs); color:var(--text-subtle); }
+
+/* ===== Google & Naver Search Engines ===== */
+.search-engine-wrap { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); }
+.search-engine-label { font: var(--weight-bold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 2px; }
+.engine-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: #ffffff;
+  border: 1.5px solid var(--hanji-line);
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+}
+.engine-form:focus-within {
+  border-color: #1428a0;
+  box-shadow: 0 0 0 2px rgba(20, 40, 160, 0.18);
+}
+.engine-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  font: var(--weight-bold) var(--text-sm)/1 var(--font-sans);
+  flex: none;
+  min-width: 95px;
+}
+.engine-brand.google { color: #4285f4; }
+.engine-brand.naver { color: #03c75a; }
+.naver-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #03c75a;
+  color: #fff;
+  font: var(--weight-extrabold) 12px/1 var(--font-sans);
+  border-radius: 4px;
+}
+.engine-input {
+  flex: 1;
+  height: 38px;
+  border: none;
+  background: transparent;
+  font: var(--weight-medium) var(--text-sm)/1 var(--font-sans);
+  color: var(--text-strong);
+  padding: 0 var(--space-2);
+  outline: none;
+  min-width: 0;
+}
+.engine-btn {
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  border: none;
+  font: var(--weight-bold) var(--text-xs)/1 var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition-base);
+}
+.engine-btn.google-btn { background: #4285f4; color: #fff; }
+.engine-btn.google-btn:hover { background: #3367d6; }
+.engine-btn.naver-btn { background: #03c75a; color: #fff; }
+.engine-btn.naver-btn:hover { background: #02a84c; }
+
+@media (max-width: 600px) {
+  .engine-form { flex-wrap: wrap; padding: 10px; }
+  .engine-brand { width: 100%; margin-bottom: 6px; padding: 0; }
+  .engine-input { width: 100%; border: 1px solid var(--hanji-line); border-radius: var(--radius-sm); height: 38px; margin-bottom: 8px; padding: 0 10px; background: var(--surface-page); }
+  .engine-btn { width: 100%; height: 38px; }
+}
 </style>
 </head>
 <body>
@@ -1551,6 +1624,8 @@ button { font-family: var(--font-sans); }
   }
 
   function renderLandingPage(authFormHtml) {
+    var GOOGLE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>';
+
     return '' +
       '<div class="landing-page">' +
 
@@ -1573,10 +1648,28 @@ button { font-family: var(--font-sans); }
       '</div>' +
 
       '<section class="landing-section">' +
-      '<div class="landing-head"><span class="eyebrow-seal">Dictionary</span><h2>한국어 단어를 바로 찾아보세요</h2></div>' +
-      '<p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:480px;margin:0 auto">국립국어원 한국어기초사전 데이터로, 회원가입 없이도 궁금한 단어를 바로 찾아볼 수 있습니다.</p>' +
+      '<div class="landing-head"><span class="eyebrow-seal">Dictionary & Search</span><h2>한국어 단어 및 포털 검색</h2></div>' +
+      '<p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:480px;margin:0 auto">국립국어원 한국어기초사전 및 구글, 네이버 검색을 바로 이용하실 수 있습니다.</p>' +
       '<div class="dict-widget"><div class="dict-row"><input type="text" id="dict-q" placeholder="예: 나무, 되다" value="나무"><button type="button" id="dict-search-btn">찾기</button></div>' +
-      '<div id="dict-result"></div><span class="dict-note">데이터 제공: 국립국어원 한국어기초사전</span></div></section>' +
+      '<div id="dict-result"></div><span class="dict-note">데이터 제공: 국립국어원 한국어기초사전</span>' +
+      
+      '<div class="search-engine-wrap">' +
+      '<div class="search-engine-label">포털 검색 바로가기</div>' +
+      
+      '<form action="https://www.google.com/search" method="get" target="_blank" class="engine-form">' +
+      '<div class="engine-brand google">' + GOOGLE_ICON + '<span>Google</span></div>' +
+      '<input type="text" name="q" class="engine-input" placeholder="구글에서 검색할 단어를 입력하세요" required>' +
+      '<button type="submit" class="engine-btn google-btn">구글 검색</button>' +
+      '</form>' +
+
+      '<form action="https://search.naver.com/search.naver" method="get" target="_blank" class="engine-form">' +
+      '<div class="engine-brand naver"><span class="naver-badge">N</span><span>NAVER</span></div>' +
+      '<input type="text" name="query" class="engine-input" placeholder="네이버에서 검색할 단어를 입력하세요" required>' +
+      '<button type="submit" class="engine-btn naver-btn">네이버 검색</button>' +
+      '</form>' +
+
+      '</div></div></section>' +
+
       '<section class="landing-section">' +
       '<div class="landing-head"><span class="eyebrow-seal">Pricing</span><h2>수강료 및 환불 규정</h2></div>' +
       '<div class="price-card">' +
@@ -2010,7 +2103,6 @@ button { font-family: var(--font-sans); }
   }
 
   var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
-  if (resetTokenMatch  var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
   if (resetTokenMatch) {
     state.authResetToken = decodeURIComponent(resetTokenMatch);
     history.replaceState(null, "", location.pathname);
@@ -2038,4 +2130,7 @@ button { font-family: var(--font-sans); }
 })();
 </script>
 </body>
-</html>
+</html>'
+EOF
+}
+}
