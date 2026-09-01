@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -1677,8 +1678,6 @@ button { font-family: var(--font-sans); }
       '<div class="price-card">' +
       '<div class="price-head"><span class="amount">$22</span><span class="unit">1회차(50분) · 미국 달러 · 수업 전 입금 (부가세 포함)</span></div>' +
       '<table class="refund-table">' +
-      '<tr><td>수업 시작 전 환불 요청</td><td>9 입금 (부가세 포함)</span></div>' +
-      '<table class="refund-table">' +
       '<tr><td>수업 시작 전 환불 요청</td><td>90%</td></tr>' +
       '<tr><td>수업 30% 진행 후</td><td>50%</td></tr>' +
       '<tr><td>수업 50% 진행 후</td><td>환불 불가</td></tr>' +
@@ -1717,5 +1716,421 @@ button { font-family: var(--font-sans); }
       '</div>' +
       (tab === "signup" ? '<div><label class="field-label">이름</label><input class="input" id="auth-name" type="text" placeholder="선택 입력" autocomplete="name"></div>' : "") +
       '<div><label class="field-label">이메일</label><input class="input" id="auth-email" type="email" required placeholder="example@naver.com" autocomplete="email" value="' + esc(tab === "login" ? state.savedEmail : "") + '"></div>' +
-      '<div><label class="field-label">비밀번호</label><input class="input" id="auth-password" type="password" required placeholder="8자 이상" autocomplete="' + (tab === "signup" ? "new-password" : "current-password")
-      </html>
+      '<div><label class="field-label">비밀번호</label><input class="input" id="auth-password" type="password" required placeholder="8자 이상" autocomplete="' + (tab === "signup" ? "new-password" : "current-password") + '"></div>' +
+      (tab === "login" ?
+        '<label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-remember-email"' + (state.authRememberEmail ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">이메일 저장</span>' +
+        '</label>'
+        : "") +
+      (tab === "signup" ?
+        '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-agree-terms" style="margin-top:3px"' + (state.authAgreeTerms ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">' +
+        '<a href="#" id="show-terms" style="color:var(--info-500)">이용약관</a> 및 ' +
+        '<a href="#" id="show-privacy" style="color:var(--info-500)">개인정보처리방침</a>에 동의합니다. (필수)' +
+        '</span></label>' +
+        '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-confirm-age" style="margin-top:3px"' + (state.authConfirmAge ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">만 14세 이상입니다. (필수)</span></label>'
+        : "") +
+      (state.authError ? '<div class="auth-error">' + esc(state.authError) + '</div>' : "") +
+      (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
+      '<div style="display:flex;gap:var(--space-3)">' +
+      '<button class="btn btn-primary" style="flex:1" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
+      (state.authBusy ? "처리 중…" : (tab === "signup" ? "입학하기" : "로그인")) + '</button>' +
+      (tab === "signup" ? '<button class="btn btn-secondary" style="flex:1" type="button" id="auth-complete">수료하기</button>' : "") +
+      '</div>' +
+      (tab === "login" ? '<button type="button" id="forgot-link" style="align-self:center;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;font:inherit;text-decoration:underline">비밀번호를 잊으셨나요?</button>' : "") +
+      '</form>' +
+      renderOAuthButtons() +
+      '<div class="auth-hint">' + (tab === "signup" ? "회원가입 시 이메일로 인증 링크가 발송되며, 인증을 완료해야 로그인할 수 있습니다." : "계정이 없다면 회원가입 탭에서 새로 만들 수 있습니다.") + '</div>'
+    ) + renderAuthTermsModal();
+  }
+
+  function renderAuthTermsModal() {
+    if (!state.authTermsModal) return "";
+    var isTerms = state.authTermsModal === "terms";
+    return '<div class="modal-backdrop" data-close-terms-modal="1"><div class="modal-box" data-stop-terms="1"><div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4);max-height:80vh;overflow-y:auto">' +
+      '<span style="font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong)">' + (isTerms ? "이용약관" : "개인정보처리방침") + '</span>' +
+      '<div style="white-space:pre-wrap;font-size:var(--text-sm);color:var(--text-body);line-height:1.7">' + esc(isTerms ? TERMS_TEXT : PRIVACY_TEXT) + '</div>' +
+      '<button class="btn btn-secondary full" type="button" data-close-terms-modal="1">닫기</button>' +
+      '</div></div></div>';
+  }
+
+  function renderOAuthButtons() {
+    var KAKAO_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><path fill="#191600" d="M12 3C6.48 3 2 6.58 2 11c0 2.86 1.87 5.36 4.7 6.8-.15.6-.96 3.6-1 3.8 0 0-.02.17.09.24.11.07.24.02.24.02.32-.04 3.7-2.42 4.3-2.85.53.08 1.08.12 1.67.12 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>';
+    var WECHAT_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><ellipse cx="9" cy="10" rx="7" ry="5.5" fill="#fff"/><ellipse cx="16" cy="15" rx="5.5" ry="4.3" fill="#fff" fill-opacity="0.85"/></svg>';
+    return '<div style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<div style="display:flex;align-items:center;gap:var(--space-3);color:var(--text-subtle);font-size:var(--text-xs)">' +
+      '<span style="flex:1;height:1px;background:var(--border-subtle)"></span>메신저 앱이 없으신가요?<span style="flex:1;height:1px;background:var(--border-subtle)"></span></div>' +
+      '<a href="https://www.kakaocorp.com/page/service/service/KakaoTalk" target="_blank" rel="noopener" class="btn full" style="background:#FEE500;color:#191600;border:none;gap:var(--space-2)">' + KAKAO_ICON + '카카오톡 받기 / 가입</a>' +
+      '<a href="https://www.wechat.com/en/" target="_blank" rel="noopener" class="btn full" style="background:#07C160;color:#fff;border:none;gap:var(--space-2)">' + WECHAT_ICON + '위챗 받기 / 가입</a>' +
+      '</div>';
+  }
+
+  function renderAuthForgot() {
+    var f = state.authForgot;
+    if (f.stage === "sent") {
+      return authShell(
+        '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+        '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">비밀번호 재설정 링크</div>' +
+        '<div style="color:var(--text-body)"><strong>' + esc(f.email) + '</strong> 계정의 비밀번호를 재설정할 수 있는 링크입니다.</div>' +
+        '<div class="dev-box"><strong>개발 모드 안내</strong> — 실제 메일 서버가 연동되어 있지 않아 지금은 링크를 화면에 직접 표시합니다. 실제 서비스에서는 이 부분이 실제 이메일 발송으로 대체됩니다.<br><br>' +
+        '<a href="' + esc(f.devResetUrl) + '" target="_blank" rel="noopener">' + esc(f.devResetUrl) + '</a></div>' +
+        '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+        '</div>'
+      );
+    }
+    return authShell(
+      '<form id="forgot-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">비밀번호를 잊으셨나요?</div>' +
+      '<div style="color:var(--text-muted)">가입하신 이메일을 입력하시면 비밀번호를 새로 설정할 수 있는 링크를 보여드립니다.</div>' +
+      '<div><label class="field-label">이메일</label><input class="input" id="forgot-email" type="email" required placeholder="example@naver.com" autocomplete="email"></div>' +
+      (state.authForgotError ? '<div class="auth-error">' + esc(state.authForgotError) + '</div>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="forgot-submit"' + (state.authForgotBusy ? " disabled" : "") + '>' +
+      (state.authForgotBusy ? "처리 중…" : "재설정 링크 받기") + '</button>' +
+      '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+      '</form>'
+    );
+  }
+
+  function renderAuthReset() {
+    return authShell(
+      '<form id="reset-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">새 비밀번호 설정</div>' +
+      '<div><label class="field-label">새 비밀번호</label><input class="input" id="reset-password" type="password" required placeholder="8자 이상" autocomplete="new-password"></div>' +
+      (state.authResetError ? '<div class="auth-error">' + esc(state.authResetError) + '</div>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="reset-submit"' + (state.authResetBusy ? " disabled" : "") + '>' +
+      (state.authResetBusy ? "처리 중…" : "비밀번호 변경") + '</button>' +
+      '</form>'
+    );
+  }
+
+  function renderAuth() {
+    if (state.authResetToken) return renderAuthReset();
+    if (state.authForgot) return renderAuthForgot();
+    if (state.authPendingVerify) return renderAuthPending();
+    return renderLandingPage(renderAuthFormCard());
+  }
+
+  function submitAuth(e) {
+    e.preventDefault();
+    if (state.authBusy) return;
+    var tab = state.authTab;
+    var email = document.getElementById("auth-email").value.trim();
+    var password = document.getElementById("auth-password").value;
+    var nameEl = document.getElementById("auth-name");
+    if (tab === "signup" && !state.authAgreeTerms) {
+      setState({ authError: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." });
+      return;
+    }
+    if (tab === "signup" && !state.authConfirmAge) {
+      setState({ authError: "만 14세 이상만 가입할 수 있습니다." });
+      return;
+    }
+    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "", agreeTerms: true, confirmAge: true } : { email: email, password: password };
+    setState({ authBusy: true, authError: "", authUnverifiedEmail: "" });
+    fetch(tab === "signup" ? "/api/signup" : "/api/login", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) {
+          setState({ authBusy: false, authError: r.data.error || "요청에 실패했습니다.", authUnverifiedEmail: r.data.unverified ? email : "" });
+          return;
+        }
+        if (tab === "signup" && r.data.pendingVerification) {
+          setState({ authBusy: false, authError: "", authPendingVerify: { email: r.data.email, devVerifyUrl: r.data.devVerifyUrl } });
+          return;
+        }
+        if (tab === "login") setSavedEmail(state.authRememberEmail ? email : "");
+        onAuthSuccess(r.data.user);
+        setState({ authBusy: false, authError: "" });
+        fire("로그인 완료", (r.data.user.name || r.data.user.email) + " 님, 환영합니다.", "success");
+      })
+      .catch(function () { setState({ authBusy: false, authError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function onAuthSuccess(user) {
+    state.auth = user;
+    if (user.role === "admin") {
+      loadDashboard();
+    } else {
+      if (ADMIN_ONLY_VIEWS.indexOf(state.view) !== -1) state.view = "assignments";
+      if (state.view === "assignments") loadAssignmentsView();
+    }
+  }
+
+  function resendVerification() {
+    var email = state.authUnverifiedEmail;
+    if (!email) return;
+    fetch("/api/resend-verification", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authError: r.data.error || "재발송에 실패했습니다." }); return; }
+        setState({ authError: "", authUnverifiedEmail: "", authPendingVerify: { email: email, devVerifyUrl: r.data.devVerifyUrl } });
+      })
+      .catch(function () { setState({ authError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitForgot(e) {
+    e.preventDefault();
+    if (state.authForgotBusy) return;
+    var email = document.getElementById("forgot-email").value.trim();
+    setState({ authForgotBusy: true, authForgotError: "" });
+    fetch("/api/forgot-password", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authForgotBusy: false, authForgotError: r.data.error || "요청에 실패했습니다." }); return; }
+        setState({ authForgotBusy: false, authForgotError: "", authForgot: { stage: "sent", email: r.data.email, devResetUrl: r.data.devResetUrl } });
+      })
+      .catch(function () { setState({ authForgotBusy: false, authForgotError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitReset(e) {
+    e.preventDefault();
+    if (state.authResetBusy) return;
+    var password = document.getElementById("reset-password").value;
+    setState({ authResetBusy: true, authResetError: "" });
+    fetch("/api/reset-password", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: state.authResetToken, password: password })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authResetBusy: false, authResetError: r.data.error || "요청에 실패했습니다." }); return; }
+        onAuthSuccess(r.data.user);
+        setState({ authResetBusy: false, authResetError: "", authResetToken: null });
+        fire("비밀번호 변경 완료", "새 비밀번호로 로그인되었습니다.", "success");
+      })
+      .catch(function () { setState({ authResetBusy: false, authResetError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function doLogout() {
+    fetch("/api/logout", { method: "POST" }).then(function () { setState({ auth: null, view: "dash", modal: null }); });
+  }
+
+  function bindAuthEvents() {
+    var root = document.getElementById("app");
+    var dictBtn = document.getElementById("dict-search-btn");
+    if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
+    root.querySelectorAll("[data-auth-tab]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ authTab: el.getAttribute("data-auth-tab"), authError: "", authUnverifiedEmail: "" }); });
+    });
+    var form = document.getElementById("auth-form");
+    if (form) form.addEventListener("submit", submitAuth);
+    var completeBtn = document.getElementById("auth-complete");
+    if (completeBtn) completeBtn.addEventListener("click", function () { fire("수료하기", "수료 절차는 준비 중입니다.", "info"); });
+    var resendBtn = document.getElementById("resend-btn");
+    if (resendBtn) resendBtn.addEventListener("click", resendVerification);
+    var forgotLink = document.getElementById("forgot-link");
+    if (forgotLink) forgotLink.addEventListener("click", function () { setState({ authForgot: { stage: "email" }, authForgotError: "" }); });
+    var forgotForm = document.getElementById("forgot-form");
+    if (forgotForm) forgotForm.addEventListener("submit", submitForgot);
+    var resetForm = document.getElementById("reset-form");
+    if (resetForm) resetForm.addEventListener("submit", submitReset);
+    var backBtn = document.getElementById("back-to-login");
+    if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authForgot: null, authTab: "login" }); });
+    var agreeBox = document.getElementById("auth-agree-terms");
+    if (agreeBox) agreeBox.addEventListener("change", function () { state.authAgreeTerms = agreeBox.checked; });
+    var ageBox = document.getElementById("auth-confirm-age");
+    if (ageBox) ageBox.addEventListener("change", function () { state.authConfirmAge = ageBox.checked; });
+    var rememberBox = document.getElementById("auth-remember-email");
+    if (rememberBox) rememberBox.addEventListener("change", function () { state.authRememberEmail = rememberBox.checked; });
+    var showTerms = document.getElementById("show-terms");
+    if (showTerms) showTerms.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "terms" }); });
+    var showPrivacy = document.getElementById("show-privacy");
+    if (showPrivacy) showPrivacy.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "privacy" }); });
+    root.querySelectorAll("[data-close-terms-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ authTermsModal: null }); });
+    });
+    root.querySelectorAll("[data-stop-terms]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+  }
+
+  function render() {
+    var appEl = document.getElementById("app");
+
+    if (!state.authReady) {
+      appEl.className = "auth-mode";
+      appEl.innerHTML = "";
+      return;
+    }
+    if (!state.auth) {
+      appEl.className = "auth-mode";
+      appEl.innerHTML = renderAuth() + renderToast();
+      bindAuthEvents();
+      var closeToast = document.querySelector("[data-close-toast]");
+      if (closeToast) closeToast.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
+      var emailInput = document.getElementById("auth-email");
+      if (emailInput) emailInput.focus({ preventScroll: true });
+      return;
+    }
+
+    appEl.className = "";
+    var hadFocus = document.activeElement && document.activeElement.id === "query-input";
+    var isAdmin = state.auth.role === "admin";
+    var isDashView = ADMIN_ONLY_VIEWS.indexOf(state.view) !== -1;
+    var st = null;
+    var body;
+    if (isDashView && !isAdmin) {
+      body = renderAdminOnlyNotice();
+    } else if (isDashView && !state.dashboardReady) {
+      body = '<div class="card card--pad" style="color:var(--text-muted)">불러오는 중…</div>';
+    } else {
+      st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+      if (state.view === "requests") body = renderRequests();
+      else if (state.view === "students") body = renderStudents();
+      else if (state.view === "student") body = renderStudent();
+      else if (state.view === "payments") body = renderPayments();
+      else if (state.view === "materials") body = renderMaterials();
+      else if (state.view === "assignments") body = renderAssignments();
+      else if (state.view === "settings") body = renderSettings();
+      else body = renderDash();
+    }
+
+    var mm = state.modal ? modalMap(st)[state.modal] : null;
+    lastConfirm = mm ? mm.confirm : null;
+
+    appEl.innerHTML =
+      sidebarHtml() +
+      '<div class="main">' + topbarHtml(st) + '<div class="view">' + body + '</div></div>' +
+      renderModal() + renderToast();
+
+    bindEvents();
+    if (hadFocus) {
+      var qi = document.getElementById("query-input");
+      if (qi) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); }
+    }
+  }
+
+  function bindEvents() {
+    var root = document.getElementById("app");
+    root.querySelectorAll("[data-nav]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); go(el.getAttribute("data-nav")); });
+    });
+    root.querySelectorAll("[data-goto-student]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); go("student", el.getAttribute("data-goto-student")); });
+    });
+    root.querySelectorAll("[data-filter]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ filter: el.getAttribute("data-filter") }); });
+    });
+    root.querySelectorAll("[data-payfilter]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ payFilter: el.getAttribute("data-payfilter") }); });
+    });
+    root.querySelectorAll("[data-approve]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        pendingRequest = state.requests.find(function (r) { return r.id === parseInt(el.getAttribute("data-approve"), 10); });
+        setState({ modal: "approve" });
+      });
+    });
+    root.querySelectorAll("[data-open-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ modal: el.getAttribute("data-open-modal"), note: "" }); });
+    });
+    root.querySelectorAll("[data-close-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ modal: null, note: "" }); });
+    });
+    root.querySelectorAll("[data-stop]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+    var modalConfirmBtn = document.getElementById("modal-confirm");
+    if (modalConfirmBtn) modalConfirmBtn.addEventListener("click", function () { if (lastConfirm) lastConfirm(); });
+    var noteInput = document.getElementById("lesson-note");
+    if (noteInput) noteInput.addEventListener("input", function () { state.note = noteInput.value; });
+    root.querySelectorAll("[data-confirm-payment]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); confirmPayment(el.getAttribute("data-confirm-payment")); });
+    });
+    root.querySelectorAll("[data-notyet]").forEach(function (el) {
+      el.addEventListener("click", function () { notYet(); });
+    });
+    var logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) logoutBtn.addEventListener("click", doLogout);
+    var materialForm = document.getElementById("material-upload-form");
+    if (materialForm) materialForm.addEventListener("submit", submitMaterialUpload);
+    root.querySelectorAll("[data-del-material]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteMaterialById(parseInt(el.getAttribute("data-del-material"), 10)); });
+    });
+    root.querySelectorAll("[data-open-file]").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        openFileInline(el.getAttribute("data-open-file"), el.getAttribute("data-mime"));
+      });
+    });
+    var assignmentForm = document.getElementById("assignment-upload-form");
+    if (assignmentForm) assignmentForm.addEventListener("submit", submitAssignmentUpload);
+    root.querySelectorAll("[data-pick-student]").forEach(function (el) {
+      el.addEventListener("click", function () { selectAdminStudent(el.getAttribute("data-pick-student")); });
+    });
+    root.querySelectorAll("[data-edit-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () { startEditAssignment(parseInt(el.getAttribute("data-edit-assignment"), 10), el.getAttribute("data-title")); });
+    });
+    root.querySelectorAll("[data-save-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var input = document.getElementById("assignment-edit-input");
+        if (input) state.assignmentEditTitle = input.value;
+        saveEditAssignment(parseInt(el.getAttribute("data-save-assignment"), 10));
+      });
+    });
+    root.querySelectorAll("[data-cancel-assignment]").forEach(function (el) {
+      el.addEventListener("click", cancelEditAssignment);
+    });
+    root.querySelectorAll("[data-del-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteAssignmentById(parseInt(el.getAttribute("data-del-assignment"), 10)); });
+    });
+    root.querySelectorAll("[data-edit-student-email]").forEach(function (el) {
+      el.addEventListener("click", function () { startEditStudentEmail(el.getAttribute("data-edit-student-email"), el.getAttribute("data-email")); });
+    });
+    root.querySelectorAll("[data-save-student-email]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var input = document.getElementById("student-email-edit-input");
+        if (input) state.studentEmailEditValue = input.value;
+        saveEditStudentEmail(el.getAttribute("data-save-student-email"));
+      });
+    });
+    root.querySelectorAll("[data-cancel-student-email]").forEach(function (el) {
+      el.addEventListener("click", cancelEditStudentEmail);
+    });
+    root.querySelectorAll("[data-del-comment]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteCommentById(parseInt(el.getAttribute("data-del-comment"), 10)); });
+    });
+    root.querySelectorAll("[data-close-toast]").forEach(function (el) {
+      el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
+    });
+    var qi = document.getElementById("query-input");
+    if (qi) qi.addEventListener("input", function () { state.query = qi.value; render(); });
+  }
+
+  var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
+  if (resetTokenMatch) {
+    state.authResetToken = decodeURIComponent(resetTokenMatch);
+    history.replaceState(null, "", location.pathname);
+  }
+  render();
+  var justVerified = /(?:^|[?&])verified=1(?:&|$)/.test(location.search);
+  if (justVerified) history.replaceState(null, "", location.pathname);
+
+  fetch("/api/me")
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      if (data) onAuthSuccess(data.user);
+      state.authReady = true;
+      render();
+      if (justVerified && state.auth) {
+        fire("이메일 인증 완료", "인증이 완료되어 자동으로 로그인되었습니다.", "success");
+      }
+    })
+    .catch(function () { state.authReady = true; render(); });
+
+  setInterval(function () {
+    var clockEl = document.querySelector(".who .clock");
+    if (clockEl) clockEl.textContent = clockText();
+  }, 30000);
+})();
+</script>
+</body>
+</html>
