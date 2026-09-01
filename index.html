@@ -1041,6 +1041,7 @@ button { font-family: var(--font-sans); }
       '<span class="search-wrap"><span class="icon">⌕</span><input class="search-input" id="query-input" type="text" placeholder="학생·결제 검색" value="' + esc(state.query) + '"></span>' +
       '<span class="who"><span class="name">' + esc(who) + ' ' + roleBadge + '</span><span class="clock tabular">' + esc(clock) + '</span></span>' +
 '<button type="button" class="btn btn-secondary" onclick="openPressModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#1e3a8a;cursor:pointer;">📰 언론 보도 관리</button>' +      
+'<button type="button" class="btn btn-secondary" onclick="openPasswordChangeModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#1e3a8a;cursor:pointer;">🔒 비밀번호 변경</button>' +      
       '<button class="btn btn-secondary" id="logout-btn" style="height:32px;padding:0 var(--space-4)">로그아웃</button>' +
       '</div></header>' +
       '<div class="mobile-nav">' + navHtml("chip") + '</div>';
