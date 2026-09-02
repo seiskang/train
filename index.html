@@ -1041,6 +1041,7 @@ button { font-family: var(--font-sans); }
       '<span class="search-wrap"><span class="icon">⌕</span><input class="search-input" id="query-input" type="text" placeholder="학생·결제 검색" value="' + esc(state.query) + '"></span>' +
       '<span class="who"><span class="name">' + esc(who) + ' ' + roleBadge + '</span><span class="clock tabular">' + esc(clock) + '</span></span>' +
 '<button type="button" class="btn btn-secondary" onclick="openPressModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#1e3a8a;cursor:pointer;">📰 언론 보도 관리</button>' +      
+      '<button type="button" class="btn btn-secondary" onclick="openNoticeModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#0d9488;cursor:pointer;">📢 공지사항</button>' +
 '<button type="button" class="btn btn-secondary" onclick="openPasswordChangeModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#1e3a8a;cursor:pointer;">🔒 비밀번호 변경</button>' +      
       '<button class="btn btn-secondary" id="logout-btn" style="height:32px;padding:0 var(--space-4)">로그아웃</button>' +
       '</div></header>' +
@@ -1694,6 +1695,7 @@ button { font-family: var(--font-sans); }
       '<span class="brand-sub" style="color:var(--text-muted)">1:1 Voice Lessons</span></span></div>' +
       '<div class="auth-card">' + authFormHtml + '</div>' +
       '<div style="text-align:center;margin-top:14px;"><button type="button" onclick="openPressModal()" style="background:#1e3a8a;color:#ffffff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:bold;border:none;cursor:pointer;">📰 언론 보도 / 뉴스룸</button></div>' +
+      '<button type="button" onclick="openNoticeModal()" style="background:#0d9488;color:#ffffff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:bold;border:none;cursor:pointer;margin-left:6px;">📢 공지사항</button>' +
       '</div>' +
 
       '</div>';
@@ -2138,11 +2140,12 @@ button { font-family: var(--font-sans); }
   }, 30000);
 })();
 </script>
-<!-- ========================================== -->
-<!-- [세이스강 언론 보도 CMS & 비밀번호 변경 통합 시스템] -->
-<!-- ========================================== -->
+<!-- ========================================================== -->
+<!-- [세이스강 프리미엄 통합 시스템: 공지게시판 + 언론보도 + 비번변경] -->
+<!-- ========================================================== -->
 <style>
-#pressModal, #pressWriteModal, #passwordChangeModal {
+/* 통합 모달 오버레이 */
+#pressModal, #pressWriteModal, #passwordChangeModal, #noticeModal, #noticeWriteModal {
   display: none;
   position: fixed;
   top: 0;
@@ -2159,7 +2162,7 @@ button { font-family: var(--font-sans); }
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
 }
-#pressModal.active, #pressWriteModal.active, #passwordChangeModal.active {
+#pressModal.active, #pressWriteModal.active, #passwordChangeModal.active, #noticeModal.active, #noticeWriteModal.active {
   display: flex !important;
 }
 .sk-modal-box {
@@ -2174,13 +2177,13 @@ button { font-family: var(--font-sans); }
   overflow: hidden;
   animation: skFadeUp 0.25s ease-out;
 }
-.sk-modal-box-small {
-  max-width: 440px !important;
-}
+.sk-modal-box-small { max-width: 440px !important; }
 @keyframes skFadeUp {
   from { opacity: 0; transform: translateY(20px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* 헤더 */
 .sk-modal-header {
   background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
   color: #ffffff;
@@ -2189,6 +2192,9 @@ button { font-family: var(--font-sans); }
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sk-modal-header-notice {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%) !important;
 }
 .sk-badge-top {
   display: inline-block;
@@ -2199,20 +2205,10 @@ button { font-family: var(--font-sans); }
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 6px;
-  letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
-.sk-modal-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #ffffff;
-}
-.sk-modal-desc {
-  margin: 3px 0 0 0;
-  font-size: 12px;
-  color: #93c5fd;
-}
+.sk-modal-title { margin: 0; font-size: 18px; font-weight: 700; color: #ffffff; }
+.sk-modal-desc { margin: 3px 0 0 0; font-size: 12px; color: #93c5fd; }
 .sk-close-btn {
   background: rgba(255,255,255,0.15);
   border: none;
@@ -2227,9 +2223,9 @@ button { font-family: var(--font-sans); }
   font-size: 16px;
   transition: all 0.2s;
 }
-.sk-close-btn:hover {
-  background: rgba(255,255,255,0.3);
-}
+.sk-close-btn:hover { background: rgba(255,255,255,0.3); }
+
+/* 관리자 글쓰기 버튼 */
 .sk-admin-write-btn {
   background: #2563eb;
   color: #ffffff;
@@ -2246,15 +2242,15 @@ button { font-family: var(--font-sans); }
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   transition: all 0.2s;
 }
+.sk-admin-write-btn:hover { background: #1d4ed8; }
+
+/* 검색 & 탭 */
 .sk-filter-panel {
   background: #f8fafc;
   padding: 14px 20px 10px 20px;
   border-bottom: 1px solid #e2e8f0;
 }
-.sk-search-wrap {
-  position: relative;
-  margin-bottom: 10px;
-}
+.sk-search-wrap { position: relative; margin-bottom: 10px; }
 .sk-search-input {
   width: 100%;
   padding: 9px 14px 9px 36px;
@@ -2265,7 +2261,6 @@ button { font-family: var(--font-sans); }
   color: #1e293b;
   box-sizing: border-box;
   outline: none;
-  transition: all 0.2s;
 }
 .sk-search-input:focus {
   border-color: #2563eb;
@@ -2280,12 +2275,7 @@ button { font-family: var(--font-sans); }
   color: #64748b;
   pointer-events: none;
 }
-.sk-tab-bar {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
+.sk-tab-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
 .sk-tab-btn {
   background: #ffffff;
   border: 1px solid #cbd5e1;
@@ -2295,24 +2285,18 @@ button { font-family: var(--font-sans); }
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
   white-space: nowrap;
+  transition: all 0.2s;
 }
-.sk-tab-btn:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-}
+.sk-tab-btn:hover { background: #f1f5f9; color: #0f172a; }
 .sk-tab-btn.active {
   background: #1e3a8a !important;
   color: #ffffff !important;
   border-color: #1e3a8a !important;
 }
-.sk-modal-body {
-  padding: 18px 20px;
-  overflow-y: auto;
-  background: #f8fafc;
-  flex: 1;
-}
+
+/* 본문 & 카드 */
+.sk-modal-body { padding: 18px 20px; overflow-y: auto; background: #f8fafc; flex: 1; }
 .sk-article-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -2343,46 +2327,16 @@ button { font-family: var(--font-sans); }
   border-radius: 6px;
   margin-right: 6px;
 }
-.sk-media-name {
-  color: #64748b;
-  font-weight: 600;
+.sk-cat-tag-pinned {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
 }
-.sk-card-date {
-  color: #94a3b8;
-}
-.sk-card-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 4px 0;
-  line-height: 1.4;
-}
-.sk-card-sub {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1e40af;
-  margin: 0 0 6px 0;
-}
-.sk-card-summary {
-  font-size: 12px;
-  color: #475569;
-  line-height: 1.5;
-  margin: 0 0 10px 0;
-}
-.sk-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.sk-read-btn {
-  color: #1d4ed8;
-  font-size: 12px;
-  font-weight: 700;
-}
-.sk-admin-actions {
-  display: flex;
-  gap: 6px;
-}
+.sk-card-date { color: #94a3b8; }
+.sk-card-title { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 4px 0; line-height: 1.4; }
+.sk-card-summary { font-size: 12.5px; color: #475569; line-height: 1.5; margin: 0 0 10px 0; }
+.sk-card-footer { display: flex; justify-content: space-between; align-items: center; }
+.sk-read-btn { color: #1d4ed8; font-size: 12px; font-weight: 700; }
+.sk-admin-actions { display: flex; gap: 6px; }
 .sk-action-btn {
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
@@ -2392,52 +2346,16 @@ button { font-family: var(--font-sans); }
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.sk-action-btn:hover {
-  background: #e2e8f0;
-}
-.sk-action-btn.del {
-  color: #ef4444;
-  border-color: #fca5a5;
-}
-.sk-action-btn.del:hover {
-  background: #fee2e2;
-}
-.sk-detail-box {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 22px;
-}
-.sk-detail-header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.sk-back-btn {
-  background: none;
-  border: none;
-  color: #1e40af;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 0;
-}
-.sk-detail-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.4;
-  margin: 10px 0 6px 0;
-}
-.sk-detail-sub {
-  font-size: 13px;
-  font-weight: 600;
-  color: #1d4ed8;
-  margin: 0 0 14px 0;
-}
+.sk-action-btn:hover { background: #e2e8f0; }
+.sk-action-btn.del { color: #ef4444; border-color: #fca5a5; }
+.sk-action-btn.del:hover { background: #fee2e2; }
+
+/* 상세 뷰 */
+.sk-detail-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; }
+.sk-detail-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.sk-back-btn { background: none; border: none; color: #1e40af; font-size: 13px; font-weight: 700; cursor: pointer; padding: 0; }
+.sk-detail-title { font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1.4; margin: 10px 0 6px 0; }
 .sk-quote-box {
   background: #eff6ff;
   border-left: 4px solid #1d4ed8;
@@ -2449,33 +2367,12 @@ button { font-family: var(--font-sans); }
   line-height: 1.6;
   margin: 14px 0;
 }
-.sk-detail-text p {
-  font-size: 13.5px;
-  line-height: 1.7;
-  color: #334155;
-  margin-bottom: 12px;
-}
-.sk-meta-box {
-  background: #f1f5f9;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 11.5px;
-  color: #64748b;
-  margin-top: 18px;
-}
-.sk-tags-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-.sk-tag-pill {
-  background: #f1f5f9;
-  color: #64748b;
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 4px;
-}
+.sk-detail-text p { font-size: 13.5px; line-height: 1.7; color: #334155; margin-bottom: 12px; }
+.sk-meta-box { background: #f1f5f9; border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #64748b; margin-top: 18px; }
+.sk-tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.sk-tag-pill { background: #f1f5f9; color: #64748b; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+
+/* 푸터 */
 .sk-modal-footer {
   background: #ffffff;
   padding: 12px 20px;
@@ -2495,16 +2392,10 @@ button { font-family: var(--font-sans); }
   color: #334155;
   cursor: pointer;
 }
-.sk-form-group {
-  margin-bottom: 14px;
-}
-.sk-form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #334155;
-  margin-bottom: 5px;
-}
+
+/* 폼 스타일 */
+.sk-form-group { margin-bottom: 14px; }
+.sk-form-label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 5px; }
 .sk-form-input, .sk-form-select, .sk-form-textarea {
   width: 100%;
   padding: 9px 12px;
@@ -2514,27 +2405,11 @@ button { font-family: var(--font-sans); }
   box-sizing: border-box;
   outline: none;
 }
-.sk-form-input:focus, .sk-form-select:focus, .sk-form-textarea:focus {
-  border-color: #2563eb;
-}
-.sk-form-row {
-  display: flex;
-  gap: 10px;
-}
-.sk-form-row > div {
-  flex: 1;
-}
-.sk-form-textarea {
-  resize: vertical;
-  min-height: 140px;
-  line-height: 1.6;
-}
-.sk-form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 18px;
-}
+.sk-form-input:focus, .sk-form-select:focus, .sk-form-textarea:focus { border-color: #2563eb; }
+.sk-form-row { display: flex; gap: 10px; }
+.sk-form-row > div { flex: 1; }
+.sk-form-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+.sk-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
 .sk-btn-primary {
   background: #1e3a8a;
   color: #ffffff;
@@ -2557,7 +2432,110 @@ button { font-family: var(--font-sans); }
 }
 </style>
 
-<!-- 1. [언론 보도 메인 모달] -->
+<!-- ========================================== -->
+<!-- 1. [공지사항 메인 모달] -->
+<!-- ========================================== -->
+<div id="noticeModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header sk-modal-header-notice">
+      <div>
+        <span class="sk-badge-top" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.4);">Notice Board</span>
+        <h3 class="sk-modal-title">📢 세이스강 공지사항</h3>
+        <p class="sk-modal-desc">1:1 맞춤 한국어 수업 안내, 학사 일정 및 주요 소식</p>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <button id="adminNoticeWriteBtn" onclick="openNoticeWriteModal()" class="sk-admin-write-btn">
+          ✏️ 새 공지 작성
+        </button>
+        <button onclick="closeNoticeModal()" class="sk-close-btn" aria-label="닫기">✕</button>
+      </div>
+    </div>
+
+    <div class="sk-filter-panel">
+      <div class="sk-search-wrap">
+        <span class="sk-search-icon">🔍</span>
+        <input type="text" id="noticeSearchInput" class="sk-search-input" placeholder="공지사항 제목, 내용 검색..." oninput="handleNoticeSearch()">
+      </div>
+      <div class="sk-tab-bar">
+        <button onclick="filterNoticeCategory('ALL')" id="ntab-ALL" class="sk-tab-btn active">전체</button>
+        <button onclick="filterNoticeCategory('PINNED')" id="ntab-PINNED" class="sk-tab-btn">필독·중요</button>
+        <button onclick="filterNoticeCategory('LESSON')" id="ntab-LESSON" class="sk-tab-btn">수업안내</button>
+        <button onclick="filterNoticeCategory('SCHEDULE')" id="ntab-SCHEDULE" class="sk-tab-btn">학사일정</button>
+        <button onclick="filterNoticeCategory('MATERIAL')" id="ntab-MATERIAL" class="sk-tab-btn">교재·자료</button>
+      </div>
+    </div>
+
+    <div class="sk-modal-body">
+      <div id="noticeListView"></div>
+      <div id="noticeDetailView" style="display: none;">
+        <div class="sk-detail-box">
+          <div class="sk-detail-header-bar">
+            <button onclick="backToNoticeList()" class="sk-back-btn">← 목록으로 돌아가기</button>
+            <div id="detailNoticeAdminActions" class="sk-admin-actions" style="display: none;"></div>
+          </div>
+          <div id="noticeDetailContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sk-modal-footer">
+      <span>총 <strong id="noticeTotalCount" style="color: #0d9488;">0</strong>건의 공지사항</span>
+      <button onclick="closeNoticeModal()" class="sk-footer-close">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. [공지사항 작성/수정 모달] -->
+<!-- ========================================== -->
+<div id="noticeWriteModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header sk-modal-header-notice">
+      <h3 class="sk-modal-title" id="noticeWriteModalTitle">✏️ 새 공지사항 작성</h3>
+      <button onclick="closeNoticeWriteModal()" class="sk-close-btn">✕</button>
+    </div>
+    <div class="sk-modal-body">
+      <form onsubmit="handleSaveNoticeArticle(event)">
+        <input type="hidden" id="writeNoticeId">
+        <div class="sk-form-row">
+          <div class="sk-form-group">
+            <label class="sk-form-label">말머리 (분류) *</label>
+            <select id="writeNoticeCategory" class="sk-form-select" required>
+              <option value="PINNED">🚨 필독·중요 공지</option>
+              <option value="LESSON" selected>📖 수업 안내</option>
+              <option value="SCHEDULE">🗓️ 학사 일정</option>
+              <option value="MATERIAL">📚 교재·자료 소식</option>
+            </select>
+          </div>
+          <div class="sk-form-group">
+            <label class="sk-form-label">작성 일자 *</label>
+            <input type="text" id="writeNoticeDate" class="sk-form-input" required>
+          </div>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">공지 제목 *</label>
+          <input type="text" id="writeNoticeTitle" class="sk-form-input" placeholder="공지사항 제목을 입력하세요" required>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">한 줄 요약 (목록에 노출)</label>
+          <input type="text" id="writeNoticeSummary" class="sk-form-input" placeholder="목록 카드에 보일 1~2줄 요약">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">공지 본문 내용 *</label>
+          <textarea id="writeNoticeContent" class="sk-form-textarea" placeholder="공지 본문을 자유롭게 입력하세요. (엔터 줄바꿈 자동 적용)" required></textarea>
+        </div>
+        <div class="sk-form-actions">
+          <button type="button" onclick="closeNoticeWriteModal()" class="sk-btn-secondary">취소</button>
+          <button type="submit" class="sk-btn-primary" style="background:#0d9488;">공지 저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. [언론 보도 메인 모달] -->
+<!-- ========================================== -->
 <div id="pressModal">
   <div class="sk-modal-box">
     <div class="sk-modal-header">
@@ -2573,7 +2551,6 @@ button { font-family: var(--font-sans); }
         <button onclick="closePressModal()" class="sk-close-btn" aria-label="닫기">✕</button>
       </div>
     </div>
-
     <div class="sk-filter-panel">
       <div class="sk-search-wrap">
         <span class="sk-search-icon">🔍</span>
@@ -2587,7 +2564,6 @@ button { font-family: var(--font-sans); }
         <button onclick="filterPressCategory('PUBLIC')" id="tab-PUBLIC" class="sk-tab-btn">공직·행정</button>
       </div>
     </div>
-
     <div class="sk-modal-body">
       <div id="pressListView"></div>
       <div id="pressDetailView" style="display: none;">
@@ -2600,7 +2576,6 @@ button { font-family: var(--font-sans); }
         </div>
       </div>
     </div>
-
     <div class="sk-modal-footer">
       <span>총 <strong id="pressTotalCount" style="color: #1e3a8a;">0</strong>건의 보도자료</span>
       <button onclick="closePressModal()" class="sk-footer-close">닫기</button>
@@ -2608,7 +2583,9 @@ button { font-family: var(--font-sans); }
   </div>
 </div>
 
-<!-- 2. [글쓰기 및 수정 모달] -->
+<!-- ========================================== -->
+<!-- 4. [언론 보도 글쓰기/수정 모달] -->
+<!-- ========================================== -->
 <div id="pressWriteModal">
   <div class="sk-modal-box">
     <div class="sk-modal-header">
@@ -2616,7 +2593,7 @@ button { font-family: var(--font-sans); }
       <button onclick="closePressWriteModal()" class="sk-close-btn">✕</button>
     </div>
     <div class="sk-modal-body">
-      <form id="pressWriteForm" onsubmit="handleSavePressArticle(event)">
+      <form onsubmit="handleSavePressArticle(event)">
         <input type="hidden" id="writeArticleId">
         <div class="sk-form-row">
           <div class="sk-form-group">
@@ -2674,7 +2651,9 @@ button { font-family: var(--font-sans); }
   </div>
 </div>
 
-<!-- 3. [관리자 전용 비밀번호 직접 변경 모달] -->
+<!-- ========================================== -->
+<!-- 5. [비밀번호 변경 모달] -->
+<!-- ========================================== -->
 <div id="passwordChangeModal">
   <div class="sk-modal-box sk-modal-box-small">
     <div class="sk-modal-header">
@@ -2701,8 +2680,263 @@ button { font-family: var(--font-sans); }
   </div>
 </div>
 
-<!-- 자바스크립트 엔진 -->
+<!-- ========================================== -->
+<!-- 통합 자바스크립트 엔진 -->
+<!-- ========================================== -->
 <script>
+// 관리자 판별
+function isUserAdmin() {
+  if (typeof state !== 'undefined' && state.auth && state.auth.role === 'admin') return true;
+  return document.getElementById('logout-btn') !== null;
+}
+
+// ------------------------------------------
+// [공지사항 로직]
+// ------------------------------------------
+const defaultNoticeData = [
+  {
+    id: 101,
+    category: "PINNED",
+    categoryName: "필독·중요",
+    date: "2026.09.01",
+    title: "📢 세이스강 1:1 맞춤형 한국어 수업 운영 및 예약 안내",
+    summary: "카카오톡 보이스톡 및 WhatsApp을 통한 외국인 및 성인 맞춤형 1:1 한국어 수업 진행 절차 안내입니다.",
+    content: "안녕하세요? 세이스강 이윤재 강사입니다.\n\n세이스강 플랫폼은 학습자의 수준과 목표에 맞춘 1:1 맞춤형 비대면 한국어 수업을 진행하고 있습니다.\n\n■ 수업 형태: 카카오톡 보이스톡 또는 WhatsApp 1:1 실시간 맞춤 수업\n■ 수업 시간: 주 1~2회, 1회차 50분 기준 ($22 USD)\n■ 수강 신청: 회원가입 후 레벨 테스트 상담을 거쳐 고정 수업 슬롯이 배정됩니다.\n\n문의 사항이 있으신 경우 상담 창구를 통해 언제든 문의해 주시기 바랍니다. 감사합니다."
+  }
+];
+
+const NOTICE_STORAGE_KEY = 'seiskang_notices_v1';
+let currentNoticeCategory = 'ALL';
+let currentNoticeSearchKeyword = '';
+
+function getNoticeList() {
+  const saved = localStorage.getItem(NOTICE_STORAGE_KEY);
+  if (!saved) {
+    localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify(defaultNoticeData));
+    return defaultNoticeData;
+  }
+  try {
+    const parsed = JSON.parse(saved);
+    return (Array.isArray(parsed) && parsed.length > 0) ? parsed : defaultNoticeData;
+  } catch(e) { return defaultNoticeData; }
+}
+
+function saveNoticeList(list) {
+  localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify(list));
+}
+
+function openNoticeModal() {
+  const modal = document.getElementById('noticeModal');
+  if (modal) {
+    modal.classList.add('active');
+    const adminBtn = document.getElementById('adminNoticeWriteBtn');
+    if (adminBtn) adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
+    currentNoticeSearchKeyword = '';
+    const searchInput = document.getElementById('noticeSearchInput');
+    if (searchInput) searchInput.value = '';
+    filterNoticeCategory('ALL');
+  }
+}
+
+function closeNoticeModal() {
+  const modal = document.getElementById('noticeModal');
+  if (modal) {
+    modal.classList.remove('active');
+    backToNoticeList();
+  }
+}
+
+function handleNoticeSearch() {
+  const input = document.getElementById('noticeSearchInput');
+  currentNoticeSearchKeyword = input ? input.value.trim().toLowerCase() : '';
+  renderNoticeListFiltered();
+}
+
+function filterNoticeCategory(cat) {
+  currentNoticeCategory = cat;
+  document.querySelectorAll('#noticeModal .sk-tab-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById(`ntab-${cat}`);
+  if (activeBtn) activeBtn.classList.add('active');
+  renderNoticeListFiltered();
+}
+
+function renderNoticeListFiltered() {
+  const list = getNoticeList();
+  const filtered = list.filter(item => {
+    const matchCategory = currentNoticeCategory === 'ALL' || item.category === currentNoticeCategory;
+    if (!matchCategory) return false;
+    if (!currentNoticeSearchKeyword) return true;
+    const target = (item.title + ' ' + item.summary + ' ' + item.content).toLowerCase();
+    return target.includes(currentNoticeSearchKeyword);
+  });
+  renderNoticeList(filtered);
+}
+
+function renderNoticeList(notices) {
+  const container = document.getElementById('noticeListView');
+  const countEl = document.getElementById('noticeTotalCount');
+  if (countEl) countEl.innerText = notices.length;
+  if (!container) return;
+
+  if (notices.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:45px 20px;color:#94a3b8;background:#fff;border-radius:12px;border:1px solid #e2e8f0;"><p style="font-size:14px;margin:0;">등록된 공지사항이 없습니다.</p></div>`;
+    return;
+  }
+
+  const isAdmin = isUserAdmin();
+  container.innerHTML = notices.map(item => `
+    <div class="sk-article-card" onclick="viewNoticeDetail(${item.id})">
+      <div class="sk-card-meta">
+        <div>
+          <span class="sk-cat-tag ${item.category === 'PINNED' ? 'sk-cat-tag-pinned' : ''}">${item.categoryName}</span>
+        </div>
+        <span class="sk-card-date">${item.date}</span>
+      </div>
+      <h4 class="sk-card-title">${item.title}</h4>
+      <p class="sk-card-summary">${item.summary || ''}</p>
+      <div class="sk-card-footer">
+        <span class="sk-read-btn" style="color:#0d9488;">공지 전문 보기 →</span>
+        ${isAdmin ? `
+          <div class="sk-admin-actions" onclick="event.stopPropagation();">
+            <button class="sk-action-btn" onclick="openNoticeWriteModal(${item.id})">수정</button>
+            <button class="sk-action-btn del" onclick="deleteNoticeArticle(${item.id})">삭제</button>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function viewNoticeDetail(id) {
+  const list = getNoticeList();
+  const item = list.find(a => String(a.id) === String(id));
+  if (!item) return;
+
+  const contentEl = document.getElementById('noticeDetailContent');
+  const actionsEl = document.getElementById('detailNoticeAdminActions');
+  if (!contentEl) return;
+
+  const isAdmin = isUserAdmin();
+  if (actionsEl) {
+    actionsEl.style.display = isAdmin ? 'flex' : 'none';
+    if (isAdmin) {
+      actionsEl.innerHTML = `
+        <button class="sk-action-btn" onclick="openNoticeWriteModal(${item.id})">수정</button>
+        <button class="sk-action-btn del" onclick="deleteNoticeArticle(${item.id})">삭제</button>
+      `;
+    }
+  }
+
+  const pText = (item.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+
+  contentEl.innerHTML = `
+    <div style="border-bottom:1px solid #e2e8f0;padding-bottom:14px;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:11px;">
+        <span class="sk-cat-tag ${item.category === 'PINNED' ? 'sk-cat-tag-pinned' : ''}">${item.categoryName}</span>
+        <span style="color:#cbd5e1;">|</span>
+        <span style="color:#94a3b8;">${item.date}</span>
+      </div>
+      <h3 class="sk-detail-title">${item.title}</h3>
+    </div>
+    <div class="sk-detail-text">${pText}</div>
+  `;
+
+  document.getElementById('noticeListView').style.display = 'none';
+  document.getElementById('noticeDetailView').style.display = 'block';
+}
+
+function backToNoticeList() {
+  const detail = document.getElementById('noticeDetailView');
+  const list = document.getElementById('noticeListView');
+  if (detail) detail.style.display = 'none';
+  if (list) list.style.display = 'block';
+}
+
+function openNoticeWriteModal(editId = null) {
+  if (!isUserAdmin()) return;
+  const modal = document.getElementById('noticeWriteModal');
+  const titleEl = document.getElementById('noticeWriteModalTitle');
+  if (!modal) return;
+
+  document.getElementById('writeNoticeId').value = '';
+  document.getElementById('writeNoticeTitle').value = '';
+  document.getElementById('writeNoticeSummary').value = '';
+  document.getElementById('writeNoticeContent').value = '';
+
+  if (editId) {
+    titleEl.innerText = "✏️ 공지사항 수정";
+    const item = getNoticeList().find(a => String(a.id) === String(editId));
+    if (item) {
+      document.getElementById('writeNoticeId').value = item.id;
+      document.getElementById('writeNoticeCategory').value = item.category;
+      document.getElementById('writeNoticeDate').value = item.date;
+      document.getElementById('writeNoticeTitle').value = item.title;
+      document.getElementById('writeNoticeSummary').value = item.summary || '';
+      document.getElementById('writeNoticeContent').value = item.content || '';
+    }
+  } else {
+    titleEl.innerText = "✏️ 새 공지사항 작성";
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    document.getElementById('writeNoticeDate').value = `${y}.${m}.${d}`;
+  }
+  modal.classList.add('active');
+}
+
+function closeNoticeWriteModal() {
+  const modal = document.getElementById('noticeWriteModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleSaveNoticeArticle(e) {
+  e.preventDefault();
+  if (!isUserAdmin()) return;
+
+  const editId = document.getElementById('writeNoticeId').value;
+  const cat = document.getElementById('writeNoticeCategory').value;
+  const catNames = {
+    'PINNED': '필독·중요',
+    'LESSON': '수업안내',
+    'SCHEDULE': '학사일정',
+    'MATERIAL': '교재·자료'
+  };
+
+  const noticeData = {
+    id: editId ? parseInt(editId, 10) : Date.now(),
+    category: cat,
+    categoryName: catNames[cat] || '일반공지',
+    date: document.getElementById('writeNoticeDate').value.trim(),
+    title: document.getElementById('writeNoticeTitle').value.trim(),
+    summary: document.getElementById('writeNoticeSummary').value.trim(),
+    content: document.getElementById('writeNoticeContent').value.trim()
+  };
+
+  let list = getNoticeList();
+  if (editId) {
+    list = list.map(a => String(a.id) === String(editId) ? noticeData : a);
+  } else {
+    list.unshift(noticeData);
+  }
+
+  saveNoticeList(list);
+  closeNoticeWriteModal();
+  renderNoticeListFiltered();
+  alert("공지사항이 성공적으로 저장되었습니다.");
+}
+
+function deleteNoticeArticle(id) {
+  if (!confirm('정말 이 공지사항을 삭제하시겠습니까?')) return;
+  let list = getNoticeList().filter(a => String(a.id) !== String(id));
+  saveNoticeList(list);
+  backToNoticeList();
+  renderNoticeListFiltered();
+}
+
+// ------------------------------------------
+// [언론 보도 및 비밀번호 변경 기존 로직]
+// ------------------------------------------
 const defaultPressData = [
   {
     id: 1,
@@ -2720,14 +2954,9 @@ const defaultPressData = [
   }
 ];
 
-const PRESS_STORAGE_KEY = 'seiskang_press_articles_v7';
+const PRESS_STORAGE_KEY = 'seiskang_press_articles_v8';
 let currentPressCategory = 'ALL';
 let currentSearchKeyword = '';
-
-function isUserAdmin() {
-  if (typeof state !== 'undefined' && state.auth && state.auth.role === 'admin') return true;
-  return document.getElementById('logout-btn') !== null;
-}
 
 function getPressArticles() {
   const saved = localStorage.getItem(PRESS_STORAGE_KEY);
@@ -2738,9 +2967,7 @@ function getPressArticles() {
   try {
     const parsed = JSON.parse(saved);
     return (Array.isArray(parsed) && parsed.length > 0) ? parsed : defaultPressData;
-  } catch (e) {
-    return defaultPressData;
-  }
+  } catch (e) { return defaultPressData; }
 }
 
 function savePressArticles(articles) {
@@ -2762,10 +2989,7 @@ function openPressModal() {
 
 function closePressModal() {
   const modal = document.getElementById('pressModal');
-  if (modal) {
-    modal.classList.remove('active');
-    backToPressList();
-  }
+  if (modal) { modal.classList.remove('active'); backToPressList(); }
 }
 
 function handlePressSearch() {
@@ -2776,7 +3000,7 @@ function handlePressSearch() {
 
 function filterPressCategory(category) {
   currentPressCategory = category;
-  document.querySelectorAll('.sk-tab-btn').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('#pressModal .sk-tab-btn').forEach(tab => tab.classList.remove('active'));
   const activeTab = document.getElementById(`tab-${category}`);
   if (activeTab) activeTab.classList.add('active');
   renderPressListFiltered();
@@ -2884,7 +3108,7 @@ function backToPressList() {
 function openPressWriteModal(editId = null) {
   if (!isUserAdmin()) return;
   const modal = document.getElementById('pressWriteModal');
-  const form = document.getElementById('pressWriteForm');
+  const form = document.querySelector('#pressWriteModal form');
   const titleEl = document.getElementById('writeModalTitle');
   if (!modal || !form) return;
 
@@ -2893,8 +3117,7 @@ function openPressWriteModal(editId = null) {
 
   if (editId) {
     titleEl.innerText = "✏️ 보도자료 수정";
-    const articles = getPressArticles();
-    const item = articles.find(a => String(a.id) === String(editId));
+    const item = getPressArticles().find(a => String(a.id) === String(editId));
     if (item) {
       document.getElementById('writeArticleId').value = item.id;
       document.getElementById('writeCategory').value = item.category;
@@ -2967,9 +3190,9 @@ function deletePressArticle(id) {
   renderPressListFiltered();
 }
 
-// ==========================================
-// 관리자 비밀번호 직접 변경 로직
-// ==========================================
+// ------------------------------------------
+// [비밀번호 변경 로직]
+// ------------------------------------------
 function openPasswordChangeModal() {
   const modal = document.getElementById('passwordChangeModal');
   if (modal) {
@@ -3013,14 +3236,14 @@ function handleDirectPasswordChange(e) {
   });
 }
 
+// 배경 클릭 시 닫기
 window.addEventListener('click', function(e) {
-  const pressModal = document.getElementById('pressModal');
-  const writeModal = document.getElementById('pressWriteModal');
-  const pwModal = document.getElementById('passwordChangeModal');
-  if (e.target === pressModal) closePressModal();
-  if (e.target === writeModal) closePressWriteModal();
-  if (e.target === pwModal) closePasswordChangeModal();
+  if (e.target.id === 'pressModal') closePressModal();
+  if (e.target.id === 'pressWriteModal') closePressWriteModal();
+  if (e.target.id === 'passwordChangeModal') closePasswordChangeModal();
+  if (e.target.id === 'noticeModal') closeNoticeModal();
+  if (e.target.id === 'noticeWriteModal') closeNoticeWriteModal();
 });
 </script>
 </body>
-</html>
+</html>  
