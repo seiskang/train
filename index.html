@@ -1639,7 +1639,14 @@ button { font-family: var(--font-sans); }
       '<section class="landing-hero">' + landingHeroArt() +
       '<div class="hero-inner">' +
       '<h1>안녕하세요?<br>한국어 전문강사<br>세이스강(SEISKANG) 이윤재입니다.</h1>' +
-      '<div class="landing-photo">이윤재 선생님</div>' +
+      '<div style="display: flex; justify-content: center; gap: 12px; margin: 24px 0 16px 0; flex-wrap: wrap;">' +
+        '<button type="button" onclick="openNoticeModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: #0d9488; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(13,148,136,0.35); transition: all 0.2s;">' +
+          '📢 공지사항' +
+        '</button>' +
+        '<button type="button" onclick="openPressModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: #1e40af; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(30,64,175,0.35); transition: all 0.2s;">' +
+          '📰 언론 보도 / 뉴스룸' +
+        '</button>' +
+      '</div>' +
       '<span class="eyebrow-light">Korean Language Instructor</span>' +
       '<p class="hero-sub">저는 1964년 광주 광산구 신촌동에서 태어나 1983년 5월 24일 9급 공무원으로 신규 임용되었으며 2004년 5급 행정사무관을 거쳐 2015년 1월 2일 공기업 1급으로 명예퇴직하였습니다.<br><br>' +
       '1997년부터 지금까지 평생교육의 성인교육을 해 왔습니다.<br>' +
@@ -1695,8 +1702,7 @@ button { font-family: var(--font-sans); }
       '<span class="brand-sub" style="color:var(--text-muted)">1:1 Voice Lessons</span></span></div>' +
       '<div class="auth-card">' + authFormHtml + '</div>' +
       '<div style="text-align:center;margin-top:14px;"><button type="button" onclick="openPressModal()" style="background:#1e3a8a;color:#ffffff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:bold;border:none;cursor:pointer;">📰 언론 보도 / 뉴스룸</button></div>' +
-      '<button type="button" onclick="openNoticeModal()" style="background:#0d9488;color:#ffffff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:bold;border:none;cursor:pointer;margin-left:6px;">📢 공지사항</button>' +
-      '</div>' +
+            '</div>' +
 
       '</div>';
   }
