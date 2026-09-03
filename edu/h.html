@@ -37,7 +37,7 @@ body { background: #0b0f19; color: #fff; font-family: sans-serif; padding: 15px;
 .status { font-size: 22px; font-weight: bold; color: #facc15; text-align: center; margin-top: 10px; }
 .card.done .status { color: #4ade80; }
 .btn-print { background: #6366f1; color: #fff; margin-top: 20px; }
-#print-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; padding: 20px; }
+#print-modal, #pw-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; padding: 20px; }
 .modal-content { background: #0f172a; border: 4px solid #818cf8; border-radius: 20px; padding: 20px; max-width: 500px; margin: 40px auto; text-align: center; }
 .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
 .btn-p { padding: 12px; font-size: 20px; font-weight: bold; border-radius: 10px; border: 2px solid #64748b; background: #1e293b; color: #fff; cursor: pointer; }
@@ -132,6 +132,22 @@ th { background: #eee; }
 
   <button class="btn-main btn-print" onclick="openP()">🖨️ 병원 진료 제출용 A4 출력 (인쇄/PDF)</button>
   <button class="btn-voice" style="margin-top:15px; font-size:22px; padding:15px;" onclick="speak('소리와 음성 안내가 정상 작동합니다.')">🔔 알람 소리 및 음성 테스트</button>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px;">
+    <button class="btn-voice" style="background:#1e293b; border-color:#facc15; color:#facc15; font-size:22px; padding:14px;" onclick="openPwModal()">🔑 비밀번호 변경</button>
+    <button class="btn-voice" style="background:#334155; font-size:22px; padding:14px;" onclick="logout()">로그아웃</button>
+  </div>
+</div>
+
+<div id="pw-modal">
+  <div class="modal-content">
+    <h3 style="color:#facc15; font-size:28px; margin-bottom:12px;">🔑 비밀번호 변경</h3>
+    <div style="font-size:18px; color:#cbd5e1; margin-bottom:15px;">새로 사용하실 비밀번호를 입력해 주세요.</div>
+    <input type="password" id="pw-cur" class="login-input" placeholder="현재 비밀번호" style="height:60px; font-size:24px;">
+    <input type="password" id="pw-new" class="login-input" placeholder="새 비밀번호" style="height:60px; font-size:24px;">
+    <button class="btn-main" style="background:#22c55e; color:#000; margin-bottom:12px;" onclick="saveNewPw()">새 비밀번호로 변경 저장</button>
+    <button class="btn-voice" onclick="closePwModal()">취소 및 닫기</button>
+  </div>
 </div>
 
 <div id="print-modal">
@@ -186,16 +202,21 @@ function speak(t) {
     u.lang = 'ko-KR'; window.speechSynthesis.speak(u);
   }
 }
+function getValidPw() {
+  return localStorage.getItem('seiskang_custom_pw') || '1968';
+}
 function doLogin() {
   const id = document.getElementById('l-id').value.trim();
   const pw = document.getElementById('l-pw').value.trim();
-  if ((id === 'm6411' || id === 'justice11419@naver.com') && (pw === '1968' || pw === '1968번')) {
+  const currentPw = getValidPw();
+  if ((id === 'm6411' || id === 'justice11419@naver.com') && (pw === currentPw || pw === currentPw + '번')) {
     localStorage.setItem('auth', '1');
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
     speak('환영합니다. 건강 알리미를 시작합니다.');
   } else {
     alert('아이디 또는 비밀번호가 틀렸습니다.');
+    speak('아이디 또는 비밀번호가 틀렸습니다.');
   }
 }
 if (localStorage.getItem('auth') === '1') {
@@ -204,6 +225,38 @@ if (localStorage.getItem('auth') === '1') {
 } else {
   document.getElementById('login-screen').style.display = 'block';
   document.getElementById('main-content').style.display = 'none';
+}
+function openPwModal() {
+  document.getElementById('pw-modal').style.display = 'block';
+  document.getElementById('pw-cur').value = '';
+  document.getElementById('pw-new').value = '';
+}
+function closePwModal() {
+  document.getElementById('pw-modal').style.display = 'none';
+}
+function saveNewPw() {
+  const cur = document.getElementById('pw-cur').value.trim();
+  const n = document.getElementById('pw-new').value.trim();
+  const currentPw = getValidPw();
+  if (cur !== currentPw && cur !== currentPw + '번') {
+    alert('현재 비밀번호가 일치하지 않습니다.');
+    speak('현재 비밀번호가 일치하지 않습니다.');
+    return;
+  }
+  if (!n) {
+    alert('새 비밀번호를 입력해 주세요.');
+    return;
+  }
+  localStorage.setItem('seiskang_custom_pw', n);
+  alert('비밀번호가 성공적으로 변경되었습니다.');
+  speak('비밀번호가 성공적으로 변경되었습니다.');
+  closePwModal();
+}
+function logout() {
+  if (confirm('로그아웃 하시겠습니까?')) {
+    localStorage.removeItem('auth');
+    location.reload();
+  }
 }
 function updateClock() {
   const d = new Date();
