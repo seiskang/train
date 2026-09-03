@@ -1,0 +1,283 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>시니어 생성형 AI 실전 교재 | 세이스강 이윤재</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #0b1120; color: #f8fafc;
+    font-family: 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    font-size: 22px; line-height: 1.8; padding: 20px 15px 100px;
+  }
+  .wrapper { max-width: 820px; margin: 0 auto; }
+  .hero-card {
+    background: linear-gradient(135deg, #1e1b4b 0%, #172554 100%);
+    border: 4px solid #facc15; border-radius: 28px; padding: 35px 22px;
+    text-align: center; margin-bottom: 35px; box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  }
+  .badge-main {
+    display: inline-block; background-color: #facc15; color: #000;
+    font-weight: 900; font-size: 20px; padding: 6px 22px; border-radius: 20px; margin-bottom: 16px;
+  }
+  .hero-title { font-size: 36px; font-weight: 900; color: #ffffff; line-height: 1.4; margin-bottom: 15px; word-break: keep-all; }
+  .hero-sub { font-size: 23px; color: #93c5fd; font-weight: bold; margin-bottom: 20px; word-break: keep-all; }
+  .hero-author {
+    font-size: 20px; color: #cbd5e1; border-top: 2px solid #334155; padding-top: 15px;
+    display: flex; justify-content: center; align-items: center; gap: 14px;
+  }
+  .author-img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #facc15; object-fit: cover; }
+  .toc-card { background-color: #1e293b; border: 3px solid #38bdf8; border-radius: 24px; padding: 25px 20px; margin-bottom: 40px; }
+  .toc-title { font-size: 26px; font-weight: 900; color: #38bdf8; margin-bottom: 15px; }
+  .toc-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .toc-item a {
+    color: #f1f5f9; text-decoration: none; font-size: 21px; font-weight: bold; display: block;
+    padding: 12px 16px; background-color: #0f172a; border-radius: 12px; border-left: 6px solid #facc15; transition: background 0.2s;
+  }
+  .toc-item a:hover { background-color: #334155; color: #facc15; }
+  .chapter-box {
+    background-color: #131c31; border: 3px solid #475569; border-radius: 26px;
+    padding: 30px 22px; margin-bottom: 45px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .chapter-header { border-bottom: 3px solid #facc15; padding-bottom: 14px; margin-bottom: 22px; }
+  .chap-num { color: #facc15; font-size: 22px; font-weight: 900; display: block; margin-bottom: 4px; }
+  .chap-title { font-size: 32px; font-weight: 900; color: #ffffff; line-height: 1.35; word-break: keep-all; }
+  .callout-box { border-radius: 18px; padding: 22px; margin: 22px 0; font-size: 21px; line-height: 1.7; }
+  .callout-tip { background-color: #064e3b; border: 2px solid #34d399; color: #ecfdf5; }
+  .callout-warn { background-color: #7f1d1d; border: 2px solid #f87171; color: #fef2f2; }
+  .callout-info { background-color: #1e3a8a; border: 2px solid #60a5fa; color: #eff6ff; }
+  .callout-title { font-weight: 900; font-size: 23px; margin-bottom: 10px; }
+  .visual-card { background-color: #020617; border: 3px solid #38bdf8; border-radius: 20px; padding: 22px; margin: 25px 0; text-align: center; }
+  .visual-header { font-size: 22px; font-weight: 900; color: #38bdf8; margin-bottom: 15px; }
+  .mockup-window { background-color: #1e293b; border: 2px solid #64748b; border-radius: 16px; padding: 16px; text-align: left; margin: 12px 0; }
+  .mockup-bar { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 12px; font-size: 16px; color: #94a3b8; }
+  .circle-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+  .dot-red { background: #ef4444; }
+  .dot-yellow { background: #eab308; }
+  .dot-green { background: #22c55e; }
+  .code-block { background-color: #000000; border: 2px solid #38bdf8; border-radius: 16px; padding: 18px 16px; font-family: 'Consolas', 'Courier New', monospace; font-size: 20px; color: #facc15; overflow-x: auto; margin: 15px 0; line-height: 1.5; }
+  .kbd { display: inline-block; background: #334155; color: #facc15; border: 2px solid #64748b; border-radius: 8px; padding: 2px 10px; font-size: 20px; font-weight: 900; font-family: monospace; box-shadow: 0 3px 0 #1e293b; }
+  .footer-box { text-align: center; border-top: 3px solid #334155; padding-top: 35px; margin-top: 50px; color: #94a3b8; font-size: 20px; }
+  .btn-live-app { display: inline-block; background: linear-gradient(135deg, #22c55e, #16a34a); color: #000; font-size: 24px; font-weight: 900; padding: 16px 36px; border-radius: 18px; text-decoration: none; margin-top: 20px; box-shadow: 0 6px 0 #15803d; }
+  p { margin-bottom: 16px; word-break: keep-all; }
+  ul, ol { margin-left: 28px; margin-bottom: 20px; }
+  li { margin-bottom: 10px; }
+  b, strong { color: #facc15; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header class="hero-card">
+    <span class="badge-main">시니어 생성형 AI 실전 교재</span>
+    <h1 class="hero-title">코딩 몰라도 내 손으로 만드는<br>나만의 맞춤형 건강 알리미 앱</h1>
+    <p class="hero-sub">기획부터 음성 알림, Vercel 클라우드 배포, 병원 진료용 A4 인쇄까지</p>
+    <div class="hero-author">
+      <img src="세이스강.jpg" alt="이윤재 원장" class="author-img" onerror="this.src='../images/세이스강.jpg'; this.onerror=function(){this.style.display='none'};">
+      <div><strong>청랑(淸浪) 이윤재 원장</strong> (세이스강 대표 / seiskang.kr)</div>
+    </div>
+  </header>
+  <div class="callout-box callout-tip" style="margin-bottom: 35px;">
+    <div class="callout-title">🧭 시작 전 안심 원칙 3가지</div>
+    <ol>
+      <li><b>"컴퓨터는 절대로 고장 나지 않습니다."</b> 글씨를 잘못 쳐도 컴퓨터는 폭발하지 않습니다!</li>
+      <li><b>"오류(Error)는 혼내는 게 아닙니다."</b> 컴퓨터가 길을 잘 모르겠으니 확인해달라고 묻는 것입니다.</li>
+      <li><b>단축키 4총사</b>만 기억하세요: <span class="kbd">Ctrl+A</span>(전체선택), <span class="kbd">Ctrl+C</span>(복사), <span class="kbd">Ctrl+V</span>(붙여넣기), <span class="kbd">Ctrl+S</span>(저장)</li>
+    </ol>
+  </div>
+  <nav class="toc-card">
+    <div class="toc-title">📑 실습 교재 목차 (총 8단계)</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#c1">제1장: AI에게 내 질환과 일과 말하기 (프롬프트 기획)</a></li>
+      <li class="toc-item"><a href="#c2">제2장: 시니어 맞춤 화면 설계 (고대비·특대형·음성 안내)</a></li>
+      <li class="toc-item"><a href="#c3">제3장: 컴퓨터에서 길 찾기 (파일 탐색기와 파워쉘의 만남)</a></li>
+      <li class="toc-item"><a href="#c4">제4장: 실전에서 마주친 4대 돌발 오류 완전 정복</a></li>
+      <li class="toc-item"><a href="#c5">제5장: Vercel과 GitHub로 전 세계에 무료 배포하기</a></li>
+      <li class="toc-item"><a href="#c6">제6장: 스마트폰 홈 화면에 '진짜 앱'처럼 추가하기</a></li>
+      <li class="toc-item"><a href="#c7">제7장: 의사 선생님 제출용 A4 세로 인쇄 및 PDF 저장</a></li>
+      <li class="toc-item"><a href="#c8">제8장: 강사용 현장 지도 꿀팁 & 응급 처치 요령</a></li>
+    </ul>
+  </nav>
+  <section class="chapter-box" id="c1">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 01</span><h2 class="chap-title">AI에게 내 질환과 일과 말하기 (기획)</h2></div>
+    <p>생성형 AI를 다룰 때 가장 중요한 것은 <b>"내 일상 생활 패턴을 시간 순서대로 명확히 설명하는 것"</b>입니다. 막연하게 "건강 앱 만들어줘"라고 하면 나에게 필요 없는 기능만 가득 생깁니다.</p>
+    <div class="visual-card">
+      <div class="visual-header">🎯 성공적인 시니어 프롬프트 3대 요소</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; font-size:18px;">
+        <div style="background:#1e293b; padding:15px; border-radius:12px; border-top:5px solid #f43f5e;">
+          <div style="font-size:30px;">⏰</div><b>정확한 시간</b><br>오전 7시, 아침 8시, 저녁 7시반, 밤 10시
+        </div>
+        <div style="background:#1e293b; padding:15px; border-radius:12px; border-top:5px solid #06b6d4;">
+          <div style="font-size:30px;">💊</div><b>약/측정 항목</b><br>혈압, 체중, 고혈압·뇌경색약 O/X
+        </div>
+        <div style="background:#1e293b; padding:15px; border-radius:12px; border-top:5px solid #facc15;">
+          <div style="font-size:30px;">👓</div><b>내 신체 조건</b><br>저시력, 눈침침, 글씨 크게, 음성 피드백
+        </div>
+      </div>
+    </div>
+    <div class="callout-box callout-info">
+      <div class="callout-title">💡 이윤재 원장의 실제 프롬프트 모범 예시</div>
+      <p>"앱의 핵심 기능들을 정리해 볼게.<br>1. <b>혈압 측정</b>: 오전 7시, 저녁 10시 하루 두 번 정해진 시간 알람<br>2. <b>체중 측정</b>: 오전 7시 30분 아침 공복 상태 측정<br>3. <b>아침 약 복용</b>: 오전 8시 (고혈압, 고지혈증, 협심증, 뇌경색 약 안내)<br>4. <b>저녁 약 복용</b>: 오후 7시 30분 저녁 약 안내<br>5. 복약 유무는 O, X로 체크하고 혈압과 체중은 숫자를 직접 입력하게 해줘.<br>6. <b>나는 시각장애인이라 조금밖에 안 보여. 니가 알아서 맞춤형으로 만들어줘.</b>"</p>
+    </div>
+  </section>
+  <section class="chapter-box" id="c2">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 02</span><h2 class="chap-title">시니어 맞춤 화면 설계 (3대 원칙)</h2></div>
+    <p>시니어 대상 디지털 도구는 화려함보다 <b>'직관성과 시인성'</b>이 생명입니다.</p>
+    <div class="visual-card">
+      <div class="visual-header">📱 시니어 안심 UI 3대 디자인 설계</div>
+      <div class="mockup-window" style="background:#0b0f19; border:3px solid #facc15;">
+        <div style="background:#172554; padding:10px; border-radius:10px; margin-bottom:10px; color:#facc15; font-weight:bold; font-size:20px;">🌅 아침 혈압 측정 (오전 07:00)</div>
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:10px;">
+          <div style="background:#020617; border:2px solid #38bdf8; padding:8px 20px; border-radius:8px; font-size:26px; color:#facc15; font-weight:bold;">120</div>
+          <div style="font-size:26px; font-weight:bold;">/</div>
+          <div style="background:#020617; border:2px solid #38bdf8; padding:8px 20px; border-radius:8px; font-size:26px; color:#facc15; font-weight:bold;">80</div>
+        </div>
+        <button style="width:100%; height:60px; background:#f43f5e; color:#fff; font-size:22px; font-weight:bold; border:none; border-radius:12px;">아침 혈압 저장하기 (대형 버튼)</button>
+        <div style="text-align:center; color:#38bdf8; font-size:18px; margin-top:8px;">🔊 "혈압 120에 80이 저장되었습니다" 음성 확인</div>
+      </div>
+    </div>
+    <ul>
+      <li><b>1. 고대비(High Contrast) 배색</b>: 칠흑 같은 검정 배경에 형광 노랑, 시안 블루 글씨를 사용하여 눈부심 없이 선명하게 보입니다.</li>
+      <li><b>2. 특대형 터치 영역</b>: 손끝 감각이 무디거나 수전증이 있어도 빗나가지 않도록 버튼 높이를 최소 75px 이상 크게 설계합니다.</li>
+      <li><b>3. 한국어 음성 안내(TTS)</b>: 화면을 보지 않아도 알람과 저장 결과를 말로 똑똑히 들려줍니다.</li>
+    </ul>
+  </section>
+  <section class="chapter-box" id="c3">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 03</span><h2 class="chap-title">컴퓨터에서 길 찾기 (탐색기 주소창 마법)</h2></div>
+    <p>시니어분들이 가장 무서워하는 것이 바로 파워쉘(PowerShell)의 까만 화면입니다. 하지만 마우스 클릭 몇 번으로 쉽게 길을 찾을 수 있습니다.</p>
+    <div class="visual-card">
+      <div class="visual-header">📁 내 컴퓨터 탐색기에서 파워쉘 바로 여는 과정</div>
+      <div class="mockup-window">
+        <div class="mockup-bar">
+          <span class="circle-dot dot-red"></span><span class="circle-dot dot-yellow"></span><span class="circle-dot dot-green"></span>
+          <span>내 PC &gt; 로컬 디스크 (D:) &gt; NewMD</span>
+        </div>
+        <div style="background:#020617; border:2px solid #38bdf8; padding:12px; border-radius:10px; font-size:22px; color:#facc15; font-weight:bold;">
+          주소창 클릭 ➡️ powershell 입력 후 [Enter] 칠 것!
+        </div>
+      </div>
+      <div style="font-size:28px; color:#facc15; margin:10px 0;">⬇️ (신비롭게도 해당 폴더에서 바로 열림!)</div>
+      <div class="mockup-window" style="background:#000; border-color:#38bdf8;">
+        <span style="color:#22c55e; font-weight:bold;">PS D:\NewMD&gt;</span> <span style="color:#facc15;">_ (여기서 명령어 입력)</span>
+      </div>
+    </div>
+    <div class="callout-box callout-tip">
+      <div class="callout-title">🔑 황금 비법 순서 요약</div>
+      <ol>
+        <li>내 컴퓨터(파일 탐색기)에서 내 작업 폴더(예: <b>D:\NewMD</b>)로 들어갑니다.</li>
+        <li>탐색기 맨 위쪽의 <b>주소창(긴 네모 칸)을 마우스로 클릭</b>합니다.</li>
+        <li>영어로 <b>powershell</b> 이라고 치고 <b>엔터(Enter)</b>를 칩니다!</li>
+        <li>파워쉘이 그 자리(<code>PS D:\NewMD&gt;</code>)에서 바로 열립니다.</li>
+      </ol>
+    </div>
+  </section>
+  <section class="chapter-box" id="c4">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 04</span><h2 class="chap-title">실전에서 마주친 4대 돌발 오류 완전 정복</h2></div>
+    <p>실제 실습 도중 교육생들이 겪는 4가지 난관과 해결책입니다.</p>
+    <div class="visual-card" style="border-color:#f87171;">
+      <div class="visual-header" style="color:#f87171;">🛑 1. 윈도우 터미널 보안 경고 팝업</div>
+      <div class="mockup-window" style="background:#1e293b; border-color:#f87171;">
+        <div style="font-weight:bold; font-size:20px; color:#facc15; margin-bottom:8px;">⚠️ 경고: 여러 줄이 있는 텍스트를 붙여 넣습니다. 계속하시겠습니까?</div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:12px;">
+          <span style="background:#0284c7; color:#fff; font-weight:bold; padding:6px 18px; border-radius:8px;">[붙여넣기] ⬅️ 클릭!</span>
+          <span style="background:#475569; color:#fff; padding:6px 18px; border-radius:8px;">[취소]</span>
+        </div>
+      </div>
+      <div style="font-size:20px; text-align:left; margin-top:8px;">👉 <b>해결책</b>: 윈도우의 정상적인 확인 창입니다. 파란색 <b>[붙여넣기]</b>를 누르거나 <b>엔터</b>를 치시면 됩니다.</div>
+    </div>
+    <div class="visual-card" style="border-color:#f87171;">
+      <div class="visual-header" style="color:#f87171;">🛑 2. Author identity unknown (사용자 등록 오류)</div>
+      <div class="mockup-window" style="background:#000; color:#ef4444; font-family:monospace; font-size:18px;">
+        fatal: unable to auto-detect email address (got '이윤재@Seisgang.(none)')<br>*** Please tell me who you are.
+      </div>
+      <div style="font-size:20px; text-align:left; margin-top:8px;">👉 <b>해결책</b>: 깃(Git)에 내 이름과 이메일을 등록하면 끝납니다:
+        <div class="code-block">git config --global user.name "내이름"<br>git config --global user.email "내이메일@gmail.com"</div>
+      </div>
+    </div>
+    <div class="visual-card" style="border-color:#f87171;">
+      <div class="visual-header" style="color:#f87171;">🛑 3. GitHub 로그인 팝업 (Connect to GitHub)</div>
+      <div class="mockup-window" style="background:#1e293b; text-align:center; padding:20px;">
+        <div style="font-size:22px; font-weight:bold; color:#fff; margin-bottom:12px;">GitHub Sign in</div>
+        <div style="background:#0284c7; color:#fff; font-weight:bold; padding:10px; border-radius:10px; font-size:20px; display:inline-block;">Sign in with your browser ⬅️ 클릭!</div>
+      </div>
+      <div style="font-size:20px; text-align:left; margin-top:8px;">👉 <b>해결책</b>: 파란색 버튼을 누르면 브라우저 창이 열리며 초록색 <b>Authorize</b> 버튼만 한 번 누르면 끝납니다!</div>
+    </div>
+    <div class="visual-card" style="border-color:#f87171;">
+      <div class="visual-header" style="color:#f87171;">🛑 4. 코드가 잘려 &gt;&gt; 상태로 멈췄을 때</div>
+      <div class="mockup-window" style="background:#000; color:#fff; font-family:monospace; font-size:20px;">
+        &gt;&gt; const VALID_PW = "1968<br>&gt;&gt; _ (엔터를 쳐도 반응이 없음)
+      </div>
+      <div style="font-size:20px; text-align:left; margin-top:8px;">👉 <b>해결책</b>: 만병통치 단축키 <span class="kbd">Ctrl + C</span> 를 누르면 즉시 취소되고 원래의 <code>PS D:\NewMD&gt;</code>로 깨끗하게 탈출합니다!</div>
+    </div>
+  </section>
+  <section class="chapter-box" id="c5">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 05</span><h2 class="chap-title">Vercel과 GitHub로 전 세계 무료 배포하기</h2></div>
+    <p>코드를 수정한 뒤 전 세계에 있는 내 스마트폰으로 전송하는 <b>마법의 3단계 명령어</b>입니다.</p>
+    <div class="visual-card">
+      <div class="visual-header">🚀 클라우드 자동 배포 파이프라인</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#1e293b; border:2px solid #64748b; border-radius:12px; padding:12px; font-size:20px; text-align:left;"><b>1. git add .</b> ➡️ 수정한 파일들을 배포 상자에 담기</div>
+        <div style="background:#1e293b; border:2px solid #64748b; border-radius:12px; padding:12px; font-size:20px; text-align:left;"><b>2. git commit -m "내용"</b> ➡️ 상자에 테이프 붙이고 이름표 달기</div>
+        <div style="background:#1e293b; border:2px solid #64748b; border-radius:12px; padding:12px; font-size:20px; text-align:left;"><b>3. git push origin master</b> ➡️ 깃허브와 Vercel 클라우드로 번개 전송!</div>
+      </div>
+    </div>
+    <div class="callout-box callout-tip"><div class="callout-title">💡 Vercel 배포 무조건 성공 꿀팁</div><p><code>git push origin master:main</code> 명령어를 함께 실행해 두면, 깃허브의 <b>master</b>와 <b>main</b> 양쪽 브랜치로 모두 복사되므로 Vercel이 어떤 설정을 쓰더라도 1분 안에 100% 자동 배포됩니다.</p></div>
+  </section>
+  <section class="chapter-box" id="c6">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 06</span><h2 class="chap-title">스마트폰 홈 화면에 '진짜 앱'처럼 추가하기</h2></div>
+    <div class="visual-card">
+      <div class="visual-header">📱 스마트폰 브라우저별 설치 순서</div>
+      <div class="mockup-window" style="background:#1e293b;">
+        <div style="font-size:20px; font-weight:bold; color:#facc15; margin-bottom:8px;">크롬(Chrome) 브라우저 화면 예시</div>
+        <div style="background:#0f172a; padding:10px; border-radius:8px; font-size:18px; line-height:1.6;">
+          링크 복사<br>저장된 항목 보기<br><b>설치 및 바로가기 만들기 (앱 설치) ⬅️ 여기 터치!</b><br>데스크톱 사이트
+        </div>
+      </div>
+      <div style="font-size:20px; text-align:left; margin-top:10px;">* <b>삼성 인터넷</b>의 경우: 화면 맨 아래 <b>줄 세 개(≡)</b> ➡️ <b>현재 페이지 추가(+)</b> ➡️ <b>홈 화면</b>을 선택합니다.</div>
+    </div>
+    <p>이제 바탕화면에 <b>'세이스강 건강 알리미'</b> 아이콘이 생겨 매일 원터치로 켜집니다!</p>
+  </section>
+  <section class="chapter-box" id="c7">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 07</span><h2 class="chap-title">의사 선생님 제출용 A4 세로 인쇄 및 PDF 저장</h2></div>
+    <div class="visual-card">
+      <div class="visual-header">📄 병원 제출용 A4 세로 서식 모형</div>
+      <div class="mockup-window" style="background:#fff; color:#000; font-size:16px;">
+        <div style="text-align:center; font-weight:bold; font-size:18px; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:8px;">환자 건강 & 복약 기록표 (병원 제출용)</div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;"><span>성명: 이윤재 | 조회기간: 이번 달</span><span>복용약물: 고혈압, 고지혈증, 뇌경색</span></div>
+        <table style="width:100%; border-collapse:collapse; text-align:center; font-size:13px;">
+          <tr style="background:#eee;"><th>날짜</th><th>아침혈압</th><th>체중</th><th>아침약</th><th>저녁약</th></tr>
+          <tr><td>09/03(목)</td><td><b>120/80</b></td><td><b>68kg</b></td><td><b>O</b></td><td><b>O</b></td></tr>
+          <tr><td>09/04(금)</td><td>118/76</td><td>67.8kg</td><td>O</td><td>O</td></tr>
+        </table>
+        <div style="border-top:1px dashed #777; margin-top:10px; padding-top:5px; font-size:13px; text-align:right;">담당의 서명: ____________________ (인)</div>
+      </div>
+    </div>
+    <div class="callout-box callout-info">
+      <div class="callout-title">🩺 병원 제출용 기능의 장점</div>
+      <ul>
+        <li><b>기간 원터치 선택</b>: [이번 달], [지난 달], [최근 30일] 중 골라 클릭</li>
+        <li><b>완벽한 데이터 정리</b>: 혈압 최고/최저(mmHg), 공복 체중(kg), 아침/저녁 복약(O/X)</li>
+        <li><b>병원 맞춤형 양식</b>: 의사 선생님이 진료 메모를 적을 수 있는 <b>'담당의 소견란'</b>과 <b>'서명란'</b> 완비</li>
+        <li><b>스마트폰 PDF 저장</b>: 프린터가 없어도 스마트폰에서 PDF 파일로 저장하여 자녀나 의사 선생님께 카톡 전송 가능!</li>
+      </ul>
+    </div>
+  </section>
+  <section class="chapter-box" id="c8">
+    <div class="chapter-header"><span class="chap-num">CHAPTER 08</span><h2 class="chap-title">시니어 교육 현장 지도 꿀팁 (강사용 지침)</h2></div>
+    <div class="callout-box callout-tip">
+      <div class="callout-title">👨‍🏫 성공적인 시니어 코칭 3원칙</div>
+      <ol>
+        <li><b>마우스 드래그를 금지하고 [복사] 버튼을 가르쳐라</b>:<br>시니어 교육생들은 마우스 왼쪽 버튼을 누른 채 긴 글씨를 긁어내리는 동작에서 90% 이상 실패합니다. 코드 상자 우측 상단의 <b>[복사] 아이콘</b>을 클릭하게 하면 실패율이 0%가 됩니다.</li>
+        <li><b>"에러는 고장이 아니라 컴퓨터가 길을 물어보는 것"</b>:<br>빨간 글씨나 경고창이 뜰 때 두려워하지 말고 스마트폰으로 화면을 찍어 AI에게 물어보도록 지도하면 학습자들의 디지털 공포가 사라집니다.</li>
+        <li><b>내 폰에 앱이 깔리는 순간의 '자기효능감'</b>:<br>"코딩 한 줄 모르는 내가 내 병을 관리하는 앱을 만들었다"는 경험은 시니어 세대에게 엄청난 자존감과 삶의 활력을 선물합니다.</li>
+      </ol>
+    </div>
+  </section>
+  <footer class="footer-box">
+    <p style="font-size: 24px; font-weight: 900; color: #facc15; margin-bottom: 10px;">"지식과 경험을 나누어 사람을 세우고 세상을 이롭게!"</p>
+    <p>세이스강(seiskang.kr) 대표 청랑 이윤재</p>
+    <a href="h.html" class="btn-live-app">👉 완성된 건강 알리미 앱 직접 체험하기</a>
+  </footer>
+</div>
+</body>
+</html>
