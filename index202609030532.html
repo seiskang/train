@@ -1,0 +1,3255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세이스강 이윤재 클래스 매니저</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
+
+<style>
+  /* 사이트 전체 한국어 단어 단위 줄바꿈 */
+body, h1, h2, h3, h4, p, span, div {
+  word-break: keep-all;
+}
+/* ===== tokens: base palette (from 푸른느낌 design system) ===== */
+:root {
+  --green-50:  #f0f7f3; --green-100: #d9ece2; --green-200: #a7d8c4; --green-300: #76c0a4; --green-400: #4aa183;
+  --green-500: #1f6f5c; --green-600: #1a5d4d; --green-700: #15493d; --green-800: #0e3b30; --green-900: #082620;
+  --neutral-0: #ffffff; --neutral-50: #f7f9f8; --neutral-100: #eef2f0; --neutral-200: #dfe5e2; --neutral-300: #c5cecb;
+  --neutral-400: #9aa6a2; --neutral-500: #6f7c78; --neutral-600: #515c59; --neutral-700: #3a4340; --neutral-800: #262d2b; --neutral-900: #161b1a;
+  --clay-500: #c4684a; --amber-400: #e0a64b; --amber-500: #cf8a2b; --sky-400: #5aa9d6; --sky-500: #2f7db8; --moss-500: #7a8b3c;
+  --success-500: var(--green-500); --success-50: var(--green-50);
+  --warning-500: var(--amber-500); --warning-50: #fcf4e4;
+  --danger-500: #c4503a; --danger-50: #fbedea;
+  --info-500: var(--sky-500); --info-50: #e9f3fa;
+
+  --text-strong: var(--neutral-900); --text-body: var(--neutral-700); --text-muted: var(--neutral-500); --text-subtle: var(--neutral-400);
+  --text-on-brand: #ffffff;
+  --surface-page: var(--neutral-50); --surface-card: var(--neutral-0); --surface-sunken: var(--neutral-100); --surface-inverse: var(--green-900);
+  --surface-brand-subtle: var(--green-50);
+  --border-subtle: var(--neutral-200); --border-default: var(--neutral-300); --border-strong: var(--neutral-400); --border-focus: var(--green-400);
+  --action-primary: var(--green-500); --action-primary-hover: var(--green-600); --action-primary-active: var(--green-700); --action-ghost-hover: var(--green-50);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--green-400) 45%, transparent);
+
+  /* ---- Samsung blue reskin (overrides brand + neutrals + success/info) ---- */
+  --green-50: #eef3fb; --green-100: #dae4f6; --green-200: #b3c6ec; --green-300: #7e9bdc; --green-400: #4767c2;
+  --green-500: #1428a0; --green-600: #101f80; --green-700: #0c1863; --green-800: #081046; --green-900: #060c2b;
+  --neutral-50: #f6f8fb; --neutral-100: #eceff5; --neutral-200: #dde2ea; --neutral-300: #c2c9d6; --neutral-400: #98a1b2;
+  --neutral-500: #6b7484; --neutral-600: #4d5563; --neutral-700: #374050; --neutral-800: #232a36; --neutral-900: #131822;
+  --success-500: #1d7a4f; --success-50: #eaf5ef; --info-500: #2f7db8; --info-50: #eaf3fa; --sky-500: #2f7db8;
+  --ring: 0 0 0 3px color-mix(in srgb, var(--green-400) 40%, transparent);
+
+  /* ---- typography ---- */
+  --font-sans: "Mulish", "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700; --weight-extrabold: 800;
+  --text-2xs: 0.6875rem; --text-xs: 0.75rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.125rem;
+  --text-xl: 1.375rem; --text-2xl: 1.75rem; --text-3xl: 2.25rem;
+  --leading-tight: 1.12; --leading-snug: 1.3; --leading-normal: 1.55; --leading-relaxed: 1.7;
+  --tracking-wide: 0.04em;
+  --type-caption: var(--weight-medium) var(--text-xs)/1.4 var(--font-sans);
+  --type-body: var(--weight-regular) var(--text-md)/var(--leading-normal) var(--font-sans);
+
+  /* ---- spacing ---- */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+  --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+
+  /* ---- effects ---- */
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-pill: 999px;
+  --shadow-sm: 0 2px 6px rgba(14, 59, 48, 0.07);
+  --shadow-md: 0 6px 18px rgba(14, 59, 48, 0.09);
+  --shadow-lg: 0 16px 40px rgba(14, 59, 48, 0.12);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-base: 200ms;
+  --transition-base: all var(--duration-base) var(--ease-out);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: var(--type-body);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin: 0; }
+::selection { background: var(--green-200); color: var(--green-900); }
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: var(--radius-sm); }
+button { font-family: var(--font-sans); }
+.tabular { font-variant-numeric: tabular-nums; }
+.eyebrow { font: var(--type-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--text-muted); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== shell ===== */
+#app { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+#app.auth-mode { display: block; }
+.sidebar {
+  display: flex; flex-direction: column; gap: var(--space-8);
+  background: var(--green-900); padding: var(--space-6) var(--space-4);
+}
+.brand-row { display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-2); }
+.brand-mark {
+  display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px;
+  border-radius: 9px; background: var(--green-500); color: #fff; font: var(--weight-extrabold) 13px/1 var(--font-sans); letter-spacing: -0.02em; flex: none;
+}
+.brand-name { font: var(--weight-bold) var(--text-sm)/1.1 var(--font-sans); color: #fff; letter-spacing: -0.02em; }
+.brand-sub { font: var(--weight-medium) 10px/1 var(--font-sans); color: var(--green-300); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-nav-item {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  min-height: 44px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+  cursor: pointer; transition: var(--transition-base); background: transparent; border: none; text-align: left; width: 100%;
+}
+.side-nav-item:hover { background: rgba(255,255,255,.07); }
+.side-nav-item.is-active { background: rgba(255,255,255,.12); }
+.side-nav-item .ko { display: block; font: var(--weight-semibold) var(--text-sm)/1.2 var(--font-sans); color: rgba(255,255,255,.72); white-space: nowrap; }
+.side-nav-item.is-active .ko { color: #fff; }
+.side-nav-item .en { display: block; font: var(--weight-regular) 10px/1 var(--font-sans); color: rgba(255,255,255,.38); white-space: nowrap; }
+.side-nav-item.is-active .en { color: var(--green-200); }
+.side-nav-item .count { flex: none; font: var(--weight-semibold) 11px/1 var(--font-sans); color: rgba(255,255,255,.38); }
+.side-nav-item.is-active .count { color: var(--green-200); }
+.side-nav-item.is-soon .ko::after { content: " · 준비중"; font-weight: var(--weight-regular); color: rgba(255,255,255,.4); }
+
+.package-box {
+  margin-top: auto; padding: var(--space-4); border-radius: var(--radius-lg); background: rgba(255,255,255,.06);
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.package-box .lbl { font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--green-200); letter-spacing: 0.06em; text-transform: uppercase; }
+.package-box .big { font: var(--weight-bold) var(--text-lg)/1.2 var(--font-sans); color: #fff; }
+.package-box .fine { font: var(--weight-regular) var(--text-xs)/1.5 var(--font-sans); color: var(--green-300); }
+
+.main { display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  padding: var(--space-3) var(--space-8); min-height: 64px; background: var(--surface-card); border-bottom: 1px solid var(--border-subtle);
+}
+.crumbs { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.crumb-root { font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); color: var(--text-muted); white-space: nowrap; }
+.crumb-sep { color: var(--text-subtle); }
+.crumb-leaf { font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); color: var(--text-strong); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-right { display: flex; align-items: center; gap: var(--space-4); flex: none; }
+.who { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.who .name { font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); color: var(--text-strong); }
+.who .clock { font: var(--weight-regular) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); }
+
+.mobile-nav { display: none; gap: var(--space-2); padding: var(--space-3) var(--space-4); background: var(--surface-card); border-bottom: 1px solid var(--border-subtle); overflow-x: auto; }
+.chip {
+  display: inline-flex; flex: none; align-items: center; gap: var(--space-2); height: 34px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); cursor: pointer; font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans);
+  border: 1px solid var(--border-subtle); background: var(--surface-card); color: var(--text-body); white-space: nowrap;
+}
+.chip.is-active { border-color: var(--green-500); background: var(--green-500); color: #fff; }
+.chip.is-soon { border-style: dashed; color: var(--text-muted); }
+
+.view { flex: 1; min-width: 0; padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* ===== search input ===== */
+.search-wrap { position: relative; display: inline-flex; align-items: center; }
+.search-wrap .icon { position: absolute; left: 12px; color: var(--text-subtle); font-size: 14px; pointer-events: none; }
+.search-input {
+  width: 240px; height: 40px; padding: 0 var(--space-3) 0 34px; border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); background: var(--surface-card); color: var(--text-body);
+}
+.search-input:focus { border-color: var(--border-focus); }
+
+/* ===== buttons ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 var(--space-5);
+  border-radius: var(--radius-md); font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); cursor: pointer;
+  border: 1px solid transparent; transition: var(--transition-base); white-space: nowrap;
+}
+.btn-primary { background: var(--action-primary); color: #fff; }
+.btn-primary:hover { background: var(--action-primary-hover); }
+.btn-secondary { background: var(--surface-card); border-color: var(--border-default); color: var(--text-body); }
+.btn-secondary:hover { border-color: var(--border-strong); }
+.btn-ghost { background: transparent; color: var(--text-body); }
+.btn-ghost:hover { background: var(--action-ghost-hover); }
+.btn.full { width: 100%; }
+
+/* ===== card / stat / badge ===== */
+.card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.card--pad { padding: var(--space-6); }
+.card-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); }
+.card-head .title { font: var(--weight-bold) var(--text-md)/1 var(--font-sans); color: var(--text-strong); }
+.card-head .note { font: var(--weight-medium) var(--text-sm)/1 var(--font-sans); color: var(--text-muted); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.stat-card { display: flex; flex-direction: column; gap: var(--space-2); justify-content: center; min-height: 132px; padding: var(--space-5) var(--space-6); }
+.stat-card .label { font: var(--type-caption); color: var(--text-muted); }
+.stat-card .value { font: var(--weight-extrabold) var(--text-2xl)/1.1 var(--font-sans); color: var(--text-strong); }
+.stat-card .value .unit { font: var(--weight-semibold) var(--text-md)/1 var(--font-sans); color: var(--text-muted); margin-left: 4px; }
+.stat-card .caption { font: var(--weight-regular) var(--text-xs)/1.4 var(--font-sans); color: var(--text-muted); }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: var(--radius-pill); font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); white-space: nowrap; }
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.badge.tone-success { background: var(--success-50); color: var(--success-500); } .badge.tone-success .dot { background: var(--success-500); }
+.badge.tone-warning { background: var(--warning-50); color: var(--warning-500); } .badge.tone-warning .dot { background: var(--warning-500); }
+.badge.tone-danger { background: var(--danger-50); color: var(--danger-500); } .badge.tone-danger .dot { background: var(--danger-500); }
+.badge.tone-info { background: var(--info-50); color: var(--info-500); } .badge.tone-info .dot { background: var(--info-500); }
+.badge.tone-brand { background: var(--surface-brand-subtle); color: var(--green-600); } .badge.tone-brand .dot { background: var(--green-500); }
+.badge.tone-neutral { background: var(--neutral-100); color: var(--text-muted); } .badge.tone-neutral .dot { background: var(--text-muted); }
+
+/* ===== filter chips ===== */
+.filter-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.filter-chip {
+  display: inline-flex; flex: none; align-items: center; height: 32px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); cursor: pointer; white-space: nowrap; font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans);
+  border: 1px solid var(--border-subtle); background: var(--surface-card); color: var(--text-body);
+}
+.filter-chip.is-active { border-color: var(--green-500); background: var(--green-500); color: #fff; }
+
+/* ===== progress ===== */
+.bar-track { height: 6px; border-radius: 999px; background: var(--neutral-100); overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 999px; }
+
+.ring-wrap { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; }
+.ring-wrap .card-head.solo { align-self: flex-start; border-bottom: none; padding: 0; }
+
+/* ===== table ===== */
+.table-head, .table-row { display: grid; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-6); }
+.table-head { background: var(--neutral-50); border-bottom: 1px solid var(--border-subtle); font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.table-row { border-bottom: 1px solid var(--neutral-100); cursor: pointer; transition: var(--transition-base); }
+.table-row:hover { background: var(--green-50); }
+.table-row:last-child, .table-body > *:last-child .table-row { border-bottom: none; }
+.grid-students { grid-template-columns: 1.6fr 1.3fr 0.8fr 1.2fr 1.1fr 1fr; }
+.grid-payments { grid-template-columns: 1.5fr 1fr 0.8fr 0.8fr 1.1fr 1.1fr; }
+.avatar-init { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: none; border-radius: 50%; background: var(--green-100); color: var(--green-700); font: var(--weight-bold) var(--text-xs)/1 var(--font-sans); }
+
+/* ===== lists ===== */
+.agenda-row { display: grid; grid-template-columns: 104px 8px 1fr auto; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--neutral-100); cursor: pointer; }
+.agenda-row:last-child { border-bottom: none; }
+.agenda-row:hover { background: var(--green-50); }
+.dot-lg { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ===== alert / toast ===== */
+.alert { display: flex; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); border: 1px solid; }
+.alert.tone-success { background: var(--success-50); border-color: color-mix(in srgb, var(--success-500) 35%, transparent); }
+.alert.tone-danger { background: var(--danger-50); border-color: color-mix(in srgb, var(--danger-500) 35%, transparent); }
+.alert.tone-info { background: var(--info-50); border-color: color-mix(in srgb, var(--info-500) 35%, transparent); }
+.alert .title { font: var(--weight-bold) var(--text-sm)/1.3 var(--font-sans); color: var(--text-strong); }
+.alert .body { font: var(--weight-regular) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); margin-top: 2px; }
+.alert .close { margin-left: auto; flex: none; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px; line-height: 1; }
+
+.toast-wrap { position: fixed; z-index: 70; left: 50%; bottom: 28px; transform: translateX(-50%); width: min(560px, calc(100vw - 32px)); animation: toastIn 220ms var(--ease-out) both; }
+.toast-wrap .card { box-shadow: var(--shadow-lg); }
+
+/* ===== modal ===== */
+.modal-backdrop { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: var(--space-6); background: rgba(6,12,43,.42); animation: fadeIn 160ms var(--ease-out) both; }
+.modal-box { width: 100%; max-width: 520px; animation: rise 200ms var(--ease-out) both; }
+.modal-rows { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); background: var(--neutral-50); border-radius: var(--radius-md); }
+.modal-rows .r { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); }
+.modal-rows .r .k { font: var(--weight-regular) var(--text-sm)/1.4 var(--font-sans); color: var(--text-muted); }
+.modal-rows .r .v { flex: none; font: var(--weight-semibold) var(--text-sm)/1.4 var(--font-sans); color: var(--text-strong); text-align: right; white-space: nowrap; }
+
+.field-label { display: block; font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: var(--space-2); }
+.textarea {
+  width: 100%; padding: var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  font: var(--weight-regular) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); background: var(--surface-card); resize: vertical;
+}
+.textarea:focus { border-color: var(--border-focus); }
+.input {
+  width: 100%; height: 40px; padding: 0 var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); color: var(--text-body); background: var(--surface-card);
+}
+.input:focus { border-color: var(--border-focus); }
+
+/* ===== auth ===== */
+.auth-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-6); background: var(--surface-page); }
+.auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: var(--space-5); }
+.auth-brand { display: flex; align-items: center; justify-content: center; gap: var(--space-3); }
+.auth-tabs { display: flex; gap: var(--space-2); padding: 3px; background: var(--surface-sunken); border-radius: var(--radius-md); }
+.auth-tab { flex: 1; text-align: center; padding: var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font: var(--weight-semibold) var(--text-sm)/1 var(--font-sans); color: var(--text-muted); }
+.auth-tab.is-active { background: var(--surface-card); color: var(--text-strong); box-shadow: var(--shadow-sm); }
+.auth-error { font: var(--weight-medium) var(--text-sm)/1.4 var(--font-sans); color: var(--danger-500); }
+.auth-hint { text-align: center; font: var(--weight-regular) var(--text-xs)/1.4 var(--font-sans); color: var(--text-subtle); }
+.dev-box {
+  padding: var(--space-4); border-radius: var(--radius-md); background: var(--warning-50);
+  border: 1px solid color-mix(in srgb, var(--warning-500) 35%, transparent);
+  font: var(--weight-regular) var(--text-xs)/1.6 var(--font-sans); color: var(--text-body); word-break: break-all;
+}
+.dev-box a { color: var(--info-500); }
+
+/* ===== landing (visitor intro) ===== */
+:root {
+  --hanji: #faf6ee;
+  --hanji-line: #e6dcc8;
+  --ink: #10182b;
+  --seal: #b3402c;
+  --seal-soft: #f7e6e0;
+  --gold: #b08a3e;
+  --font-serif-kr: "Noto Serif KR", "IBM Plex Sans KR", serif;
+}
+.landing-page { background: var(--hanji); }
+.landing-hero {
+  position: relative; overflow: hidden; background: var(--ink);
+  padding: var(--space-10) var(--space-6) var(--space-8);
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-6); text-align: center;
+}
+.landing-hero .hero-art { position: absolute; inset: 0; opacity: 0.16; pointer-events: none; }
+.landing-hero .hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--space-5); max-width: 560px; }
+.landing-photo {
+  width: 216px; height: 104px; border-radius: 108px / 52px; flex: none;
+  background: linear-gradient(160deg, var(--green-300), var(--green-600));
+  display: flex; align-items: center; justify-content: center;
+  font: var(--weight-bold) 21px/1 var(--font-serif-kr); color: #fff;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.14), 0 14px 30px -10px rgba(0,0,0,0.55);
+}
+.landing-hero .eyebrow-light { font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+.landing-hero h1 {
+  font: var(--weight-bold) var(--text-3xl)/1.25 var(--font-serif-kr); color: #fff; letter-spacing: -0.01em; text-wrap: balance;
+}
+.landing-hero .hero-sub { color: rgba(255,255,255,0.72); font: var(--weight-regular) var(--text-md)/1.6 var(--font-sans); text-wrap: balance; }
+.landing-hero .hero-cta { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; margin-top: var(--space-2); }
+.landing-hero .btn-hero {
+  display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 var(--space-6);
+  border-radius: var(--radius-pill); font: var(--weight-bold) var(--text-sm)/1 var(--font-sans); cursor: pointer; border: 1px solid transparent;
+  background: var(--seal); color: #fff; transition: var(--transition-base);
+}
+.landing-hero .btn-hero:hover { background: #9c3624; }
+.landing-hero .btn-hero.ghost { background: transparent; border-color: rgba(255,255,255,0.3); color: #fff; }
+.landing-hero .btn-hero.ghost:hover { border-color: rgba(255,255,255,0.6); }
+
+.landing-section { max-width: 720px; margin: 0 auto; padding: var(--space-10) var(--space-6); display: flex; flex-direction: column; gap: var(--space-6); }
+.landing-section + .landing-section { border-top: 1px solid var(--hanji-line); }
+.landing-head { display: flex; flex-direction: column; gap: var(--space-2); text-align: center; }
+.landing-head .eyebrow-seal { font: var(--weight-bold) var(--text-xs)/1 var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--seal); }
+.landing-head h2 { font: var(--weight-bold) var(--text-2xl)/1.3 var(--font-serif-kr); color: var(--ink); text-wrap: balance; }
+
+.credential-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+.credential-card {
+  background: #fff; border: 1px solid var(--hanji-line); border-radius: var(--radius-lg);
+  padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+.credential-card .mark { width: 34px; height: 34px; border-radius: 50%; background: var(--seal-soft); color: var(--seal); display: flex; align-items: center; justify-content: center; font: var(--weight-bold) var(--text-sm)/1 var(--font-serif-kr); flex: none; }
+.credential-card .title { font: var(--weight-bold) var(--text-md)/1.35 var(--font-sans); color: var(--text-strong); }
+.credential-card .desc { font: var(--weight-regular) var(--text-sm)/1.55 var(--font-sans); color: var(--text-muted); }
+
+.career-line { display: flex; flex-direction: column; gap: var(--space-3); }
+.career-row { display: grid; grid-template-columns: 84px 1fr; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--hanji-line); }
+.career-row:last-child { border-bottom: none; }
+.career-row .age { font: var(--weight-bold) var(--text-sm)/1 var(--font-serif-kr); color: var(--seal); white-space: nowrap; }
+.career-row .desc { font: var(--weight-medium) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); }
+.role-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; }
+.role-chip {
+  display: inline-flex; align-items: center; height: 32px; padding: 0 var(--space-4); border-radius: var(--radius-pill);
+  background: #fff; border: 1px solid var(--hanji-line); font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-body);
+}
+
+.enroll-steps { display: flex; flex-direction: column; gap: var(--space-3); }
+.enroll-step { display: grid; grid-template-columns: 30px 1fr; gap: var(--space-4); align-items: flex-start; }
+.enroll-step .num {
+  width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center;
+  font: var(--weight-bold) var(--text-sm)/1 var(--font-serif-kr); flex: none;
+}
+.enroll-step .title { font: var(--weight-bold) var(--text-sm)/1.4 var(--font-sans); color: var(--text-strong); }
+.enroll-step .desc { font: var(--weight-regular) var(--text-sm)/1.55 var(--font-sans); color: var(--text-muted); margin-top: 2px; }
+
+.price-card { background: #fff; border: 1px solid var(--hanji-line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.price-head { padding: var(--space-5) var(--space-6); background: var(--ink); color: #fff; display: flex; align-items: baseline; justify-content: space-between; }
+.price-head .amount { font: var(--weight-extrabold) var(--text-2xl)/1 var(--font-serif-kr); }
+.price-head .unit { font: var(--weight-regular) var(--text-sm)/1 var(--font-sans); color: rgba(255,255,255,0.75); font-size: 13px; }
+.refund-table { width: 100%; border-collapse: collapse; }
+.refund-table td { padding: var(--space-4) var(--space-6); font: var(--weight-medium) var(--text-sm)/1.5 var(--font-sans); border-bottom: 1px solid var(--hanji-line); }
+.refund-table tr:last-child td { border-bottom: none; }
+.refund-table td:first-child { color: var(--text-muted); width: 55%; }
+.refund-table td:last-child { color: var(--text-strong); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+
+.landing-auth-wrap { background: #fff; padding: var(--space-10) var(--space-6); border-top: 1px solid var(--hanji-line); }
+.landing-auth-wrap .auth-card { max-width: 400px; margin: 0 auto; }
+
+@media (max-width: 640px) {
+  .credential-grid { grid-template-columns: 1fr; }
+  .landing-hero h1 { font-size: var(--text-2xl); }
+}
+
+/* ===== misc content ===== */
+.field-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5) var(--space-6); }
+.field-grid-2 { grid-template-columns: 1fr 1fr; }
+.field-grid .f .k { display: block; font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: var(--space-2); }
+.field-grid .f .v { font: var(--weight-medium) var(--text-md)/1.35 var(--font-sans); color: var(--text-strong); }
+.lesson-row { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--neutral-100); animation: rise 280ms var(--ease-out) both; }
+.lesson-row:last-child { border-bottom: none; }
+.lesson-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3) var(--space-5); }
+.lesson-cols .k { display: block; font: var(--weight-semibold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); margin-bottom: 2px; }
+.lesson-cols .v { font: var(--weight-regular) var(--text-sm)/1.5 var(--font-sans); color: var(--text-body); }
+
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .mobile-nav { display: flex; }
+  .topbar { padding: var(--space-3) var(--space-4); }
+  .who { display: none; }
+  .crumbs { display: none; }
+  .search-input { width: 150px; }
+  .view { padding: var(--space-4); }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .dash-grid { grid-template-columns: 1fr !important; }
+  .detail-grid { grid-template-columns: 1fr !important; }
+  .field-grid { grid-template-columns: 1fr; }
+  .req-grid { grid-template-columns: 1fr !important; }
+  .lesson-cols { grid-template-columns: 1fr; }
+  .table-head { display: none; }
+  .table-row.grid-students, .table-row.grid-payments { grid-template-columns: 1fr; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .agenda-row { grid-template-columns: auto 8px 1fr; }
+  .agenda-row .agenda-session { display: none; }
+}
+
+/* ===== CTA Button (프로필 보기 반짝임 애니메이션 - 초강력 상시 작동) ===== */
+.btn-cta {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  height: 64px !important;
+  padding: 0 var(--space-10) !important;
+  border-radius: 999px !important;
+  font: var(--weight-extrabold) var(--text-xl)/1 var(--font-sans) !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #b3402c, #e0503a, #ff7b5c, #b3402c) !important;
+  background-size: 300% 300% !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  border: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(179, 64, 44, 0.4) !important;
+  animation: btn-cta-pulse 2s ease-in-out infinite, btn-cta-bg 3s ease infinite !important;
+  transition: transform 0.2s ease !important;
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
+}
+.btn-cta:hover { transform: translateY(-2px) scale(1.03) !important; }
+.btn-cta:active { transform: scale(0.98) !important; }
+.btn-cta::after {
+  content: "" !important;
+  position: absolute !important;
+  top: -50% !important;
+  left: -100% !important;
+  width: 80% !important;
+  height: 200% !important;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255,255,255,0) 100%) !important;
+  transform: rotate(25deg) !important;
+  animation: btn-cta-shine 2s linear infinite !important;
+  pointer-events: none !important;
+}
+@keyframes btn-cta-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes btn-cta-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(179, 64, 44, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 6px 22px rgba(224, 80, 58, 0.7); }
+}
+@keyframes btn-cta-shine {
+  0% { left: -100%; }
+  50% { left: 150%; }
+  100% { left: 150%; }
+}
+
+.dict-widget { background:#fff; border:1px solid var(--hanji-line); border-radius:var(--radius-lg); padding:var(--space-6); display:flex; flex-direction:column; gap:var(--space-4); box-shadow:var(--shadow-sm); }
+.dict-widget .dict-row { display:flex; gap:var(--space-3); }
+.dict-widget input { flex:1; height:40px; padding:0 var(--space-3); border:1px solid var(--hanji-line); border-radius:var(--radius-md); font:var(--weight-regular) var(--text-sm)/1 var(--font-sans); }
+.dict-widget button { height:40px; padding:0 var(--space-5); border-radius:var(--radius-md); border:none; background:var(--seal); color:#fff; font:var(--weight-bold) var(--text-sm)/1 var(--font-sans); cursor:pointer; }
+.dict-result { border:1px solid var(--hanji-line); border-radius:var(--radius-md); padding:var(--space-4); background:var(--surface-page); margin-top:var(--space-3); }
+.dict-result .w { font:var(--weight-bold) var(--text-md)/1 var(--font-serif-kr); color:var(--ink); }
+.dict-result .g { font-size:var(--text-2xs); color:var(--seal); border:1px solid var(--seal); border-radius:var(--radius-sm); padding:1px 6px; margin-left:6px; }
+.dict-result p { margin:6px 0 0; font-size:var(--text-sm); color:var(--text-muted); }
+.dict-note { font-size:var(--text-2xs); color:var(--text-subtle); }
+
+/* ===== Google & Naver Search Engines ===== */
+.search-engine-wrap { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); }
+.search-engine-label { font: var(--weight-bold) var(--text-xs)/1 var(--font-sans); color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 2px; }
+.engine-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: #ffffff;
+  border: 1.5px solid var(--hanji-line);
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+}
+.engine-form:focus-within {
+  border-color: #1428a0;
+  box-shadow: 0 0 0 2px rgba(20, 40, 160, 0.18);
+}
+.engine-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  font: var(--weight-bold) var(--text-sm)/1 var(--font-sans);
+  flex: none;
+  min-width: 95px;
+}
+.engine-brand.google { color: #4285f4; }
+.engine-brand.naver { color: #03c75a; }
+.naver-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #03c75a;
+  color: #fff;
+  font: var(--weight-extrabold) 12px/1 var(--font-sans);
+  border-radius: 4px;
+}
+.engine-input {
+  flex: 1;
+  height: 38px;
+  border: none;
+  background: transparent;
+  font: var(--weight-medium) var(--text-sm)/1 var(--font-sans);
+  color: var(--text-strong);
+  padding: 0 var(--space-2);
+  outline: none;
+  min-width: 0;
+}
+.engine-btn {
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  border: none;
+  font: var(--weight-bold) var(--text-xs)/1 var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition-base);
+}
+.engine-btn.google-btn { background: #4285f4; color: #fff; }
+.engine-btn.google-btn:hover { background: #3367d6; }
+.engine-btn.naver-btn { background: #03c75a; color: #fff; }
+.engine-btn.naver-btn:hover { background: #02a84c; }
+
+@media (max-width: 600px) {
+  .engine-form { flex-wrap: wrap; padding: 10px; }
+  .engine-brand { width: 100%; margin-bottom: 6px; padding: 0; }
+  .engine-input { width: 100%; border: 1px solid var(--hanji-line); border-radius: var(--radius-sm); height: 38px; margin-bottom: 8px; padding: 0 10px; background: var(--surface-page); }
+  .engine-btn { width: 100%; height: 38px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var RATE = 22;
+  var PACK = 8;
+
+  var TERMS_TEXT = "제1조 (목적)\n" +
+    "이 약관은 세이스강 이윤재 클래스 매니저(이하 \"서비스\")가 제공하는 한국어 1:1 개인교습 관리 서비스의 이용 조건 및 절차, 이용자와 운영자의 권리·의무를 규정합니다.\n\n" +
+    "제2조 (회원가입)\n" +
+    "이용자는 이메일과 비밀번호를 입력하고 본 약관 및 개인정보처리방침에 동의함으로써 회원가입을 신청하며, 이메일 인증을 완료한 시점에 가입이 확정됩니다.\n\n" +
+    "제3조 (서비스의 제공)\n" +
+    "서비스는 수강 신청, 학생 관리, 결제·회차 관리, 수업 기록, 교안·과제 자료 업로드 등의 기능을 제공합니다. 운영상 필요에 따라 서비스의 전부 또는 일부가 변경되거나 중단될 수 있습니다.\n\n" +
+    "제4조 (이용자의 의무)\n" +
+    "이용자는 본인의 계정 정보를 안전하게 관리해야 하며, 타인의 정보를 도용하거나 서비스를 부정하게 이용해서는 안 됩니다.\n\n" +
+    "제5조 (면책)\n" +
+    "운영자는 천재지변, 통신 장애 등 불가항력적인 사유로 서비스를 제공할 수 없는 경우 책임을 지지 않습니다.\n\n" +
+    "제6조 (약관의 변경)\n" +
+    "운영자는 필요한 경우 관련 법령을 위반하지 않는 범위에서 이 약관을 개정할 수 있으며, 개정 시 서비스 내 공지합니다.\n\n" +
+    "부칙: 이 약관은 2026년 8월 26일부터 시행합니다.";
+
+  var PRIVACY_TEXT = "1. 수집하는 개인정보 항목\n" +
+    "이메일 주소, 비밀번호(암호화 저장), 이름(선택 입력)\n\n" +
+    "2. 수집 및 이용 목적\n" +
+    "회원 식별 및 로그인, 수강 신청·결제·수업 기록 등 서비스 제공, 비밀번호 재설정 등 계정 관리\n\n" +
+    "3. 보유 및 이용 기간\n" +
+    "회원 탈퇴 시 또는 목적 달성 시까지 보관하며, 관련 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관합니다.\n\n" +
+    "4. 제3자 제공\n" +
+    "수집한 개인정보는 법령에 특별한 규정이 있는 경우를 제외하고 이용자의 동의 없이 제3자에게 제공하지 않습니다.\n\n" +
+    "5. 이용자의 권리\n" +
+    "이용자는 언제든지 자신의 개인정보 열람, 정정, 삭제를 요청할 수 있습니다.\n\n" +
+    "6. 문의처\n" +
+    "개인정보 관련 문의는 서비스 운영자에게 연락해주세요.";
+
+  var PAY = {
+    paid: { label: "입금 완료", tone: "success" },
+    pending: { label: "입금 대기", tone: "warning" },
+    overdue: { label: "연체", tone: "danger" }
+  };
+
+  function getSavedEmail() {
+    try { return localStorage.getItem("savedEmail") || ""; } catch (e) { return ""; }
+  }
+  function setSavedEmail(email) {
+    try {
+      if (email) localStorage.setItem("savedEmail", email);
+      else localStorage.removeItem("savedEmail");
+    } catch (e) { /* 저장소 접근 불가 — 무시 */ }
+  }
+
+  var ADMIN_ONLY_VIEWS = ["dash", "requests", "students", "student", "payments"];
+  var NAV_DEFS = [
+    ["개요", "Overview", "dash", true],
+    ["수강 신청", "Requests", "requests", true],
+    ["학생", "Students", "students", true],
+    ["결제", "Payments", "payments", true],
+    ["교안", "Materials", "materials", false],
+    ["과제방", "Assignments", "assignments", false],
+    ["수업 일정", "Schedule", null, true],
+    ["설정", "Settings", "settings", false]
+  ];
+
+  var state = {
+    view: "dash", student: "s1", query: "", filter: "전체", payFilter: "전체",
+    modal: null, note: "", toast: null, toastBody: "", toastTone: "success",
+    alerts: {},
+    authReady: false, auth: null, authTab: "login", authError: "", authBusy: false,
+    authPendingVerify: null, authUnverifiedEmail: "",
+    authForgot: null, authForgotBusy: false, authForgotError: "",
+    authResetToken: null, authResetBusy: false, authResetError: "",
+    authAgreeTerms: false, authTermsModal: null, authConfirmAge: false,
+    savedEmail: getSavedEmail(), authRememberEmail: !!getSavedEmail(),
+    students: [], requests: [], invoices: [], dashboardReady: false,
+    materials: [], materialsLoaded: false, materialsBusy: false, materialsError: "",
+    materialsUploadBusy: false, materialsUploadError: "",
+    assignments: [], assignmentsLoaded: false, assignmentsBusy: false, assignmentsError: "",
+    assignmentsUploadBusy: false, assignmentsUploadError: "",
+    myStudent: null, myStudentChecked: false,
+    adminStudents: [], adminStudentsLoaded: false, selectedStudentId: null,
+    assignmentEditId: null, assignmentEditTitle: "",
+    adminUsers: [], adminUsersLoaded: false,
+    adminComments: [], adminCommentsLoaded: false,
+    studentEmailEditId: null, studentEmailEditValue: ""
+  };
+  var pendingRequest = null;
+  var toastTimer = null;
+
+  function esc(str) {
+    return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function setState(patch) { Object.assign(state, patch); render(); }
+  function remainOf(st) { return st.total - st.used; }
+  function colorVar(st) {
+    var r = remainOf(st);
+    return r <= 1 ? "var(--danger-500)" : r <= 2 ? "var(--amber-500)" : "var(--green-500)";
+  }
+  function nameOf(sid) { var s = state.students.find(function (x) { return x.id === sid; }); return s ? s.name : "—"; }
+  function fire(title, body, tone) {
+    clearTimeout(toastTimer);
+    setState({ toast: title, toastBody: body || "", toastTone: tone || "success" });
+    toastTimer = setTimeout(function () { setState({ toast: null }); }, 5200);
+  }
+  function go(view, studentId) {
+    var patch = { view: view };
+    if (studentId) patch.student = studentId;
+    setState(patch);
+    if (view === "materials" && !state.materialsLoaded) loadMaterials();
+    if (view === "assignments") loadAssignmentsView();
+    if (view === "settings" && state.auth && state.auth.role === "admin") {
+      if (!state.adminStudentsLoaded) loadAdminStudents();
+      if (!state.adminUsersLoaded) loadAdminUsers();
+      if (!state.adminCommentsLoaded) loadAdminComments();
+    }
+  }
+
+  function openFileInline(url, mimeType) {
+    var win = window.open("", "_blank");
+    fetch(url)
+      .then(function (res) { return res.blob(); })
+      .then(function (blob) {
+        var displayBlob = mimeType === "text/markdown" ? new Blob([blob], { type: "text/plain;charset=utf-8" }) : blob;
+        if (win) win.location.href = URL.createObjectURL(displayBlob);
+        else window.open(URL.createObjectURL(displayBlob), "_blank");
+      })
+      .catch(function () { if (win) win.location.href = url; else window.open(url, "_blank"); });
+  }
+
+  function formatBytes(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function loadMaterials() {
+    if (state.materialsBusy) return;
+    setState({ materialsBusy: true, materialsError: "" });
+    fetch("/api/materials")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ materialsBusy: false, materialsLoaded: true, materialsError: r.data.error || "불러오기에 실패했습니다." }); return; }
+        setState({ materialsBusy: false, materialsLoaded: true, materialsError: "", materials: r.data.materials });
+      })
+      .catch(function () { setState({ materialsBusy: false, materialsLoaded: true, materialsError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitMaterialUpload(e) {
+    e.preventDefault();
+    if (state.materialsUploadBusy) return;
+    var fileInput = document.getElementById("material-file");
+    var file = fileInput && fileInput.files[0];
+    if (!file) return;
+    var titleInput = document.getElementById("material-title");
+    var fd = new FormData();
+    fd.append("file", file);
+    if (titleInput && titleInput.value.trim()) fd.append("title", titleInput.value.trim());
+    setState({ materialsUploadBusy: true, materialsUploadError: "" });
+    fetch("/api/materials", { method: "POST", body: fd })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ materialsUploadBusy: false, materialsUploadError: r.data.error || "업로드에 실패했습니다." }); return; }
+        setState({ materialsUploadBusy: false, materialsUploadError: "", materials: [r.data.material].concat(state.materials) });
+        fire("업로드 완료", r.data.material.title + " 파일이 등록되었습니다.", "success");
+      })
+      .catch(function () { setState({ materialsUploadBusy: false, materialsUploadError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function deleteMaterialById(id) {
+    fetch("/api/materials/" + id, { method: "DELETE" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({ materials: state.materials.filter(function (m) { return m.id !== id; }) });
+        fire("삭제 완료", "교안이 삭제되었습니다.", "success");
+      })
+      .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  /* ===== assignments (과제방) ===== */
+  function loadAssignmentsView() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    if (isAdmin) {
+      if (!state.adminStudentsLoaded) loadAdminStudents();
+    } else if (!state.myStudentChecked) {
+      loadMyStudent();
+    }
+  }
+
+  function loadAdminStudents() {
+    fetch("/api/students")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ adminStudentsLoaded: true, assignmentsError: r.data.error || "불러오기에 실패했습니다." }); return; }
+        setState({ adminStudentsLoaded: true, adminStudents: r.data.students });
+      })
+      .catch(function () { setState({ adminStudentsLoaded: true, assignmentsError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function selectAdminStudent(id) {
+    setState({ selectedStudentId: id, assignmentsLoaded: false, assignments: [] });
+    loadAssignments(id);
+  }
+
+  function loadMyStudent() {
+    fetch("/api/students/me")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ myStudentChecked: true, myStudent: null }); return; }
+        setState({ myStudentChecked: true, myStudent: r.data.student });
+        if (r.data.student) loadAssignments(r.data.student.id);
+      })
+      .catch(function () { setState({ myStudentChecked: true, myStudent: null }); });
+  }
+
+  function loadAssignments(studentId) {
+    if (!studentId) return;
+    setState({ assignmentsBusy: true, assignmentsError: "" });
+    fetch("/api/assignments?studentId=" + encodeURIComponent(studentId))
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ assignmentsBusy: false, assignmentsLoaded: true, assignmentsError: r.data.error || "불러오기에 실패했습니다." }); return; }
+        setState({ assignmentsBusy: false, assignmentsLoaded: true, assignmentsError: "", assignments: r.data.assignments });
+      })
+      .catch(function () { setState({ assignmentsBusy: false, assignmentsLoaded: true, assignmentsError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitAssignmentUpload(e) {
+    e.preventDefault();
+    if (state.assignmentsUploadBusy || !state.myStudent) return;
+    var fileInput = document.getElementById("assignment-file");
+    var file = fileInput && fileInput.files[0];
+    if (!file) return;
+    var titleInput = document.getElementById("assignment-title");
+    var fd = new FormData();
+    fd.append("file", file);
+    fd.append("studentId", state.myStudent.id);
+    if (titleInput && titleInput.value.trim()) fd.append("title", titleInput.value.trim());
+    setState({ assignmentsUploadBusy: true, assignmentsUploadError: "" });
+    fetch("/api/assignments", { method: "POST", body: fd })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ assignmentsUploadBusy: false, assignmentsUploadError: r.data.error || "업로드에 실패했습니다." }); return; }
+        setState({ assignmentsUploadBusy: false, assignmentsUploadError: "", assignments: [r.data.assignment].concat(state.assignments) });
+        fire("업로드 완료", r.data.assignment.title + " 파일이 등록되었습니다.", "success");
+      })
+      .catch(function () { setState({ assignmentsUploadBusy: false, assignmentsUploadError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function startEditAssignment(id, currentTitle) {
+    setState({ assignmentEditId: id, assignmentEditTitle: currentTitle });
+  }
+
+  function cancelEditAssignment() {
+    setState({ assignmentEditId: null, assignmentEditTitle: "" });
+  }
+
+  function saveEditAssignment(id) {
+    var title = (state.assignmentEditTitle || "").trim();
+    if (!title) return;
+    fetch("/api/assignments/" + id, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: title })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("수정 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({
+          assignmentEditId: null, assignmentEditTitle: "",
+          assignments: state.assignments.map(function (a) { return a.id === id ? r.data.assignment : a; })
+        });
+        fire("수정 완료", "제목이 변경되었습니다.", "success");
+      })
+      .catch(function () { fire("수정 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function deleteAssignmentById(id) {
+    fetch("/api/assignments/" + id, { method: "DELETE" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({ assignments: state.assignments.filter(function (a) { return a.id !== id; }) });
+        fire("삭제 완료", "과제가 삭제되었습니다.", "success");
+      })
+      .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  /* ===== settings (관리자: 회원 목록 · 수강생 이메일 관리) ===== */
+  function loadAdminUsers() {
+    fetch("/api/admin/users")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ adminUsersLoaded: true }); return; }
+        setState({ adminUsersLoaded: true, adminUsers: r.data.users });
+      })
+      .catch(function () { setState({ adminUsersLoaded: true }); });
+  }
+
+  function loadAdminComments() {
+    var pages = ["ai", "aiu", "ais"];
+    Promise.all(pages.map(function (p) {
+      return fetch("/api/comments?page=" + encodeURIComponent(p))
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data, page: p }; }); })
+        .catch(function () { return { ok: false, data: null, page: p }; });
+    })).then(function (results) {
+      var all = [];
+      results.forEach(function (r) {
+        if (r.ok && r.data && r.data.comments) {
+          r.data.comments.forEach(function (c) { all.push(Object.assign({ page: r.page }, c)); });
+        }
+      });
+      all.sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+      setState({ adminCommentsLoaded: true, adminComments: all });
+    });
+  }
+
+  function deleteCommentById(id) {
+    fetch("/api/admin/comments/" + id, { method: "DELETE" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("삭제 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({ adminComments: state.adminComments.filter(function (c) { return c.id !== id; }) });
+        fire("삭제 완료", "댓글이 삭제되었습니다.", "success");
+      })
+      .catch(function () { fire("삭제 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function startEditStudentEmail(id, currentEmail) {
+    setState({ studentEmailEditId: id, studentEmailEditValue: currentEmail });
+  }
+
+  function cancelEditStudentEmail() {
+    setState({ studentEmailEditId: null, studentEmailEditValue: "" });
+  }
+
+  function saveEditStudentEmail(id) {
+    var email = (state.studentEmailEditValue || "").trim();
+    if (!email) return;
+    fetch("/api/students/" + id, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { fire("수정 실패", r.data.error || "다시 시도해주세요.", "warning"); return; }
+        setState({
+          studentEmailEditId: null, studentEmailEditValue: "",
+          adminStudents: state.adminStudents.map(function (s) { return s.id === id ? r.data.student : s; })
+        });
+        fire("수정 완료", "이메일이 변경되었습니다.", "success");
+      })
+      .catch(function () { fire("수정 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function applyDashboardSnapshot(data) {
+    state.students = data.students;
+    state.invoices = data.invoices;
+    state.requests = data.requests;
+  }
+
+  function loadDashboard() {
+    fetch("/api/dashboard")
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { state.dashboardReady = true; render(); return; }
+        applyDashboardSnapshot(r.data);
+        state.dashboardReady = true;
+        render();
+      })
+      .catch(function () { state.dashboardReady = true; render(); });
+  }
+
+  function approve(id) {
+    var r = state.requests.find(function (x) { return x.id === id; });
+    if (!r) return;
+    setState({ modal: null });
+    fetch("/api/requests/" + id + "/approve", { method: "POST" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) { fire("승인 실패", result.data.error || "다시 시도해주세요.", "warning"); return; }
+        applyDashboardSnapshot(result.data);
+        state.alerts[result.data.studentId] = true;
+        setState({ view: "student", student: result.data.studentId });
+        fire(r.name + " 님 등록 완료 — 8회차 자동 편성", r.slot + " 슬롯으로 8회차가 배정되고 $" + (PACK * RATE) + " 인보이스가 발행되었습니다.", "success");
+      })
+      .catch(function () { fire("승인 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function logLesson() {
+    var studentId = state.student, note = state.note;
+    setState({ modal: null, note: "" });
+    fetch("/api/students/" + studentId + "/lessons", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note: note })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) { fire("수업 기록 실패", result.data.error || "다시 시도해주세요.", "warning"); return; }
+        applyDashboardSnapshot(result.data);
+        render();
+        var left = result.data.totalSessions - result.data.usedSessions;
+        if (left <= 2) {
+          fire("수업 기록 완료 — 잔여 " + left + "회", "잔여 2회 이하입니다. 다음 8회 인보이스를 미리 발행해 보이스톡 일정을 이어가세요.", "warning");
+        } else {
+          fire("수업 기록 완료 — 잔여 " + left + "회", "학습 기록에 발음·어휘·과제가 저장되었습니다.", "success");
+        }
+      })
+      .catch(function () { fire("수업 기록 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function issueInvoice() {
+    var studentId = state.student;
+    var st = state.students.find(function (x) { return x.id === studentId; });
+    setState({ modal: null });
+    fetch("/api/students/" + studentId + "/invoices", { method: "POST" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) { fire("발행 실패", result.data.error || "다시 시도해주세요.", "warning"); return; }
+        applyDashboardSnapshot(result.data);
+        render();
+        fire("인보이스 발행 — $" + (PACK * RATE), (st ? st.name : "") + " 님에게 9월 8회 패키지 청구서를 보냈습니다. 입금 확인 시 회차가 충전됩니다.", "info");
+      })
+      .catch(function () { fire("발행 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function confirmPayment(id) {
+    fetch("/api/invoices/" + id + "/confirm", { method: "POST" })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) { fire("입금 확인 실패", result.data.error || "다시 시도해주세요.", "warning"); return; }
+        applyDashboardSnapshot(result.data);
+        render();
+        fire("입금 확인 — 회차 충전 완료", "잔여 회차가 8회로 초기화되고 결제 상태가 입금 완료로 바뀌었습니다.", "success");
+      })
+      .catch(function () { fire("입금 확인 실패", "서버에 연결할 수 없습니다.", "warning"); });
+  }
+
+  function notYet() { fire("이 화면은 다음 단계에서 만들어요", "지금은 수강 신청 · 학습 관리 · 결제 관리 흐름만 동작합니다.", "info"); }
+
+  /* ===== rendering ===== */
+  function badge(label, tone, dot) {
+    return '<span class="badge tone-' + tone + '">' + (dot ? '<span class="dot"></span>' : "") + esc(label) + "</span>";
+  }
+  function bar(pct, color) {
+    return '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>';
+  }
+
+  function navHtml(kind) {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    var active = state.view === "student" ? "students" : state.view;
+    return NAV_DEFS.filter(function (d) { return !d || isAdmin; }).map(function (d) {
+      var ko = d[0], en = d, key = d[2];
+      var on = key === active;
+      var countMap = { requests: state.requests.length, students: state.students.length, payments: state.invoices.filter(function (v) { return v.status !== "paid"; }).length };
+      var count = countMap[key] || "";
+      if (kind === "side") {
+        var sideAttr = key ? ' data-nav="' + key + '"' : ' data-notyet="1"';
+        return '<button class="side-nav-item' + (on ? " is-active" : "") + (key ? "" : " is-soon") + '"' + sideAttr + '>' +
+          '<span><span class="ko">' + esc(ko) + '</span><span class="en">' + esc(en) + '</span></span>' +
+          '<span class="count">' + esc(count) + '</span></button>';
+      }
+      var chipAttr = key ? ' data-nav="' + key + '"' : ' data-notyet="1"';
+      return '<span class="chip' + (on ? " is-active" : "") + (key ? "" : " is-soon") + '"' + chipAttr + '>' + esc(ko) + '</span>';
+    }).join("");
+  }
+
+  function sidebarHtml() {
+    return '' +
+      '<aside class="sidebar">' +
+      '<div class="brand-row"><span class="brand-mark">한</span><span><span class="brand-name" style="display:block">한국어 수업 관리</span><span class="brand-sub">1:1 Voice Lessons</span></span></div>' +
+      '<nav class="side-nav">' + navHtml("side") + '</nav>' +
+      '<div class="package-box"><span class="lbl">기본 패키지</span><span class="big tabular">월 ' + PACK + '회 · $' + (PACK * RATE) + '</span>' +
+      '<span class="fine">주 2회 · 1회 50분 · 회당 $' + RATE + ' (부가세 포함)<br>보이스톡 1:1 · 추가 회차 별도 협의</span></div>' +
+      '</aside>';
+  }
+
+  function crumbFor(view, st) {
+    var map = { dash: "개요 / Overview", requests: "수강 신청 / Requests", students: "학생 / Students", student: "학생 / Students", payments: "결제 / Payments", materials: "교안 / Materials", assignments: "과제방 / Assignments", settings: "설정 / Settings" };
+    return { root: map[view] || "", leaf: view === "student" && st ? st.name : "" };
+  }
+
+  function clockText() {
+    var now = new Date();
+    var kst = now.toLocaleString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hour12: false, month: "long", day: "numeric" });
+    var local = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    var tzLabel = "UTC" + (-now.getTimezoneOffset() >= 0 ? "+" : "") + (-now.getTimezoneOffset() / 60);
+    return "KST " + kst + " · 현지 " + local + " (" + tzLabel + ")";
+  }
+
+  function topbarHtml(st) {
+    var c = crumbFor(state.view, st);
+    var clock = clockText();
+    var who = state.auth ? (state.auth.name || state.auth.email) : "이윤재 강사";
+    var roleBadge = state.auth && state.auth.role === "admin" ? badge("관리자", "brand", true) : "";
+    return '' +
+      '<header class="topbar">' +
+      '<div class="crumbs"><span class="crumb-root">' + esc(c.root) + '</span>' +
+      (c.leaf ? '<span class="crumb-sep">/</span><span class="crumb-leaf">' + esc(c.leaf) + '</span>' : "") + '</div>' +
+      '<div class="topbar-right">' +
+      '<span class="search-wrap"><span class="icon">⌕</span><input class="search-input" id="query-input" type="text" placeholder="학생·결제 검색" value="' + esc(state.query) + '"></span>' +
+      '<span class="who"><span class="name">' + esc(who) + ' ' + roleBadge + '</span><span class="clock tabular">' + esc(clock) + '</span></span>' +
+'<button type="button" class="btn btn-secondary" onclick="openPressModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#1e3a8a;cursor:pointer;">📰 언론 보도 관리</button>' +      
+      '<button type="button" class="btn btn-secondary" onclick="openNoticeModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#0d9488;cursor:pointer;">📢 공지사항</button>' +
+'<button type="button" class="btn btn-secondary" onclick="openPasswordChangeModal()" style="height:32px;padding:0 var(--space-3);margin-right:8px;font-weight:bold;color:#1e3a8a;cursor:pointer;">🔒 비밀번호 변경</button>' +      
+      '<button class="btn btn-secondary" id="logout-btn" style="height:32px;padding:0 var(--space-4)">로그아웃</button>' +
+      '</div></header>' +
+      '<div class="mobile-nav">' + navHtml("chip") + '</div>';
+  }
+
+  function renderAdminOnlyNotice() {
+    return '<div class="card card--pad" style="color:var(--text-muted)">이 화면은 강사(관리자)만 볼 수 있습니다.</div>';
+  }
+
+  function statCard(label, value, unit, caption) {
+    return '<div class="card stat-card"><span class="label">' + esc(label) + '</span>' +
+      '<span class="value tabular">' + esc(value) + (unit ? '<span class="unit">' + esc(unit) + '</span>' : "") + '</span>' +
+      '<span class="caption">' + esc(caption) + '</span></div>';
+  }
+
+  function renderDash() {
+    var students = state.students, invoices = state.invoices;
+    var pendingSum = invoices.filter(function (v) { return v.status === "pending"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var overdueSum = invoices.filter(function (v) { return v.status === "overdue"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var unpaidLabel = "$" + (pendingSum + overdueSum);
+    var monthDone = students.reduce(function (a, x) { return a + x.lessons.length; }, 0);
+    var lowList = students.filter(function (x) { return remainOf(x) <= 2; });
+    var pendingCount = invoices.filter(function (v) { return v.status === "pending"; }).length;
+    var overdueCount = invoices.filter(function (v) { return v.status === "overdue"; }).length;
+
+    var agenda = students.map(function (x) {
+      var lastLesson = x.lessons[0];
+      return {
+        kst: x.slot || "일정 미정", local: x.local || "", sid: x.id,
+        meta: (x.level || "") + " · " + (lastLesson ? lastLesson.topic : x.goal || "첫 수업 예정"),
+        session: x.used + "/" + x.total,
+        dot: x.pay === "overdue" ? "var(--danger-500)" : x.pay === "pending" ? "var(--info-500)" : "var(--green-500)"
+      };
+    });
+
+    var lowBalance = lowList.concat(students.filter(function (x) { return remainOf(x) > 2; }).slice(0, 1));
+    var dueInvoices = invoices.filter(function (v) { return v.status !== "paid"; });
+    var uniqueStudentNames = students.map(function (x) { return x.name; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(" · ");
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+      '<span class="eyebrow">' + esc(clockText()) + '</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-3xl)/1.15 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">안녕하세요, ' + esc(state.auth.name || state.auth.email) + '님</h1>' +
+      '<p style="font:var(--weight-semibold) var(--text-lg)/1.3 var(--font-sans);color:var(--text-body)">등록 학생 ' + students.length + '명, 미수금 ' + esc(unpaidLabel) + '</p>' +
+      '<p style="color:var(--text-muted)">신청을 승인하면 주 2회 8회차와 인보이스가 자동으로 만들어집니다.</p></div>' +
+      '<div style="display:flex;gap:var(--space-3)"><button class="btn btn-secondary" data-nav="payments">결제 관리</button>' +
+      '<button class="btn btn-primary" data-nav="requests">수강 신청 ' + state.requests.length + '건</button></div></div>' +
+
+      '<div class="stat-grid">' +
+      statCard("등록 학생 / Students", String(students.length), "명", uniqueStudentNames || "등록된 학생이 없습니다") +
+      statCard("누적 수업 / Lessons", String(monthDone), "회", "수업 기록에 저장된 회차 합계") +
+      statCard("미수금 / Unpaid", unpaidLabel, "", "대기 " + pendingCount + "건 · 연체 " + overdueCount + "건") +
+      statCard("회차 소진 임박 / Low", String(lowList.length), "명", "잔여 2회 이하 — 재결제 안내 필요") +
+      '</div>' +
+
+      '<div class="dash-grid" style="display:grid;grid-template-columns:1.4fr 1fr;gap:var(--space-4);align-items:start">' +
+      '<div class="card"><div class="card-head"><span class="title">학생별 고정 슬롯</span><span class="note">KST · 학생 현지 시각</span></div>' +
+      (agenda.length ? agenda.map(function (row) {
+        return '<div class="agenda-row" data-goto-student="' + row.sid + '">' +
+          '<span><span class="tabular" style="display:block;font:var(--weight-bold) var(--text-md)/1.2 var(--font-sans);color:var(--text-strong)">' + esc(row.kst) + '</span>' +
+          '<span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(row.local) + '</span></span>' +
+          '<span class="dot-lg" style="background:' + row.dot + '"></span>' +
+          '<span><span style="display:block;font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(nameOf(row.sid)) + '</span>' +
+          '<span style="display:block;font-size:var(--text-sm);color:var(--text-muted)">' + esc(row.meta) + '</span></span>' +
+          '<span class="agenda-session" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">' +
+          '<span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--green-600)">' + esc(row.session) + '</span>' +
+          '</span></div>';
+      }).join("") : '<div style="padding:var(--space-6);color:var(--text-muted)">등록된 학생이 없습니다.</div>') + '</div>' +
+
+      '<div style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+      '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">잔여 회차 · 재결제 안내</span>' +
+      lowBalance.map(function (x) {
+        return '<div data-goto-student="' + x.id + '" style="cursor:pointer;display:flex;flex-direction:column;gap:var(--space-2)">' +
+          '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3)">' +
+          '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-body)">' + esc(x.name) + '</span>' +
+          '<span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:' + colorVar(x) + '">' + remainOf(x) + '/' + x.total + '회</span></div>' +
+          bar(Math.round((remainOf(x) / x.total) * 100), colorVar(x)) + '</div>';
+      }).join("") + '</div>' +
+
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">확인이 필요한 결제</span>' +
+      dueInvoices.map(function (v) {
+        return '<div data-nav="payments" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-2) 0;border-bottom:1px solid var(--neutral-100)">' +
+          '<span style="display:flex;flex-direction:column;gap:1px"><span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-body)">' + esc(nameOf(v.sid)) + '</span>' +
+          '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.period + " · $" + v.amount + " · " + v.method) + '</span></span>' +
+          badge(PAY[v.status].label, PAY[v.status].tone, true) + '</div>';
+      }).join("") + '</div></div></div>';
+  }
+
+  function renderRequests() {
+    var requests = state.requests;
+    var header = '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Requests</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">수강 신청</h1>' +
+      '<span style="color:var(--text-muted)">승인하면 희망 요일 기준 8회차가 자동 편성되고 $' + (PACK * RATE) + ' 인보이스가 발행됩니다.</span></div>';
+
+    var grid = '<div class="req-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)">' +
+      requests.map(function (r) {
+        var fields = [["희망 레벨", r.level], ["희망 슬롯", r.wish], ["유입 경로", r.via], ["언어", r.lang]];
+        return '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+          '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)">' +
+          '<span><span style="display:block;font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong)">' + esc(r.name) + '</span>' +
+          '<span style="display:block;color:var(--text-muted)">' + esc(r.region + " · " + r.offset) + '</span></span>' +
+          badge(r.state, r.tone, true) + '</div>' +
+          '<div class="field-grid field-grid-2">' + fields.map(function (f) {
+            return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v" style="font-size:var(--text-sm)">' + esc(f) + '</span></span>';
+          }).join("") + '</div>' +
+          '<span style="font-size:var(--text-sm);color:var(--text-body);padding:var(--space-3) var(--space-4);background:var(--neutral-50);border-radius:var(--radius-md)">' + esc(r.note) + '</span>' +
+          '<div style="display:flex;gap:var(--space-3);justify-content:flex-end">' +
+          '<button class="btn btn-ghost" data-notyet="1">보류</button>' +
+          '<button class="btn btn-primary" data-approve="' + r.id + '">승인 · 8회 편성</button></div></div>';
+      }).join("") + '</div>';
+
+    var empty = requests.length ? "" : '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+      '<span style="font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">대기 중인 신청이 없습니다.</span>' +
+      '<span style="color:var(--text-muted)">승인한 신청은 학생 목록에서 확인할 수 있습니다.</span></div>';
+
+    return header + grid + empty;
+  }
+
+  function renderStudents() {
+    var q = state.query.trim().toLowerCase();
+    var lowCount = state.students.filter(function (x) { return remainOf(x) <= 2; }).length;
+    var summary = "활동 " + state.students.length + "명 · 주 2회 고정 슬롯 · 잔여 2회 이하 " + lowCount + "명";
+    var filterDefs = ["전체", "입금 완료", "입금 대기", "연체", "잔여 2회 이하"];
+    var rows = state.students.filter(function (st) {
+      if (q && !(st.name + st.where + st.level + st.goal).toLowerCase().includes(q)) return false;
+      if (state.filter === "전체") return true;
+      if (state.filter === "잔여 2회 이하") return remainOf(st) <= 2;
+      return PAY[st.pay].label === state.filter;
+    });
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Students</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">학생 관리</h1>' +
+      '<span style="color:var(--text-muted)">' + esc(summary) + '</span></div>' +
+      '<button class="btn btn-primary" data-nav="requests">신청에서 등록</button></div>' +
+
+      '<div class="filter-row">' + filterDefs.map(function (label) {
+        return '<span class="filter-chip' + (label === state.filter ? " is-active" : "") + '" data-filter="' + esc(label) + '">' + esc(label) + '</span>';
+      }).join("") + '</div>' +
+
+      '<div class="card" style="overflow:hidden">' +
+      '<div class="table-head grid-students"><span>학생</span><span>거주 / 시차</span><span>레벨</span><span>고정 슬롯 (KST)</span><span>잔여 회차</span><span>결제</span></div>' +
+      '<div class="table-body">' + rows.map(function (st) {
+        var pct = Math.round((remainOf(st) / st.total) * 100);
+        return '<div class="table-row grid-students" data-goto-student="' + st.id + '">' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3);min-width:0">' +
+          '<span class="avatar-init">' + esc(st.initials) + '</span>' +
+          '<span><span style="display:block;font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(st.name) + '</span>' +
+          '<span style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(st.goal) + '</span></span></span>' +
+          '<span><span style="display:block;font-size:var(--text-sm)">' + esc(st.where) + '</span><span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(st.offset) + '</span></span>' +
+          '<span style="font-size:var(--text-sm)">' + esc(st.level) + '</span>' +
+          '<span class="tabular" style="font-size:var(--text-sm)">' + esc(st.slot) + '</span>' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3)"><span style="flex:1;max-width:80px">' + bar(pct, colorVar(st)) + '</span>' +
+          '<span class="tabular" style="font:var(--weight-semibold) var(--text-xs)/1 var(--font-sans);color:var(--text-muted);white-space:nowrap">' + remainOf(st) + '/' + st.total + '</span></span>' +
+          '<span>' + badge(PAY[st.pay].label, PAY[st.pay].tone, true) + '</span></div>';
+      }).join("") + '</div></div>';
+  }
+
+  function renderStudent() {
+    var st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+    var invoices = state.invoices.filter(function (v) { return v.sid === st.id; });
+    var paidTotal = invoices.filter(function (v) { return v.status === "paid"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var remainPct = Math.round((remainOf(st) / st.total) * 100);
+    var justApproved = !!state.alerts[st.id];
+
+    var alertHtml = "";
+    if (justApproved) {
+      alertHtml = '<div class="alert tone-success"><div><div class="title">8회차 자동 편성 완료 · 인보이스 발행됨</div>' +
+        '<div class="body">' + esc(st.slot) + ' KST 슬롯으로 8회차가 배정되었고, $' + (PACK * RATE) + ' 청구서가 발행되었습니다. 입금 확인 시 회차가 충전됩니다.</div></div></div>';
+    } else if (st.pay === "overdue") {
+      alertHtml = '<div class="alert tone-danger"><div><div class="title">결제가 9일 지연되었습니다</div>' +
+        '<div class="body">잔여 회차가 0회입니다. 입금 확인 전까지 다음 보이스톡 일정을 잡지 않는 것을 권장합니다.</div></div></div>';
+    }
+
+    var remainNote = remainOf(st) <= 2
+      ? "잔여 " + remainOf(st) + "회 — 다음 8회 패키지($" + (PACK * RATE) + ") 발행이 필요합니다."
+      : "이번 패키지 " + st.total + "회 중 " + st.used + "회 진행 · 주 2회 기준 " + Math.ceil(remainOf(st) / 2) + "주치 남음";
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-3);min-width:0">' +
+      '<span data-nav="students" style="font:var(--weight-medium) var(--text-sm)/1 var(--font-sans);color:var(--green-600);cursor:pointer">← 학생 목록</span>' +
+      '<div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap">' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">' + esc(st.name) + '</h1>' +
+      badge(PAY[st.pay].label, PAY[st.pay].tone, true) + badge(st.level, "neutral", false) + '</div>' +
+      '<span style="color:var(--text-muted)">' + esc(st.where + " · " + st.offset + " · " + st.slot + " KST (" + st.local + ") · 1회 50분 보이스톡") + '</span></div>' +
+      '<div style="display:flex;gap:var(--space-3)"><button class="btn btn-secondary" data-open-modal="invoice">인보이스 발행</button>' +
+      '<button class="btn btn-primary" data-open-modal="lesson">수업 완료 기록</button></div></div>' +
+
+      alertHtml +
+
+      '<div class="detail-grid" style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:0">' +
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<span style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">수강 정보</span>' +
+      '<div class="field-grid">' + st.fields.map(function (f) {
+        return '<span class="f"><span class="k">' + esc(f[0]) + '</span><span class="v">' + esc(f) + '</span></span>';
+      }).join("") + '</div></div>' +
+
+      '<div class="card"><div class="card-head"><span class="title">학습 기록 · 보이스톡 50분</span>' +
+      '<span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--green-600)">누적 ' + st.lessons.length + '회 기록</span></div>' +
+      (st.lessons.length ? st.lessons.map(function (l) {
+        return '<div class="lesson-row"><div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--space-3)">' +
+          '<span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:var(--text-strong)">' + l.no + '회차</span>' +
+          '<span class="tabular" style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(l.date) + '</span>' +
+          '<span style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--text-body)">' + esc(l.topic) + '</span>' +
+          badge(l.attend, l.tone, false) + '</div>' +
+          '<div class="lesson-cols">' +
+          '<span><span class="k">발음 교정</span><span class="v">' + esc(l.pron) + '</span></span>' +
+          '<span><span class="k">어휘 · 표현</span><span class="v">' + esc(l.vocab) + '</span></span>' +
+          '<span><span class="k">과제</span><span class="v">' + esc(l.hw) + '</span></span>' +
+          '</div></div>';
+      }).join("") : '<div style="padding:var(--space-8) var(--space-6);display:flex;flex-direction:column;gap:var(--space-2)">' +
+        '<span style="font:var(--weight-semibold) var(--text-sm)/1.4 var(--font-sans);color:var(--text-body)">아직 진행한 수업이 없습니다.</span>' +
+        '<span style="color:var(--text-muted)">첫 수업을 마친 뒤 &lsquo;수업 완료 기록&rsquo;을 누르면 회차가 차감되고 기록이 남습니다.</span></div>') +
+      '</div></div>' +
+
+      '<div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:0">' +
+      '<div class="card card--pad ring-wrap">' +
+      '<span style="align-self:flex-start;font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">잔여 회차</span>' +
+      ringSvg(remainPct, remainOf(st) + "/" + st.total, colorVar(st)) +
+      '<span style="color:var(--text-muted)">' + esc(remainNote) + '</span>' +
+      '<button class="btn btn-secondary full" data-open-modal="invoice">다음 8회 인보이스</button></div>' +
+
+      '<div class="card"><div class="card-head"><span class="title">결제 이력</span><span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1 var(--font-sans);color:var(--text-muted)">입금 누계 $' + paidTotal + '</span></div>' +
+      invoices.map(function (v) {
+        return '<div data-nav="payments" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+          '<span style="display:flex;flex-direction:column;gap:2px"><span class="tabular" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(v.period + " · " + v.sessions + "회") + '</span>' +
+          '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.method + " · " + v.issued) + '</span></span>' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3)"><span class="tabular" style="font:var(--weight-bold) var(--text-sm)/1 var(--font-sans);color:var(--text-strong)">$' + v.amount + '</span>' +
+          badge(PAY[v.status].label, PAY[v.status].tone, false) + '</span></div>';
+      }).join("") + '</div></div></div>';
+  }
+
+  function ringSvg(pct, label, color) {
+    var r = 40, c = 2 * Math.PI * r, off = c * (1 - pct / 100);
+    return '<svg width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="잔여 회차 ' + esc(label) + '">' +
+      '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="var(--neutral-100)" stroke-width="8"></circle>' +
+      '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="8" stroke-linecap="round" ' +
+      'stroke-dasharray="' + c + '" stroke-dashoffset="' + off + '" transform="rotate(-90 48 48)"></circle>' +
+      '<text x="48" y="53" text-anchor="middle" font-family="var(--font-mono)" font-size="15" font-weight="600" fill="var(--text-strong)">' + esc(label) + '</text>' +
+      '</svg>';
+  }
+
+  function renderPayments() {
+    var invoices = state.invoices;
+    var thisPeriodInvoices = invoices.filter(function (v) { return v.period === "2026-08"; });
+    var billed = thisPeriodInvoices.reduce(function (a, v) { return a + v.amount; }, 0);
+    var paidInvoices = invoices.filter(function (v) { return v.status === "paid"; });
+    var paid = thisPeriodInvoices.filter(function (v) { return v.status === "paid"; }).reduce(function (a, v) { return a + v.amount; }, 0);
+    var pendingInvoices = invoices.filter(function (v) { return v.status === "pending"; });
+    var overdueInvoices = invoices.filter(function (v) { return v.status === "overdue"; });
+    var pendingSum = pendingInvoices.reduce(function (a, v) { return a + v.amount; }, 0);
+    var overdueSum = overdueInvoices.reduce(function (a, v) { return a + v.amount; }, 0);
+    var paidMethods = paidInvoices.filter(function (v, i, arr) { return arr.map(function (x) { return x.method; }).indexOf(v.method) === i; }).map(function (v) { return v.method; });
+    var q = state.query.trim().toLowerCase();
+    var payFilterDefs = ["전체", "입금 완료", "입금 대기", "연체"];
+
+    var rows = invoices.filter(function (v) {
+      if (state.payFilter !== "전체" && PAY[v.status].label !== state.payFilter) return false;
+      if (q && !(nameOf(v.sid) + v.method + v.period).toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Payments</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">결제 관리</h1>' +
+      '<span style="color:var(--text-muted)">회당 $' + RATE + ' (부가세 포함) · 월 ' + PACK + '회 $' + (PACK * RATE) + ' 기준 · 추가 회차는 별도 협의</span></div>' +
+      '<button class="btn btn-primary" data-notyet="1">인보이스 내보내기</button></div>' +
+
+      '<div class="stat-grid">' +
+      statCard("8월 청구 / Billed", "$" + billed, "", thisPeriodInvoices.length + "건") +
+      statCard("입금 완료 / Paid", "$" + paid, "", paidMethods.join(" · ") || "결제 내역 없음") +
+      statCard("대기 / Pending", "$" + pendingSum, "", pendingInvoices.length + "건") +
+      statCard("연체 / Overdue", "$" + overdueSum, "", overdueInvoices.length + "건") +
+      '</div>' +
+
+      '<div class="filter-row">' + payFilterDefs.map(function (label) {
+        return '<span class="filter-chip' + (label === state.payFilter ? " is-active" : "") + '" data-payfilter="' + esc(label) + '">' + esc(label) + '</span>';
+      }).join("") + '</div>' +
+
+      '<div class="card" style="overflow:hidden">' +
+      '<div class="table-head grid-payments"><span>학생</span><span>기간</span><span>회차</span><span>금액</span><span>수단 / 발행일</span><span>상태</span></div>' +
+      '<div class="table-body">' + rows.map(function (v) {
+        return '<div class="table-row grid-payments" data-goto-student="' + v.sid + '">' +
+          '<span><span style="display:block;font:var(--weight-semibold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(nameOf(v.sid)) + '</span>' +
+          '<span style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.kind) + '</span></span>' +
+          '<span class="tabular" style="font-size:var(--text-sm)">' + esc(v.period) + '</span>' +
+          '<span class="tabular" style="font-size:var(--text-sm)">' + v.sessions + '회</span>' +
+          '<span class="tabular" style="font:var(--weight-bold) var(--text-md)/1 var(--font-sans);color:var(--text-strong)">$' + v.amount + '</span>' +
+          '<span><span style="display:block;font-size:var(--text-sm)">' + esc(v.method) + '</span><span class="tabular" style="display:block;font-size:var(--text-xs);color:var(--text-muted)">' + esc(v.issued) + '</span></span>' +
+          '<span style="display:flex;align-items:center;gap:var(--space-3)" data-stop="1">' + badge(PAY[v.status].label, PAY[v.status].tone, true) +
+          (v.status !== "paid" ? '<span data-confirm-payment="' + v.id + '" style="font:var(--weight-semibold) var(--text-xs)/1 var(--font-sans);color:var(--green-600);cursor:pointer;white-space:nowrap">입금 확인</span>' : "") +
+          '</span></div>';
+      }).join("") + '</div></div>';
+  }
+
+  function renderMaterials() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    var rows = state.materials;
+    return '' +
+      '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Materials</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">교안</h1>' +
+      '<span style="color:var(--text-muted)">옵시디언 형식의 md 파일이나 pdf 파일로 수업 자료를 올려두고 관리하세요.</span></div>' +
+      '</div>' +
+
+      (isAdmin ?
+        '<form id="material-upload-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+        '<div><label class="field-label">제목 (선택)</label><input class="input" id="material-title" type="text" placeholder="예: 3주차 회의 표현 정리"></div>' +
+        '<div><label class="field-label">파일 (.md 또는 .pdf, 20MB 이하)</label><input class="input" id="material-file" type="file" accept=".md,.pdf" required></div>' +
+        (state.materialsUploadError ? '<div class="auth-error">' + esc(state.materialsUploadError) + '</div>' : "") +
+        '<button class="btn btn-primary" type="submit" id="material-upload-submit" style="align-self:flex-start"' + (state.materialsUploadBusy ? " disabled" : "") + '>' +
+        (state.materialsUploadBusy ? "업로드 중…" : "업로드") + '</button>' +
+        '</form>'
+        : "") +
+
+      (state.materialsError ? '<div class="auth-error">' + esc(state.materialsError) + '</div>' : "") +
+
+      (state.materialsBusy && !rows.length ? '<div class="card card--pad" style="color:var(--text-muted)">불러오는 중…</div>' :
+        (!rows.length ? '<div class="card card--pad" style="color:var(--text-muted)">아직 등록된 교안이 없습니다.</div>' :
+          '<div class="card">' + rows.map(function (m) {
+            return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+              '<span style="display:flex;flex-direction:column;gap:2px;min-width:0">' +
+              '<a href="#" data-open-file="' + esc(m.blob_url) + '" data-mime="' + esc(m.mime_type) + '" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(m.title) + '</a>' +
+              '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(m.file_name) + ' · ' + formatBytes(m.size_bytes) + ' · ' + esc(new Date(m.created_at).toLocaleDateString("ko-KR")) + '</span></span>' +
+              (isAdmin ? '<button class="btn btn-secondary" data-del-material="' + m.id + '">삭제</button>' : '<a class="btn btn-secondary" href="#" data-open-file="' + esc(m.blob_url) + '" data-mime="' + esc(m.mime_type) + '">열기</a>') +
+              '</div>';
+          }).join("") + '</div>'));
+  }
+
+  function renderAssignmentList(canManage) {
+    var rows = state.assignments;
+    if (state.assignmentsBusy && !rows.length) return '<div class="card card--pad" style="color:var(--text-muted)">불러오는 중…</div>';
+    if (!rows.length) return '<div class="card card--pad" style="color:var(--text-muted)">아직 등록된 과제가 없습니다.</div>';
+    return '<div class="card">' + rows.map(function (a) {
+      var isEditing = state.assignmentEditId === a.id;
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+        '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">' +
+        (isEditing ?
+          '<input class="input" id="assignment-edit-input" value="' + esc(state.assignmentEditTitle) + '">' :
+          '<a href="#" data-open-file="' + esc(a.blob_url) + '" data-mime="' + esc(a.mime_type) + '" style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(a.title) + '</a>') +
+        '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(a.file_name) + ' · ' + formatBytes(a.size_bytes) + ' · ' + esc(new Date(a.created_at).toLocaleDateString("ko-KR")) + '</span></span>' +
+        (canManage ?
+          (isEditing ?
+            '<span style="display:flex;gap:var(--space-2);flex:none">' +
+            '<button class="btn btn-secondary" type="button" data-save-assignment="' + a.id + '">저장</button>' +
+            '<button class="btn btn-ghost" type="button" data-cancel-assignment="1">취소</button></span>'
+            :
+            '<span style="display:flex;gap:var(--space-2);flex:none">' +
+            '<button class="btn btn-secondary" type="button" data-edit-assignment="' + a.id + '" data-title="' + esc(a.title) + '">수정</button>' +
+            '<button class="btn btn-secondary" type="button" data-del-assignment="' + a.id + '">삭제</button></span>')
+          : '<a class="btn btn-secondary" href="#" data-open-file="' + esc(a.blob_url) + '" data-mime="' + esc(a.mime_type) + '">열기</a>') +
+        '</div>';
+    }).join("") + '</div>';
+  }
+
+  function renderAssignmentUploadForm() {
+    return '<form id="assignment-upload-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<div><label class="field-label">제목 (선택)</label><input class="input" id="assignment-title" type="text" placeholder="예: 3주차 숙제"></div>' +
+      '<div><label class="field-label">파일 (.md 또는 .pdf, 20MB 이하)</label><input class="input" id="assignment-file" type="file" accept=".md,.pdf" required></div>' +
+      (state.assignmentsUploadError ? '<div class="auth-error">' + esc(state.assignmentsUploadError) + '</div>' : "") +
+      '<button class="btn btn-primary" type="submit" id="assignment-upload-submit" style="align-self:flex-start"' + (state.assignmentsUploadBusy ? " disabled" : "") + '>' +
+      (state.assignmentsUploadBusy ? "업로드 중…" : "업로드") + '</button>' +
+      '</form>';
+  }
+
+  function renderAssignmentsHeader(sub) {
+    return '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Assignments</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">과제방</h1>' +
+      '<span style="color:var(--text-muted)">' + esc(sub) + '</span></div></div>';
+  }
+
+  function renderAssignmentsAdmin() {
+    var students = state.adminStudents;
+    return '' +
+      renderAssignmentsHeader("수강생을 선택하면 그 학생의 과제방을 열람할 수 있습니다. (업로드·수정은 수강생 본인만 가능)") +
+      (state.assignmentsError ? '<div class="auth-error">' + esc(state.assignmentsError) + '</div>' : "") +
+      (!students.length ? '<div class="card card--pad" style="color:var(--text-muted)">' + (state.adminStudentsLoaded ? "등록된 수강생이 없습니다." : "불러오는 중…") + '</div>' :
+        '<div class="filter-row">' + students.map(function (s) {
+          return '<span class="filter-chip' + (s.id === state.selectedStudentId ? " is-active" : "") + '" data-pick-student="' + esc(s.id) + '">' + esc(s.name) + '</span>';
+        }).join("") + '</div>' +
+        (!state.selectedStudentId ? '<div class="card card--pad" style="color:var(--text-muted)">수강생을 선택해주세요.</div>' : renderAssignmentList(false)));
+  }
+
+  function renderAssignmentsStudent() {
+    if (!state.myStudentChecked) {
+      return renderAssignmentsHeader("확인하는 중…") + '<div class="card card--pad" style="color:var(--text-muted)">확인하는 중…</div>';
+    }
+    if (!state.myStudent) {
+      return renderAssignmentsHeader("본인만 업로드·수정·열람할 수 있는 개인 과제방입니다.") +
+        '<div class="card card--pad" style="color:var(--text-muted)">연결된 수강생 정보가 없습니다. 가입하신 이메일이 수강생으로 등록된 이메일과 다를 수 있어요 — 강사에게 문의해주세요.</div>';
+    }
+    return '' +
+      renderAssignmentsHeader(state.myStudent.name + " 님의 과제방 — 본인만 업로드·수정·열람할 수 있습니다.") +
+      renderAssignmentUploadForm() +
+      (state.assignmentsError ? '<div class="auth-error">' + esc(state.assignmentsError) + '</div>' : "") +
+      renderAssignmentList(true);
+  }
+
+  function renderAssignments() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    return isAdmin ? renderAssignmentsAdmin() : renderAssignmentsStudent();
+  }
+
+  function renderStudentEmailPanel() {
+    var students = state.adminStudents;
+    return '<div class="card">' +
+      '<div class="card-head"><span class="title">수강생 이메일 관리</span><span class="note">과제방 자동 연결에 사용됩니다</span></div>' +
+      (!students.length ? '<div style="padding:var(--space-6);color:var(--text-muted)">' + (state.adminStudentsLoaded ? "등록된 수강생이 없습니다." : "불러오는 중…") + '</div>' :
+        students.map(function (s) {
+          var isEditing = state.studentEmailEditId === s.id;
+          return '<div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+            '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong);width:140px;flex:none">' + esc(s.name) + '</span>' +
+            (isEditing ?
+              '<input class="input" id="student-email-edit-input" type="email" value="' + esc(state.studentEmailEditValue) + '" style="flex:1">' :
+              '<span style="flex:1;color:var(--text-body);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(s.email) + '</span>') +
+            (isEditing ?
+              '<span style="display:flex;gap:var(--space-2);flex:none">' +
+              '<button class="btn btn-secondary" type="button" data-save-student-email="' + esc(s.id) + '">저장</button>' +
+              '<button class="btn btn-ghost" type="button" data-cancel-student-email="1">취소</button></span>'
+              :
+              '<button class="btn btn-secondary" type="button" data-edit-student-email="' + esc(s.id) + '" data-email="' + esc(s.email) + '" style="flex:none">수정</button>') +
+            '</div>';
+        }).join("")) +
+      '</div>';
+  }
+
+  function renderMemberListPanel() {
+    var users = state.adminUsers;
+    return '<div class="card">' +
+      '<div class="card-head"><span class="title">회원 목록</span><span class="note">' + users.length + '명 가입</span></div>' +
+      (!users.length ? '<div style="padding:var(--space-6);color:var(--text-muted)">' + (state.adminUsersLoaded ? "가입한 회원이 없습니다." : "불러오는 중…") + '</div>' :
+        users.map(function (u) {
+          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+            '<span style="display:flex;flex-direction:column;gap:2px;min-width:0">' +
+            '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(u.name || u.email) + '</span>' +
+            '<span style="font-size:var(--text-xs);color:var(--text-muted)">' + esc(u.email) + '</span></span>' +
+            badge(u.role === "admin" ? "관리자" : "일반", u.role === "admin" ? "brand" : "neutral", true) +
+            '</div>';
+        }).join("")) +
+      '</div>';
+  }
+
+  function renderCommentModerationPanel() {
+    var comments = state.adminComments;
+    var pageLabel = { ai: "ai.html", aiu: "aiu.html", ais: "ais.html" };
+    return '<div class="card">' +
+      '<div class="card-head"><span class="title">댓글 관리</span><span class="note">' + comments.length + '개</span></div>' +
+      (!comments.length ? '<div style="padding:var(--space-6);color:var(--text-muted)">' + (state.adminCommentsLoaded ? "등록된 댓글이 없습니다." : "불러오는 중…") + '</div>' :
+        comments.map(function (c) {
+          return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--neutral-100)">' +
+            '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">' +
+            '<span style="font:var(--weight-semibold) var(--text-sm)/1.3 var(--font-sans);color:var(--text-strong)">' + esc(c.name) + '<span style="font-weight:400;color:var(--text-muted)"> · ' + esc(pageLabel[c.page] || c.page) + '</span></span>' +
+            '<span style="font-size:var(--text-xs);color:var(--text-muted);white-space:pre-wrap">' + esc(c.content) + '</span>' +
+            '</span>' +
+            '<button class="btn btn-ghost" type="button" data-del-comment="' + esc(c.id) + '" style="flex:none">삭제</button>' +
+            '</div>';
+        }).join("")) +
+      '</div>';
+  }
+
+  function renderSettings() {
+    var isAdmin = state.auth && state.auth.role === "admin";
+    if (!isAdmin) {
+      return '' +
+        '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Settings</span>' +
+        '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">설정</h1></div>' +
+        '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+        '<span class="field-label">이메일</span><span style="color:var(--text-strong)">' + esc(state.auth.email) + '</span>' +
+        '</div>';
+    }
+    return '' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)"><span class="eyebrow">Settings</span>' +
+      '<h1 style="font:var(--weight-extrabold) var(--text-2xl)/1.2 var(--font-sans);letter-spacing:-0.02em;color:var(--text-strong)">설정</h1></div>' +
+      renderStudentEmailPanel() +
+      renderMemberListPanel() +
+      renderCommentModerationPanel();
+  }
+
+  function modalMap(st) {
+    return {
+      approve: pendingRequest ? {
+        title: "수강 신청 승인", subtitle: "승인하면 희망 슬롯 기준으로 8회차가 자동 편성되고, $" + (PACK * RATE) + " 인보이스가 발행됩니다.",
+        cta: "승인하고 8회 편성",
+        rows: [["학생", pendingRequest.name], ["희망 슬롯", pendingRequest.slot + " KST"], ["현지 시각", pendingRequest.localLabel], ["패키지", "월 " + PACK + "회 · 1회 50분 · $" + RATE + "/회 (부가세 포함)"], ["청구 금액", "$" + (PACK * RATE)]],
+        needsNote: false, confirm: function () { approve(pendingRequest.id); }
+      } : null,
+      lesson: {
+        title: "수업 완료 기록", subtitle: st.name + " · 50분 보이스톡 · 기록을 저장하면 잔여 회차가 1회 차감됩니다.",
+        cta: "기록 저장 · 회차 차감",
+        rows: [["회차", (st.used + 1) + " / " + st.total], ["일시", new Date().toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", month: "long", day: "numeric" }) + " " + st.slot.split(" ")[1] + " KST" + (st.local === "동일 시간대" ? "" : " · 현지 " + st.local)], ["차감 후 잔여", Math.max(0, remainOf(st) - 1) + "회"]],
+        needsNote: true, confirm: logLesson
+      },
+      invoice: {
+        title: "다음 " + PACK + "회 인보이스 발행", subtitle: st.name + " 님에게 다음 패키지 청구서를 발행합니다. 추가 회차는 별도 협의 항목으로 따로 발행하세요.",
+        cta: "$" + (PACK * RATE) + " 청구서 발행",
+        rows: [["패키지", "월 " + PACK + "회 · 주 2회 · 1회 50분"], ["단가", "$" + RATE + " (부가세 포함) / 회"], ["합계", "$" + (PACK * RATE)], ["수단", st.method]],
+        needsNote: false, confirm: issueInvoice
+      }
+    };
+  }
+
+  function renderModal() {
+    if (!state.modal) return "";
+    var st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+    var mm = modalMap(st)[state.modal];
+    if (!mm) return "";
+    return '<div class="modal-backdrop" data-close-modal="1"><div class="modal-box" data-stop="1"><div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="display:flex;flex-direction:column;gap:var(--space-2)">' +
+      '<span style="font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong);letter-spacing:-0.01em">' + esc(mm.title) + '</span>' +
+      '<span style="color:var(--text-muted)">' + esc(mm.subtitle) + '</span></div>' +
+      (mm.rows ? '<div class="modal-rows">' + mm.rows.map(function (r) {
+        return '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v tabular">' + esc(r) + '</span></div>';
+      }).join("") + '</div>' : "") +
+      (mm.needsNote ? '<div><label class="field-label">수업 메모</label><textarea class="textarea" id="lesson-note" rows="3" placeholder="예: 종결어미 발음 교정, 사무실 표현 12개, 과제 — 자기소개 음성 녹음">' + esc(state.note) + '</textarea></div>' : "") +
+      '<div style="display:flex;justify-content:flex-end;gap:var(--space-3)">' +
+      '<button class="btn btn-secondary" data-close-modal="1">취소</button>' +
+      '<button class="btn btn-primary" id="modal-confirm">' + esc(mm.cta) + '</button></div>' +
+      '</div></div></div>';
+  }
+
+  function renderToast() {
+    if (!state.toast) return "";
+    return '<div class="toast-wrap"><div class="card card--pad alert tone-' + (state.toastTone === "warning" ? "warning" : state.toastTone) + '" style="align-items:flex-start">' +
+      '<div style="flex:1"><div class="title">' + esc(state.toast) + '</div><div class="body">' + esc(state.toastBody) + '</div></div>' +
+      '<button class="close" data-close-toast="1" aria-label="닫기">×</button></div></div>';
+  }
+
+  var lastConfirm = null;
+
+  /* ===== auth ===== */
+  function authShell(inner) {
+    return '' +
+      '<div class="auth-shell"><div class="auth-card">' +
+      '<div class="auth-brand"><span class="brand-mark">한</span>' +
+      '<span><span class="brand-name" style="display:block;color:var(--text-strong)">한국어 수업 관리</span>' +
+      '<span class="brand-sub" style="color:var(--text-muted)">1:1 Voice Lessons</span></span></div>' +
+      inner +
+      '</div></div>';
+  }
+
+  function landingHeroArt() {
+    return '<svg class="hero-art" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<text x="30" y="150" font-family="var(--font-serif-kr)" font-size="230" font-weight="900" fill="#b08a3e" opacity="0.45">하</text>' +
+      '<text x="540" y="372" font-family="var(--font-serif-kr)" font-size="210" font-weight="900" fill="#b3402c" opacity="0.4">글</text>' +
+      '<text x="300" y="80" font-family="var(--font-serif-kr)" font-size="120" font-weight="900" fill="#faf6ee" opacity="0.5">ㄱ</text>' +
+      '<text x="610" y="112" font-family="var(--font-serif-kr)" font-size="100" font-weight="900" fill="#faf6ee" opacity="0.32">ㅁ</text>' +
+      '<text x="20" y="372" font-family="var(--font-serif-kr)" font-size="140" font-weight="900" fill="#faf6ee" opacity="0.28">ㅗ</text>' +
+      '<g transform="translate(400,215)" fill="#faf6ee" opacity="0.92">' +
+      '<path d="M-72,148 Q-92,58 -40,10 Q-20,-10 0,-10 Q20,-10 40,10 Q92,58 72,148 Z"/>' +
+      '<circle cx="0" cy="-46" r="30"/>' +
+      '<rect x="-56" y="66" width="112" height="14" rx="7"/>' +
+      '</g></svg>';
+  }
+
+  function searchDictionary() {
+    var input = document.getElementById("dict-q");
+    var box = document.getElementById("dict-result");
+    if (!input || !box) return;
+    var q = input.value.trim();
+    if (!q) return;
+    box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">찾는 중…</span>';
+    fetch("/api/dictionary/krdict?q=" + encodeURIComponent(q))
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok || !r.data.items || !r.data.items.length) {
+          box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">검색 결과가 없습니다.</span>';
+          return;
+        }
+        box.innerHTML = r.data.items.map(function (item) {
+          return '<div class="dict-result"><span class="w">' + esc(item.word) + '</span>' +
+            (item.grade ? '<span class="g">' + esc(item.grade) + '</span>' : "") +
+            '<p>' + esc((item.definitions || []).join(" / ")) + '</p></div>';
+        }).join("");
+      })
+      .catch(function () {
+        box.innerHTML = '<span style="color:var(--text-muted);font-size:var(--text-sm)">서버에 연결할 수 없습니다.</span>';
+      });
+  }
+
+  function renderLandingPage(authFormHtml) {
+    var GOOGLE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>';
+
+    return '' +
+      '<div class="landing-page">' +
+
+      '<section class="landing-hero">' + landingHeroArt() +
+      '<div class="hero-inner">' +
+      '<h1>안녕하세요?<br>한국어 전문강사<br>세이스강(SEISKANG) 이윤재입니다.</h1>' +
+      '<div style="display: flex; justify-content: center; gap: 12px; margin: 24px 0 16px 0; flex-wrap: wrap;">' +
+        '<button type="button" onclick="openNoticeModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: #0d9488; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(13,148,136,0.35); transition: all 0.2s;">' +
+          '📢 공지사항' +
+        '</button>' +
+        '<button type="button" onclick="openPressModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: #1e40af; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(30,64,175,0.35); transition: all 0.2s;">' +
+          '📰 언론 보도 / 뉴스룸' +
+        '</button>' +
+      '</div>' +
+      '<span class="eyebrow-light">Korean Language Instructor</span>' +
+      '<p class="hero-sub">저는 1964년 광주 광산구 신촌동에서 태어나 1983년 5월 24일 9급 공무원으로 신규 임용되었으며 2004년 5급 행정사무관을 거쳐 2015년 1월 2일 공기업 1급으로 명예퇴직하였습니다.<br><br>' +
+      '1997년부터 지금까지 평생교육의 성인교육을 해 왔습니다.<br>' +
+      '지금은 한국어를 배우고 싶은 외국인분들과 함께<br> VoIP 1:1 한국어 교육을 진행하고 있습니다.<br>' +
+      '카카오톡 보이스톡으로 맞춤형 비대면 수업으로 만나보세요.</p>' +
+      '<div class="hero-cta">' +
+      '<a href="#auth-form-anchor" class="btn-hero">회원가입하고 시작하기</a>' +
+      '<a href="#auth-form-anchor" class="btn-hero ghost">이미 계정이 있어요</a>' +
+      '</div></div></section>' +
+
+      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>세이스강 이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 세이스강 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-cta">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
+      '<div class="enroll-steps">' +
+      '<div class="enroll-step"><span class="num">1</span><div><div class="title">회원가입 후 로그인</div><div class="desc">아래에서 회원가입하시면 바로 이용하실 수 있습니다.</div></div></div>' +
+      '<div class="enroll-step"><span class="num">2</span><div><div class="title">레벨 테스트 상담</div><div class="desc">한국어 실력에 맞는 수업을 위해 먼저 상담을 진행합니다.</div></div></div>' +
+      '<div class="enroll-step"><span class="num">3</span><div><div class="title">주 1~2회, 회당 50분</div><div class="desc">보이스톡으로 1:1 맞춤 수업을 진행합니다.</div></div></div>' +
+      '</div>' +
+
+      '<section class="landing-section">' +
+      '<div class="landing-head"><span class="eyebrow-seal">Dictionary & Search</span><h2>한국어 단어 및 포털 검색</h2></div>' +
+      '<p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:480px;margin:0 auto">국립국어원 한국어기초사전 및 구글, 네이버 검색을 바로 이용하실 수 있습니다.</p>' +
+      '<div class="dict-widget"><div class="dict-row"><input type="text" id="dict-q" placeholder="예: 나무, 되다" value="나무"><button type="button" id="dict-search-btn">찾기</button></div>' +
+      '<div id="dict-result"></div><span class="dict-note">데이터 제공: 국립국어원 한국어기초사전</span>' +
+      
+      '<div class="search-engine-wrap">' +
+      '<div class="search-engine-label">포털 검색 바로가기</div>' +
+      
+      '<form action="https://www.google.com/search" method="get" target="_blank" class="engine-form">' +
+      '<div class="engine-brand google">' + GOOGLE_ICON + '<span>Google</span></div>' +
+      '<input type="text" name="q" class="engine-input" placeholder="구글에서 검색할 단어를 입력하세요" required>' +
+      '<button type="submit" class="engine-btn google-btn">구글 검색</button>' +
+      '</form>' +
+
+      '<form action="https://search.naver.com/search.naver" method="get" target="_blank" class="engine-form">' +
+      '<div class="engine-brand naver"><span class="naver-badge">N</span><span>NAVER</span></div>' +
+      '<input type="text" name="query" class="engine-input" placeholder="네이버에서 검색할 단어를 입력하세요" required>' +
+      '<button type="submit" class="engine-btn naver-btn">네이버 검색</button>' +
+      '</form>' +
+
+      '</div></div></section>' +
+
+      '<section class="landing-section">' +
+      '<div class="landing-head"><span class="eyebrow-seal">Pricing</span><h2>수강료 및 환불 규정</h2></div>' +
+      '<div class="price-card">' +
+      '<div class="price-head"><span class="amount">$22</span><span class="unit">1회차(50분) · 미국 달러 · 수업 전 입금 (부가세 포함)</span></div>' +
+      '<table class="refund-table">' +
+      '<tr><td>수업 시작 전 환불 요청</td><td>90%</td></tr>' +
+      '<tr><td>수업 30% 진행 후</td><td>50%</td></tr>' +
+      '<tr><td>수업 50% 진행 후</td><td>환불 불가</td></tr>' +
+      '</table></div></section>' +
+      '<div class="landing-auth-wrap" id="auth-form-anchor">' +
+      '<div class="auth-brand" style="margin-bottom:var(--space-6)"><span class="brand-mark">한</span>' +
+      '<span><span class="brand-name" style="display:block;color:var(--text-strong)">한국어 수업 관리</span>' +
+      '<span class="brand-sub" style="color:var(--text-muted)">1:1 Voice Lessons</span></span></div>' +
+      '<div class="auth-card">' + authFormHtml + '</div>' +
+      '<div style="text-align:center;margin-top:14px;"><button type="button" onclick="openPressModal()" style="background:#1e3a8a;color:#ffffff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:bold;border:none;cursor:pointer;">📰 언론 보도 / 뉴스룸</button></div>' +
+            '</div>' +
+
+      '</div>';
+  }
+
+  function renderAuthPending() {
+    var p = state.authPendingVerify;
+    return authShell(
+      '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">이메일 인증이 필요합니다</div>' +
+      '<div style="color:var(--text-body)"><strong>' + esc(p.email) + '</strong> 주소로 인증 메일을 보냈습니다. 메일함에서 링크를 클릭하면 가입이 완료되고 자동으로 로그인됩니다.</div>' +
+      '<div class="dev-box"><strong>개발 모드 안내</strong> — 실제 메일 서버가 연동되어 있지 않아 지금은 링크를 화면에 직접 표시합니다. 실제 서비스에서는 이 부분이 실제 이메일 발송으로 대체됩니다.<br><br>' +
+      '<a href="' + esc(p.devVerifyUrl) + '" target="_blank" rel="noopener">' + esc(p.devVerifyUrl) + '</a></div>' +
+      '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+      '</div>'
+    );
+  }
+
+  function renderAuthFormCard() {
+    var tab = state.authTab;
+    return (
+      '<form id="auth-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div class="auth-tabs">' +
+      '<div class="auth-tab' + (tab === "login" ? " is-active" : "") + '" data-auth-tab="login">로그인</div>' +
+      '<div class="auth-tab' + (tab === "signup" ? " is-active" : "") + '" data-auth-tab="signup">회원가입</div>' +
+      '</div>' +
+      (tab === "signup" ? '<div><label class="field-label">이름</label><input class="input" id="auth-name" type="text" placeholder="선택 입력" autocomplete="name"></div>' : "") +
+      '<div><label class="field-label">이메일</label><input class="input" id="auth-email" type="email" required placeholder="example@naver.com" autocomplete="email" value="' + esc(tab === "login" ? state.savedEmail : "") + '"></div>' +
+      '<div><label class="field-label">비밀번호</label><input class="input" id="auth-password" type="password" required placeholder="8자 이상" autocomplete="' + (tab === "signup" ? "new-password" : "current-password") + '"></div>' +
+      (tab === "login" ?
+        '<label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-remember-email"' + (state.authRememberEmail ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">이메일 저장</span>' +
+        '</label>'
+        : "") +
+      (tab === "signup" ?
+        '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-agree-terms" style="margin-top:3px"' + (state.authAgreeTerms ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">' +
+        '<a href="#" id="show-terms" style="color:var(--info-500)">이용약관</a> 및 ' +
+        '<a href="#" id="show-privacy" style="color:var(--info-500)">개인정보처리방침</a>에 동의합니다. (필수)' +
+        '</span></label>' +
+        '<label style="display:flex;align-items:flex-start;gap:var(--space-2);cursor:pointer">' +
+        '<input type="checkbox" id="auth-confirm-age" style="margin-top:3px"' + (state.authConfirmAge ? " checked" : "") + '>' +
+        '<span style="font-size:var(--text-sm);color:var(--text-body)">만 14세 이상입니다. (필수)</span></label>'
+        : "") +
+      (state.authError ? '<div class="auth-error">' + esc(state.authError) + '</div>' : "") +
+      (state.authUnverifiedEmail ? '<button type="button" class="btn btn-secondary full" id="resend-btn">인증 메일 다시 받기</button>' : "") +
+      '<div style="display:flex;gap:var(--space-3)">' +
+      '<button class="btn btn-primary" style="flex:1" type="submit" id="auth-submit"' + (state.authBusy ? " disabled" : "") + '>' +
+      (state.authBusy ? "처리 중…" : (tab === "signup" ? "입학하기" : "로그인")) + '</button>' +
+      (tab === "signup" ? '<button class="btn btn-secondary" style="flex:1" type="button" id="auth-complete">수료하기</button>' : "") +
+      '</div>' +
+      (tab === "login" ? '<button type="button" id="forgot-link" style="align-self:center;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;font:inherit;text-decoration:underline">비밀번호를 잊으셨나요?</button>' : "") +
+      '</form>' +
+      renderOAuthButtons() +
+      '<div class="auth-hint">' + (tab === "signup" ? "회원가입 시 이메일로 인증 링크가 발송되며, 인증을 완료해야 로그인할 수 있습니다." : "계정이 없다면 회원가입 탭에서 새로 만들 수 있습니다.") + '</div>'
+    ) + renderAuthTermsModal();
+  }
+
+  function renderAuthTermsModal() {
+    if (!state.authTermsModal) return "";
+    var isTerms = state.authTermsModal === "terms";
+    return '<div class="modal-backdrop" data-close-terms-modal="1"><div class="modal-box" data-stop-terms="1"><div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4);max-height:80vh;overflow-y:auto">' +
+      '<span style="font:var(--weight-bold) var(--text-lg)/1.2 var(--font-sans);color:var(--text-strong)">' + (isTerms ? "이용약관" : "개인정보처리방침") + '</span>' +
+      '<div style="white-space:pre-wrap;font-size:var(--text-sm);color:var(--text-body);line-height:1.7">' + esc(isTerms ? TERMS_TEXT : PRIVACY_TEXT) + '</div>' +
+      '<button class="btn btn-secondary full" type="button" data-close-terms-modal="1">닫기</button>' +
+      '</div></div></div>';
+  }
+
+  function renderOAuthButtons() {
+    var KAKAO_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><path fill="#191600" d="M12 3C6.48 3 2 6.58 2 11c0 2.86 1.87 5.36 4.7 6.8-.15.6-.96 3.6-1 3.8 0 0-.02.17.09.24.11.07.24.02.24.02.32-.04 3.7-2.42 4.3-2.85.53.08 1.08.12 1.67.12 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>';
+    var WECHAT_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex:none"><ellipse cx="9" cy="10" rx="7" ry="5.5" fill="#fff"/><ellipse cx="16" cy="15" rx="5.5" ry="4.3" fill="#fff" fill-opacity="0.85"/></svg>';
+    return '<div style="display:flex;flex-direction:column;gap:var(--space-3)">' +
+      '<div style="display:flex;align-items:center;gap:var(--space-3);color:var(--text-subtle);font-size:var(--text-xs)">' +
+      '<span style="flex:1;height:1px;background:var(--border-subtle)"></span>메신저 앱이 없으신가요?<span style="flex:1;height:1px;background:var(--border-subtle)"></span></div>' +
+      '<a href="https://www.kakaocorp.com/page/service/service/KakaoTalk" target="_blank" rel="noopener" class="btn full" style="background:#FEE500;color:#191600;border:none;gap:var(--space-2)">' + KAKAO_ICON + '카카오톡 받기 / 가입</a>' +
+      '<a href="https://www.wechat.com/en/" target="_blank" rel="noopener" class="btn full" style="background:#07C160;color:#fff;border:none;gap:var(--space-2)">' + WECHAT_ICON + '위챗 받기 / 가입</a>' +
+      '</div>';
+  }
+
+  function renderAuthForgot() {
+    var f = state.authForgot;
+    if (f.stage === "sent") {
+      return authShell(
+        '<div class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-4)">' +
+        '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">비밀번호 재설정 링크</div>' +
+        '<div style="color:var(--text-body)"><strong>' + esc(f.email) + '</strong> 계정의 비밀번호를 재설정할 수 있는 링크입니다.</div>' +
+        '<div class="dev-box"><strong>개발 모드 안내</strong> — 실제 메일 서버가 연동되어 있지 않아 지금은 링크를 화면에 직접 표시합니다. 실제 서비스에서는 이 부분이 실제 이메일 발송으로 대체됩니다.<br><br>' +
+        '<a href="' + esc(f.devResetUrl) + '" target="_blank" rel="noopener">' + esc(f.devResetUrl) + '</a></div>' +
+        '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+        '</div>'
+      );
+    }
+    return authShell(
+      '<form id="forgot-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">비밀번호를 잊으셨나요?</div>' +
+      '<div style="color:var(--text-muted)">가입하신 이메일을 입력하시면 비밀번호를 새로 설정할 수 있는 링크를 보여드립니다.</div>' +
+      '<div><label class="field-label">이메일</label><input class="input" id="forgot-email" type="email" required placeholder="example@naver.com" autocomplete="email"></div>' +
+      (state.authForgotError ? '<div class="auth-error">' + esc(state.authForgotError) + '</div>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="forgot-submit"' + (state.authForgotBusy ? " disabled" : "") + '>' +
+      (state.authForgotBusy ? "처리 중…" : "재설정 링크 받기") + '</button>' +
+      '<button class="btn btn-secondary full" type="button" id="back-to-login">로그인 화면으로 돌아가기</button>' +
+      '</form>'
+    );
+  }
+
+  function renderAuthReset() {
+    return authShell(
+      '<form id="reset-form" class="card card--pad" style="display:flex;flex-direction:column;gap:var(--space-5)">' +
+      '<div style="font:var(--weight-bold) var(--text-md)/1.3 var(--font-sans);color:var(--text-strong)">새 비밀번호 설정</div>' +
+      '<div><label class="field-label">새 비밀번호</label><input class="input" id="reset-password" type="password" required placeholder="8자 이상" autocomplete="new-password"></div>' +
+      (state.authResetError ? '<div class="auth-error">' + esc(state.authResetError) + '</div>' : "") +
+      '<button class="btn btn-primary full" type="submit" id="reset-submit"' + (state.authResetBusy ? " disabled" : "") + '>' +
+      (state.authResetBusy ? "처리 중…" : "비밀번호 변경") + '</button>' +
+      '</form>'
+    );
+  }
+
+  function renderAuth() {
+    if (state.authResetToken) return renderAuthReset();
+    if (state.authForgot) return renderAuthForgot();
+    if (state.authPendingVerify) return renderAuthPending();
+    return renderLandingPage(renderAuthFormCard());
+  }
+
+  function submitAuth(e) {
+    e.preventDefault();
+    if (state.authBusy) return;
+    var tab = state.authTab;
+    var email = document.getElementById("auth-email").value.trim();
+    var password = document.getElementById("auth-password").value;
+    var nameEl = document.getElementById("auth-name");
+    if (tab === "signup" && !state.authAgreeTerms) {
+      setState({ authError: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." });
+      return;
+    }
+    if (tab === "signup" && !state.authConfirmAge) {
+      setState({ authError: "만 14세 이상만 가입할 수 있습니다." });
+      return;
+    }
+    var body = tab === "signup" ? { email: email, password: password, name: nameEl ? nameEl.value.trim() : "", agreeTerms: true, confirmAge: true } : { email: email, password: password };
+    setState({ authBusy: true, authError: "", authUnverifiedEmail: "" });
+    fetch(tab === "signup" ? "/api/signup" : "/api/login", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) {
+          setState({ authBusy: false, authError: r.data.error || "요청에 실패했습니다.", authUnverifiedEmail: r.data.unverified ? email : "" });
+          return;
+        }
+        if (tab === "signup" && r.data.pendingVerification) {
+          setState({ authBusy: false, authError: "", authPendingVerify: { email: r.data.email, devVerifyUrl: r.data.devVerifyUrl } });
+          return;
+        }
+        if (tab === "login") setSavedEmail(state.authRememberEmail ? email : "");
+        onAuthSuccess(r.data.user);
+        setState({ authBusy: false, authError: "" });
+        fire("로그인 완료", (r.data.user.name || r.data.user.email) + " 님, 환영합니다.", "success");
+      })
+      .catch(function () { setState({ authBusy: false, authError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function onAuthSuccess(user) {
+    state.auth = user;
+    if (user.role === "admin") {
+      loadDashboard();
+    } else {
+      if (ADMIN_ONLY_VIEWS.indexOf(state.view) !== -1) state.view = "assignments";
+      if (state.view === "assignments") loadAssignmentsView();
+    }
+  }
+
+  function resendVerification() {
+    var email = state.authUnverifiedEmail;
+    if (!email) return;
+    fetch("/api/resend-verification", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authError: r.data.error || "재발송에 실패했습니다." }); return; }
+        setState({ authError: "", authUnverifiedEmail: "", authPendingVerify: { email: email, devVerifyUrl: r.data.devVerifyUrl } });
+      })
+      .catch(function () { setState({ authError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitForgot(e) {
+    e.preventDefault();
+    if (state.authForgotBusy) return;
+    var email = document.getElementById("forgot-email").value.trim();
+    setState({ authForgotBusy: true, authForgotError: "" });
+    fetch("/api/forgot-password", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authForgotBusy: false, authForgotError: r.data.error || "요청에 실패했습니다." }); return; }
+        setState({ authForgotBusy: false, authForgotError: "", authForgot: { stage: "sent", email: r.data.email, devResetUrl: r.data.devResetUrl } });
+      })
+      .catch(function () { setState({ authForgotBusy: false, authForgotError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function submitReset(e) {
+    e.preventDefault();
+    if (state.authResetBusy) return;
+    var password = document.getElementById("reset-password").value;
+    setState({ authResetBusy: true, authResetError: "" });
+    fetch("/api/reset-password", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: state.authResetToken, password: password })
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { setState({ authResetBusy: false, authResetError: r.data.error || "요청에 실패했습니다." }); return; }
+        onAuthSuccess(r.data.user);
+        setState({ authResetBusy: false, authResetError: "", authResetToken: null });
+        fire("비밀번호 변경 완료", "새 비밀번호로 로그인되었습니다.", "success");
+      })
+      .catch(function () { setState({ authResetBusy: false, authResetError: "서버에 연결할 수 없습니다." }); });
+  }
+
+  function doLogout() {
+    fetch("/api/logout", { method: "POST" }).then(function () { setState({ auth: null, view: "dash", modal: null }); });
+  }
+
+  function bindAuthEvents() {
+    var root = document.getElementById("app");
+    var dictBtn = document.getElementById("dict-search-btn");
+    if (dictBtn) dictBtn.addEventListener("click", searchDictionary);
+    root.querySelectorAll("[data-auth-tab]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ authTab: el.getAttribute("data-auth-tab"), authError: "", authUnverifiedEmail: "" }); });
+    });
+    var form = document.getElementById("auth-form");
+    if (form) form.addEventListener("submit", submitAuth);
+    var completeBtn = document.getElementById("auth-complete");
+    if (completeBtn) completeBtn.addEventListener("click", function () { fire("수료하기", "수료 절차는 준비 중입니다.", "info"); });
+    var resendBtn = document.getElementById("resend-btn");
+    if (resendBtn) resendBtn.addEventListener("click", resendVerification);
+    var forgotLink = document.getElementById("forgot-link");
+    if (forgotLink) forgotLink.addEventListener("click", function () { setState({ authForgot: { stage: "email" }, authForgotError: "" }); });
+    var forgotForm = document.getElementById("forgot-form");
+    if (forgotForm) forgotForm.addEventListener("submit", submitForgot);
+    var resetForm = document.getElementById("reset-form");
+    if (resetForm) resetForm.addEventListener("submit", submitReset);
+    var backBtn = document.getElementById("back-to-login");
+    if (backBtn) backBtn.addEventListener("click", function () { setState({ authPendingVerify: null, authForgot: null, authTab: "login" }); });
+    var agreeBox = document.getElementById("auth-agree-terms");
+    if (agreeBox) agreeBox.addEventListener("change", function () { state.authAgreeTerms = agreeBox.checked; });
+    var ageBox = document.getElementById("auth-confirm-age");
+    if (ageBox) ageBox.addEventListener("change", function () { state.authConfirmAge = ageBox.checked; });
+    var rememberBox = document.getElementById("auth-remember-email");
+    if (rememberBox) rememberBox.addEventListener("change", function () { state.authRememberEmail = rememberBox.checked; });
+    var showTerms = document.getElementById("show-terms");
+    if (showTerms) showTerms.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "terms" }); });
+    var showPrivacy = document.getElementById("show-privacy");
+    if (showPrivacy) showPrivacy.addEventListener("click", function (e) { e.preventDefault(); setState({ authTermsModal: "privacy" }); });
+    root.querySelectorAll("[data-close-terms-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ authTermsModal: null }); });
+    });
+    root.querySelectorAll("[data-stop-terms]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+  }
+
+  function render() {
+    var appEl = document.getElementById("app");
+
+    if (!state.authReady) {
+      appEl.className = "auth-mode";
+      appEl.innerHTML = "";
+      return;
+    }
+    if (!state.auth) {
+      appEl.className = "auth-mode";
+      appEl.innerHTML = renderAuth() + renderToast();
+      bindAuthEvents();
+      var closeToast = document.querySelector("[data-close-toast]");
+      if (closeToast) closeToast.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
+      var emailInput = document.getElementById("auth-email");
+      if (emailInput) emailInput.focus({ preventScroll: true });
+      return;
+    }
+
+    appEl.className = "";
+    var hadFocus = document.activeElement && document.activeElement.id === "query-input";
+    var isAdmin = state.auth.role === "admin";
+    var isDashView = ADMIN_ONLY_VIEWS.indexOf(state.view) !== -1;
+    var st = null;
+    var body;
+    if (isDashView && !isAdmin) {
+      body = renderAdminOnlyNotice();
+    } else if (isDashView && !state.dashboardReady) {
+      body = '<div class="card card--pad" style="color:var(--text-muted)">불러오는 중…</div>';
+    } else {
+      st = state.students.find(function (x) { return x.id === state.student; }) || state.students[0];
+      if (state.view === "requests") body = renderRequests();
+      else if (state.view === "students") body = renderStudents();
+      else if (state.view === "student") body = renderStudent();
+      else if (state.view === "payments") body = renderPayments();
+      else if (state.view === "materials") body = renderMaterials();
+      else if (state.view === "assignments") body = renderAssignments();
+      else if (state.view === "settings") body = renderSettings();
+      else body = renderDash();
+    }
+
+    var mm = state.modal ? modalMap(st)[state.modal] : null;
+    lastConfirm = mm ? mm.confirm : null;
+
+    appEl.innerHTML =
+      sidebarHtml() +
+      '<div class="main">' + topbarHtml(st) + '<div class="view">' + body + '</div></div>' +
+      renderModal() + renderToast();
+
+    bindEvents();
+    if (hadFocus) {
+      var qi = document.getElementById("query-input");
+      if (qi) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); }
+    }
+  }
+
+  function bindEvents() {
+    var root = document.getElementById("app");
+    root.querySelectorAll("[data-nav]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); go(el.getAttribute("data-nav")); });
+    });
+    root.querySelectorAll("[data-goto-student]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); go("student", el.getAttribute("data-goto-student")); });
+    });
+    root.querySelectorAll("[data-filter]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ filter: el.getAttribute("data-filter") }); });
+    });
+    root.querySelectorAll("[data-payfilter]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ payFilter: el.getAttribute("data-payfilter") }); });
+    });
+    root.querySelectorAll("[data-approve]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        pendingRequest = state.requests.find(function (r) { return r.id === parseInt(el.getAttribute("data-approve"), 10); });
+        setState({ modal: "approve" });
+      });
+    });
+    root.querySelectorAll("[data-open-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ modal: el.getAttribute("data-open-modal"), note: "" }); });
+    });
+    root.querySelectorAll("[data-close-modal]").forEach(function (el) {
+      el.addEventListener("click", function () { setState({ modal: null, note: "" }); });
+    });
+    root.querySelectorAll("[data-stop]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+    var modalConfirmBtn = document.getElementById("modal-confirm");
+    if (modalConfirmBtn) modalConfirmBtn.addEventListener("click", function () { if (lastConfirm) lastConfirm(); });
+    var noteInput = document.getElementById("lesson-note");
+    if (noteInput) noteInput.addEventListener("input", function () { state.note = noteInput.value; });
+    root.querySelectorAll("[data-confirm-payment]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.stopPropagation(); confirmPayment(el.getAttribute("data-confirm-payment")); });
+    });
+    root.querySelectorAll("[data-notyet]").forEach(function (el) {
+      el.addEventListener("click", function () { notYet(); });
+    });
+    var logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) logoutBtn.addEventListener("click", doLogout);
+    var materialForm = document.getElementById("material-upload-form");
+    if (materialForm) materialForm.addEventListener("submit", submitMaterialUpload);
+    root.querySelectorAll("[data-del-material]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteMaterialById(parseInt(el.getAttribute("data-del-material"), 10)); });
+    });
+    root.querySelectorAll("[data-open-file]").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        openFileInline(el.getAttribute("data-open-file"), el.getAttribute("data-mime"));
+      });
+    });
+    var assignmentForm = document.getElementById("assignment-upload-form");
+    if (assignmentForm) assignmentForm.addEventListener("submit", submitAssignmentUpload);
+    root.querySelectorAll("[data-pick-student]").forEach(function (el) {
+      el.addEventListener("click", function () { selectAdminStudent(el.getAttribute("data-pick-student")); });
+    });
+    root.querySelectorAll("[data-edit-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () { startEditAssignment(parseInt(el.getAttribute("data-edit-assignment"), 10), el.getAttribute("data-title")); });
+    });
+    root.querySelectorAll("[data-save-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var input = document.getElementById("assignment-edit-input");
+        if (input) state.assignmentEditTitle = input.value;
+        saveEditAssignment(parseInt(el.getAttribute("data-save-assignment"), 10));
+      });
+    });
+    root.querySelectorAll("[data-cancel-assignment]").forEach(function (el) {
+      el.addEventListener("click", cancelEditAssignment);
+    });
+    root.querySelectorAll("[data-del-assignment]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteAssignmentById(parseInt(el.getAttribute("data-del-assignment"), 10)); });
+    });
+    root.querySelectorAll("[data-edit-student-email]").forEach(function (el) {
+      el.addEventListener("click", function () { startEditStudentEmail(el.getAttribute("data-edit-student-email"), el.getAttribute("data-email")); });
+    });
+    root.querySelectorAll("[data-save-student-email]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var input = document.getElementById("student-email-edit-input");
+        if (input) state.studentEmailEditValue = input.value;
+        saveEditStudentEmail(el.getAttribute("data-save-student-email"));
+      });
+    });
+    root.querySelectorAll("[data-cancel-student-email]").forEach(function (el) {
+      el.addEventListener("click", cancelEditStudentEmail);
+    });
+    root.querySelectorAll("[data-del-comment]").forEach(function (el) {
+      el.addEventListener("click", function () { deleteCommentById(parseInt(el.getAttribute("data-del-comment"), 10)); });
+    });
+    root.querySelectorAll("[data-close-toast]").forEach(function (el) {
+      el.addEventListener("click", function () { clearTimeout(toastTimer); setState({ toast: null }); });
+    });
+    var qi = document.getElementById("query-input");
+    if (qi) qi.addEventListener("input", function () { state.query = qi.value; render(); });
+  }
+
+  var resetTokenMatch = location.search.match(/(?:^|[?&])resetToken=([^&]+)/);
+  if (resetTokenMatch) {
+    state.authResetToken = decodeURIComponent(resetTokenMatch[1]);
+    history.replaceState(null, "", location.pathname);
+  }
+  render();
+  var justVerified = /(?:^|[?&])verified=1(?:&|$)/.test(location.search);
+  if (justVerified) history.replaceState(null, "", location.pathname);
+
+  fetch("/api/me")
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      if (data) onAuthSuccess(data.user);
+      state.authReady = true;
+      render();
+      if (justVerified && state.auth) {
+        fire("이메일 인증 완료", "인증이 완료되어 자동으로 로그인되었습니다.", "success");
+      }
+    })
+    .catch(function () { state.authReady = true; render(); });
+
+  setInterval(function () {
+    var clockEl = document.querySelector(".who .clock");
+    if (clockEl) clockEl.textContent = clockText();
+  }, 30000);
+})();
+</script>
+<!-- ========================================================== -->
+<!-- [세이스강 프리미엄 통합 시스템: 공지게시판 + 언론보도 + 비번변경] -->
+<!-- ========================================================== -->
+<style>
+/* 통합 모달 오버레이 */
+#pressModal, #pressWriteModal, #passwordChangeModal, #noticeModal, #noticeWriteModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
+}
+#pressModal.active, #pressWriteModal.active, #passwordChangeModal.active, #noticeModal.active, #noticeWriteModal.active {
+  display: flex !important;
+}
+.sk-modal-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: skFadeUp 0.25s ease-out;
+}
+.sk-modal-box-small { max-width: 440px !important; }
+@keyframes skFadeUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 헤더 */
+.sk-modal-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sk-modal-header-notice {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%) !important;
+}
+.sk-badge-top {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  color: #bfdbfe;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.sk-modal-title { margin: 0; font-size: 18px; font-weight: 700; color: #ffffff; }
+.sk-modal-desc { margin: 3px 0 0 0; font-size: 12px; color: #93c5fd; }
+.sk-close-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+.sk-close-btn:hover { background: rgba(255,255,255,0.3); }
+
+/* 관리자 글쓰기 버튼 */
+.sk-admin-write-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 4px;
+  margin-right: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: all 0.2s;
+}
+.sk-admin-write-btn:hover { background: #1d4ed8; }
+
+/* 검색 & 탭 */
+.sk-filter-panel {
+  background: #f8fafc;
+  padding: 14px 20px 10px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.sk-search-wrap { position: relative; margin-bottom: 10px; }
+.sk-search-input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #1e293b;
+  box-sizing: border-box;
+  outline: none;
+}
+.sk-search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.sk-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #64748b;
+  pointer-events: none;
+}
+.sk-tab-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.sk-tab-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.sk-tab-btn:hover { background: #f1f5f9; color: #0f172a; }
+.sk-tab-btn.active {
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  border-color: #1e3a8a !important;
+}
+
+/* 본문 & 카드 */
+.sk-modal-body { padding: 18px 20px; overflow-y: auto; background: #f8fafc; flex: 1; }
+.sk-article-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.sk-article-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.08);
+  transform: translateY(-2px);
+}
+.sk-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+.sk-cat-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+.sk-cat-tag-pinned {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+.sk-card-date { color: #94a3b8; }
+.sk-card-title { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 4px 0; line-height: 1.4; }
+.sk-card-summary { font-size: 12.5px; color: #475569; line-height: 1.5; margin: 0 0 10px 0; }
+.sk-card-footer { display: flex; justify-content: space-between; align-items: center; }
+.sk-read-btn { color: #1d4ed8; font-size: 12px; font-weight: 700; }
+.sk-admin-actions { display: flex; gap: 6px; }
+.sk-action-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.sk-action-btn:hover { background: #e2e8f0; }
+.sk-action-btn.del { color: #ef4444; border-color: #fca5a5; }
+.sk-action-btn.del:hover { background: #fee2e2; }
+
+/* 상세 뷰 */
+.sk-detail-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; }
+.sk-detail-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.sk-back-btn { background: none; border: none; color: #1e40af; font-size: 13px; font-weight: 700; cursor: pointer; padding: 0; }
+.sk-detail-title { font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1.4; margin: 10px 0 6px 0; }
+.sk-quote-box {
+  background: #eff6ff;
+  border-left: 4px solid #1d4ed8;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 14px 0;
+}
+.sk-detail-text p { font-size: 13.5px; line-height: 1.7; color: #334155; margin-bottom: 12px; }
+.sk-meta-box { background: #f1f5f9; border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #64748b; margin-top: 18px; }
+.sk-tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.sk-tag-pill { background: #f1f5f9; color: #64748b; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+
+/* 푸터 */
+.sk-modal-footer {
+  background: #ffffff;
+  padding: 12px 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #64748b;
+}
+.sk-footer-close {
+  background: #e2e8f0;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* 폼 스타일 */
+.sk-form-group { margin-bottom: 14px; }
+.sk-form-label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 5px; }
+.sk-form-input, .sk-form-select, .sk-form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+}
+.sk-form-input:focus, .sk-form-select:focus, .sk-form-textarea:focus { border-color: #2563eb; }
+.sk-form-row { display: flex; gap: 10px; }
+.sk-form-row > div { flex: 1; }
+.sk-form-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+.sk-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.sk-btn-primary {
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.sk-btn-secondary {
+  background: #e2e8f0;
+  color: #334155;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+</style>
+
+<!-- ========================================== -->
+<!-- 1. [공지사항 메인 모달] -->
+<!-- ========================================== -->
+<div id="noticeModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header sk-modal-header-notice">
+      <div>
+        <span class="sk-badge-top" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.4);">Notice Board</span>
+        <h3 class="sk-modal-title">📢 세이스강 공지사항</h3>
+        <p class="sk-modal-desc">1:1 맞춤 한국어 수업 안내, 학사 일정 및 주요 소식</p>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <button id="adminNoticeWriteBtn" onclick="openNoticeWriteModal()" class="sk-admin-write-btn">
+          ✏️ 새 공지 작성
+        </button>
+        <button onclick="closeNoticeModal()" class="sk-close-btn" aria-label="닫기">✕</button>
+      </div>
+    </div>
+
+    <div class="sk-filter-panel">
+      <div class="sk-search-wrap">
+        <span class="sk-search-icon">🔍</span>
+        <input type="text" id="noticeSearchInput" class="sk-search-input" placeholder="공지사항 제목, 내용 검색..." oninput="handleNoticeSearch()">
+      </div>
+      <div class="sk-tab-bar">
+        <button onclick="filterNoticeCategory('ALL')" id="ntab-ALL" class="sk-tab-btn active">전체</button>
+        <button onclick="filterNoticeCategory('PINNED')" id="ntab-PINNED" class="sk-tab-btn">필독·중요</button>
+        <button onclick="filterNoticeCategory('LESSON')" id="ntab-LESSON" class="sk-tab-btn">수업안내</button>
+        <button onclick="filterNoticeCategory('SCHEDULE')" id="ntab-SCHEDULE" class="sk-tab-btn">학사일정</button>
+        <button onclick="filterNoticeCategory('MATERIAL')" id="ntab-MATERIAL" class="sk-tab-btn">교재·자료</button>
+      </div>
+    </div>
+
+    <div class="sk-modal-body">
+      <div id="noticeListView"></div>
+      <div id="noticeDetailView" style="display: none;">
+        <div class="sk-detail-box">
+          <div class="sk-detail-header-bar">
+            <button onclick="backToNoticeList()" class="sk-back-btn">← 목록으로 돌아가기</button>
+            <div id="detailNoticeAdminActions" class="sk-admin-actions" style="display: none;"></div>
+          </div>
+          <div id="noticeDetailContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sk-modal-footer">
+      <span>총 <strong id="noticeTotalCount" style="color: #0d9488;">0</strong>건의 공지사항</span>
+      <button onclick="closeNoticeModal()" class="sk-footer-close">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. [공지사항 작성/수정 모달] -->
+<!-- ========================================== -->
+<div id="noticeWriteModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header sk-modal-header-notice">
+      <h3 class="sk-modal-title" id="noticeWriteModalTitle">✏️ 새 공지사항 작성</h3>
+      <button onclick="closeNoticeWriteModal()" class="sk-close-btn">✕</button>
+    </div>
+    <div class="sk-modal-body">
+      <form onsubmit="handleSaveNoticeArticle(event)">
+        <input type="hidden" id="writeNoticeId">
+        <div class="sk-form-row">
+          <div class="sk-form-group">
+            <label class="sk-form-label">말머리 (분류) *</label>
+            <select id="writeNoticeCategory" class="sk-form-select" required>
+              <option value="PINNED">🚨 필독·중요 공지</option>
+              <option value="LESSON" selected>📖 수업 안내</option>
+              <option value="SCHEDULE">🗓️ 학사 일정</option>
+              <option value="MATERIAL">📚 교재·자료 소식</option>
+            </select>
+          </div>
+          <div class="sk-form-group">
+            <label class="sk-form-label">작성 일자 *</label>
+            <input type="text" id="writeNoticeDate" class="sk-form-input" required>
+          </div>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">공지 제목 *</label>
+          <input type="text" id="writeNoticeTitle" class="sk-form-input" placeholder="공지사항 제목을 입력하세요" required>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">한 줄 요약 (목록에 노출)</label>
+          <input type="text" id="writeNoticeSummary" class="sk-form-input" placeholder="목록 카드에 보일 1~2줄 요약">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">공지 본문 내용 *</label>
+          <textarea id="writeNoticeContent" class="sk-form-textarea" placeholder="공지 본문을 자유롭게 입력하세요. (엔터 줄바꿈 자동 적용)" required></textarea>
+        </div>
+        <div class="sk-form-actions">
+          <button type="button" onclick="closeNoticeWriteModal()" class="sk-btn-secondary">취소</button>
+          <button type="submit" class="sk-btn-primary" style="background:#0d9488;">공지 저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. [언론 보도 메인 모달] -->
+<!-- ========================================== -->
+<div id="pressModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header">
+      <div>
+        <span class="sk-badge-top">Press & Media</span>
+        <h3 class="sk-modal-title">세이스강 언론 보도 및 대외 활동</h3>
+        <p class="sk-modal-desc">청랑 이윤재 원장의 공직 32년, 반부패 정책 및 대외 언론 보도 아카이브</p>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <button id="adminWriteBtn" onclick="openPressWriteModal()" class="sk-admin-write-btn">
+          ✏️ 새 기사 등록
+        </button>
+        <button onclick="closePressModal()" class="sk-close-btn" aria-label="닫기">✕</button>
+      </div>
+    </div>
+    <div class="sk-filter-panel">
+      <div class="sk-search-wrap">
+        <span class="sk-search-icon">🔍</span>
+        <input type="text" id="pressSearchInput" class="sk-search-input" placeholder="기사 제목, 언론사, 키워드 검색..." oninput="handlePressSearch()">
+      </div>
+      <div class="sk-tab-bar">
+        <button onclick="filterPressCategory('ALL')" id="tab-ALL" class="sk-tab-btn active">전체</button>
+        <button onclick="filterPressCategory('INTEGRITY')" id="tab-INTEGRITY" class="sk-tab-btn">반부패·청렴 정책</button>
+        <button onclick="filterPressCategory('EDU')" id="tab-EDU" class="sk-tab-btn">한국어·디지털 교육</button>
+        <button onclick="filterPressCategory('LIT')" id="tab-LIT" class="sk-tab-btn">문학·문화예술</button>
+        <button onclick="filterPressCategory('PUBLIC')" id="tab-PUBLIC" class="sk-tab-btn">공직·행정</button>
+      </div>
+    </div>
+    <div class="sk-modal-body">
+      <div id="pressListView"></div>
+      <div id="pressDetailView" style="display: none;">
+        <div class="sk-detail-box">
+          <div class="sk-detail-header-bar">
+            <button onclick="backToPressList()" class="sk-back-btn">← 목록으로 돌아가기</button>
+            <div id="detailAdminActions" class="sk-admin-actions" style="display: none;"></div>
+          </div>
+          <div id="pressDetailContent"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sk-modal-footer">
+      <span>총 <strong id="pressTotalCount" style="color: #1e3a8a;">0</strong>건의 보도자료</span>
+      <button onclick="closePressModal()" class="sk-footer-close">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 4. [언론 보도 글쓰기/수정 모달] -->
+<!-- ========================================== -->
+<div id="pressWriteModal">
+  <div class="sk-modal-box">
+    <div class="sk-modal-header">
+      <h3 class="sk-modal-title" id="writeModalTitle">✏️ 보도자료 등록 / 수정</h3>
+      <button onclick="closePressWriteModal()" class="sk-close-btn">✕</button>
+    </div>
+    <div class="sk-modal-body">
+      <form onsubmit="handleSavePressArticle(event)">
+        <input type="hidden" id="writeArticleId">
+        <div class="sk-form-row">
+          <div class="sk-form-group">
+            <label class="sk-form-label">말머리 (분류) *</label>
+            <select id="writeCategory" class="sk-form-select" required>
+              <option value="INTEGRITY">반부패·청렴 정책</option>
+              <option value="EDU">한국어·디지털 교육</option>
+              <option value="LIT">문학·문화예술</option>
+              <option value="PUBLIC">공직·행정</option>
+            </select>
+          </div>
+          <div class="sk-form-group">
+            <label class="sk-form-label">보도 일자 *</label>
+            <input type="text" id="writeDate" class="sk-form-input" placeholder="예: 2026.09.01" required>
+          </div>
+          <div class="sk-form-group">
+            <label class="sk-form-label">언론사명 *</label>
+            <input type="text" id="writeMedia" class="sk-form-input" placeholder="예: 프라임경제" required>
+          </div>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">기사 제목 *</label>
+          <input type="text" id="writeTitle" class="sk-form-input" placeholder="기사 헤드라인 제목" required>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">부제목 / 소제목</label>
+          <input type="text" id="writeSubtitle" class="sk-form-input" placeholder="기사 부제목 또는 리드문">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">목록 카드 요약문 (2~3줄)</label>
+          <input type="text" id="writeSummary" class="sk-form-input" placeholder="목록에 보일 간략한 요약">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">강조 인용구 (선택 사항)</label>
+          <input type="text" id="writeQuote" class="sk-form-input" placeholder="핵심 발표 주제나 강조할 문장">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">기사 본문 내용 *</label>
+          <textarea id="writeContent" class="sk-form-textarea" placeholder="기사 본문을 입력하세요." required></textarea>
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">출처 및 문의처 정보</label>
+          <input type="text" id="writeMeta" class="sk-form-input" placeholder="예: 문의: 코레일 감사실 / 청렴조사팀 | 출처: 프라임경제">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">해시태그 (쉼표로 구분)</label>
+          <input type="text" id="writeTags" class="sk-form-input" placeholder="예: 코레일, 청렴정책, 이윤재">
+        </div>
+        <div class="sk-form-actions">
+          <button type="button" onclick="closePressWriteModal()" class="sk-btn-secondary">취소</button>
+          <button type="submit" class="sk-btn-primary">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 5. [비밀번호 변경 모달] -->
+<!-- ========================================== -->
+<div id="passwordChangeModal">
+  <div class="sk-modal-box sk-modal-box-small">
+    <div class="sk-modal-header">
+      <h3 class="sk-modal-title">🔒 관리자 비밀번호 변경</h3>
+      <button onclick="closePasswordChangeModal()" class="sk-close-btn">✕</button>
+    </div>
+    <div class="sk-modal-body">
+      <form onsubmit="handleDirectPasswordChange(event)">
+        <div class="sk-form-group">
+          <label class="sk-form-label">새 비밀번호 입력 *</label>
+          <input type="password" id="skNewPassword" class="sk-form-input" placeholder="새 비밀번호 입력" required minlength="4">
+        </div>
+        <div class="sk-form-group">
+          <label class="sk-form-label">새 비밀번호 확인 *</label>
+          <input type="password" id="skConfirmPassword" class="sk-form-input" placeholder="새 비밀번호 다시 입력" required minlength="4">
+        </div>
+        <p id="skPwError" style="display:none; color:#ef4444; font-size:12px; margin:4px 0 0 0;"></p>
+        <div class="sk-form-actions">
+          <button type="button" onclick="closePasswordChangeModal()" class="sk-btn-secondary">취소</button>
+          <button type="submit" class="sk-btn-primary">비밀번호 저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 통합 자바스크립트 엔진 -->
+<!-- ========================================== -->
+<script>
+// 관리자 판별
+function isUserAdmin() {
+  if (typeof state !== 'undefined' && state.auth && state.auth.role === 'admin') return true;
+  return document.getElementById('logout-btn') !== null;
+}
+
+// ------------------------------------------
+// [공지사항 로직]
+// ------------------------------------------
+const defaultNoticeData = [
+  {
+    id: 101,
+    category: "PINNED",
+    categoryName: "필독·중요",
+    date: "2026.09.01",
+    title: "📢 세이스강 1:1 맞춤형 한국어 수업 운영 및 예약 안내",
+    summary: "카카오톡 보이스톡 및 WhatsApp을 통한 외국인 및 성인 맞춤형 1:1 한국어 수업 진행 절차 안내입니다.",
+    content: "안녕하세요? 세이스강 이윤재 강사입니다.\n\n세이스강 플랫폼은 학습자의 수준과 목표에 맞춘 1:1 맞춤형 비대면 한국어 수업을 진행하고 있습니다.\n\n■ 수업 형태: 카카오톡 보이스톡 또는 WhatsApp 1:1 실시간 맞춤 수업\n■ 수업 시간: 주 1~2회, 1회차 50분 기준 ($22 USD)\n■ 수강 신청: 회원가입 후 레벨 테스트 상담을 거쳐 고정 수업 슬롯이 배정됩니다.\n\n문의 사항이 있으신 경우 상담 창구를 통해 언제든 문의해 주시기 바랍니다. 감사합니다."
+  }
+];
+
+const NOTICE_STORAGE_KEY = 'seiskang_notices_v1';
+let currentNoticeCategory = 'ALL';
+let currentNoticeSearchKeyword = '';
+
+function getNoticeList() {
+  const saved = localStorage.getItem(NOTICE_STORAGE_KEY);
+  if (!saved) {
+    localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify(defaultNoticeData));
+    return defaultNoticeData;
+  }
+  try {
+    const parsed = JSON.parse(saved);
+    return (Array.isArray(parsed) && parsed.length > 0) ? parsed : defaultNoticeData;
+  } catch(e) { return defaultNoticeData; }
+}
+
+function saveNoticeList(list) {
+  localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify(list));
+}
+
+function openNoticeModal() {
+  const modal = document.getElementById('noticeModal');
+  if (modal) {
+    modal.classList.add('active');
+    const adminBtn = document.getElementById('adminNoticeWriteBtn');
+    if (adminBtn) adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
+    currentNoticeSearchKeyword = '';
+    const searchInput = document.getElementById('noticeSearchInput');
+    if (searchInput) searchInput.value = '';
+    filterNoticeCategory('ALL');
+  }
+}
+
+function closeNoticeModal() {
+  const modal = document.getElementById('noticeModal');
+  if (modal) {
+    modal.classList.remove('active');
+    backToNoticeList();
+  }
+}
+
+function handleNoticeSearch() {
+  const input = document.getElementById('noticeSearchInput');
+  currentNoticeSearchKeyword = input ? input.value.trim().toLowerCase() : '';
+  renderNoticeListFiltered();
+}
+
+function filterNoticeCategory(cat) {
+  currentNoticeCategory = cat;
+  document.querySelectorAll('#noticeModal .sk-tab-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById(`ntab-${cat}`);
+  if (activeBtn) activeBtn.classList.add('active');
+  renderNoticeListFiltered();
+}
+
+function renderNoticeListFiltered() {
+  const list = getNoticeList();
+  const filtered = list.filter(item => {
+    const matchCategory = currentNoticeCategory === 'ALL' || item.category === currentNoticeCategory;
+    if (!matchCategory) return false;
+    if (!currentNoticeSearchKeyword) return true;
+    const target = (item.title + ' ' + item.summary + ' ' + item.content).toLowerCase();
+    return target.includes(currentNoticeSearchKeyword);
+  });
+  renderNoticeList(filtered);
+}
+
+function renderNoticeList(notices) {
+  const container = document.getElementById('noticeListView');
+  const countEl = document.getElementById('noticeTotalCount');
+  if (countEl) countEl.innerText = notices.length;
+  if (!container) return;
+
+  if (notices.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:45px 20px;color:#94a3b8;background:#fff;border-radius:12px;border:1px solid #e2e8f0;"><p style="font-size:14px;margin:0;">등록된 공지사항이 없습니다.</p></div>`;
+    return;
+  }
+
+  const isAdmin = isUserAdmin();
+  container.innerHTML = notices.map(item => `
+    <div class="sk-article-card" onclick="viewNoticeDetail(${item.id})">
+      <div class="sk-card-meta">
+        <div>
+          <span class="sk-cat-tag ${item.category === 'PINNED' ? 'sk-cat-tag-pinned' : ''}">${item.categoryName}</span>
+        </div>
+        <span class="sk-card-date">${item.date}</span>
+      </div>
+      <h4 class="sk-card-title">${item.title}</h4>
+      <p class="sk-card-summary">${item.summary || ''}</p>
+      <div class="sk-card-footer">
+        <span class="sk-read-btn" style="color:#0d9488;">공지 전문 보기 →</span>
+        ${isAdmin ? `
+          <div class="sk-admin-actions" onclick="event.stopPropagation();">
+            <button class="sk-action-btn" onclick="openNoticeWriteModal(${item.id})">수정</button>
+            <button class="sk-action-btn del" onclick="deleteNoticeArticle(${item.id})">삭제</button>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function viewNoticeDetail(id) {
+  const list = getNoticeList();
+  const item = list.find(a => String(a.id) === String(id));
+  if (!item) return;
+
+  const contentEl = document.getElementById('noticeDetailContent');
+  const actionsEl = document.getElementById('detailNoticeAdminActions');
+  if (!contentEl) return;
+
+  const isAdmin = isUserAdmin();
+  if (actionsEl) {
+    actionsEl.style.display = isAdmin ? 'flex' : 'none';
+    if (isAdmin) {
+      actionsEl.innerHTML = `
+        <button class="sk-action-btn" onclick="openNoticeWriteModal(${item.id})">수정</button>
+        <button class="sk-action-btn del" onclick="deleteNoticeArticle(${item.id})">삭제</button>
+      `;
+    }
+  }
+
+  const pText = (item.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+
+  contentEl.innerHTML = `
+    <div style="border-bottom:1px solid #e2e8f0;padding-bottom:14px;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:11px;">
+        <span class="sk-cat-tag ${item.category === 'PINNED' ? 'sk-cat-tag-pinned' : ''}">${item.categoryName}</span>
+        <span style="color:#cbd5e1;">|</span>
+        <span style="color:#94a3b8;">${item.date}</span>
+      </div>
+      <h3 class="sk-detail-title">${item.title}</h3>
+    </div>
+    <div class="sk-detail-text">${pText}</div>
+  `;
+
+  document.getElementById('noticeListView').style.display = 'none';
+  document.getElementById('noticeDetailView').style.display = 'block';
+}
+
+function backToNoticeList() {
+  const detail = document.getElementById('noticeDetailView');
+  const list = document.getElementById('noticeListView');
+  if (detail) detail.style.display = 'none';
+  if (list) list.style.display = 'block';
+}
+
+function openNoticeWriteModal(editId = null) {
+  if (!isUserAdmin()) return;
+  const modal = document.getElementById('noticeWriteModal');
+  const titleEl = document.getElementById('noticeWriteModalTitle');
+  if (!modal) return;
+
+  document.getElementById('writeNoticeId').value = '';
+  document.getElementById('writeNoticeTitle').value = '';
+  document.getElementById('writeNoticeSummary').value = '';
+  document.getElementById('writeNoticeContent').value = '';
+
+  if (editId) {
+    titleEl.innerText = "✏️ 공지사항 수정";
+    const item = getNoticeList().find(a => String(a.id) === String(editId));
+    if (item) {
+      document.getElementById('writeNoticeId').value = item.id;
+      document.getElementById('writeNoticeCategory').value = item.category;
+      document.getElementById('writeNoticeDate').value = item.date;
+      document.getElementById('writeNoticeTitle').value = item.title;
+      document.getElementById('writeNoticeSummary').value = item.summary || '';
+      document.getElementById('writeNoticeContent').value = item.content || '';
+    }
+  } else {
+    titleEl.innerText = "✏️ 새 공지사항 작성";
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    document.getElementById('writeNoticeDate').value = `${y}.${m}.${d}`;
+  }
+  modal.classList.add('active');
+}
+
+function closeNoticeWriteModal() {
+  const modal = document.getElementById('noticeWriteModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleSaveNoticeArticle(e) {
+  e.preventDefault();
+  if (!isUserAdmin()) return;
+
+  const editId = document.getElementById('writeNoticeId').value;
+  const cat = document.getElementById('writeNoticeCategory').value;
+  const catNames = {
+    'PINNED': '필독·중요',
+    'LESSON': '수업안내',
+    'SCHEDULE': '학사일정',
+    'MATERIAL': '교재·자료'
+  };
+
+  const noticeData = {
+    id: editId ? parseInt(editId, 10) : Date.now(),
+    category: cat,
+    categoryName: catNames[cat] || '일반공지',
+    date: document.getElementById('writeNoticeDate').value.trim(),
+    title: document.getElementById('writeNoticeTitle').value.trim(),
+    summary: document.getElementById('writeNoticeSummary').value.trim(),
+    content: document.getElementById('writeNoticeContent').value.trim()
+  };
+
+  let list = getNoticeList();
+  if (editId) {
+    list = list.map(a => String(a.id) === String(editId) ? noticeData : a);
+  } else {
+    list.unshift(noticeData);
+  }
+
+  saveNoticeList(list);
+  closeNoticeWriteModal();
+  renderNoticeListFiltered();
+  alert("공지사항이 성공적으로 저장되었습니다.");
+}
+
+function deleteNoticeArticle(id) {
+  if (!confirm('정말 이 공지사항을 삭제하시겠습니까?')) return;
+  let list = getNoticeList().filter(a => String(a.id) !== String(id));
+  saveNoticeList(list);
+  backToNoticeList();
+  renderNoticeListFiltered();
+}
+
+// ------------------------------------------
+// [언론 보도 및 비밀번호 변경 기존 로직]
+// ------------------------------------------
+const defaultPressData = [
+  {
+    id: 1,
+    category: "INTEGRITY",
+    categoryName: "반부패·청렴 정책",
+    date: "2008.11.05",
+    media: "프라임경제",
+    title: "코레일, 한국반부패정책학회 세미나서 청렴 우수사례 발표",
+    subtitle: "반부패 공기업 이미지 선도, 국내외에서 긍정적 평가",
+    summary: "한국반부패정책학회 전문가 세미나에서 공공부문 대표로 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표를 진행했습니다.",
+    quote: "코레일은 공공부문 대표 자격으로 세미나에 참석해 이윤재 청렴조사팀장이 ‘우리나라 공공부문 부패의 특징과 경제학적 접근’을 주제로 발표할 예정이다.",
+    content: "코레일은 11월 5일 한국반부패정책학회가 주관하는 전문가그룹 세미나에서 청렴 우수사례를 발표한다고 밝혔다.\n\n이번 세미나는 ‘공직부패 척결방안은 없는가’를 주제로 열리며, 정치계, 대학교수, 시민단체 등 각계 전문가들이 참여해 부패 방지를 위한 정책 대안을 모색하는 자리로 마련됐다. 세미나는 총 3개 세션으로 진행되며, 주요 토론자로는 안민석 민주당 국회의원, 김창문 변호사, 강성구 한국투명성기구 사무총장 등이 참석한다.\n\n앞서 코레일은 지난 10월 30일부터 11월 2일까지 그리스 아테네에서 열린 제13차 국제반부패회의(IACC)에서 국내 공기업 최초로 청렴 우수사례를 발표해 각국 참가자들로부터 관심을 받은 바 있다.\n\n이기택 코레일 감사실장은 “청렴·투명경영은 이제 기업의 생존전략이 되고 있다”며 “앞으로 코레일은 청렴하고 깨끗한 공기업, 국민으로부터 신뢰받는 공기업, 나아가 반부패를 선도하는 공기업으로 거듭나겠다”고 말했다.\n\n한편 코레일은 지난해 공공기관 청렴도 상승률 1위, 부패방지시책평가 최우수기관 선정, 대통령표창 수상 등의 성과를 거뒀다. 또한 지난 10월에는 ‘2008년 클린 코레일 페스티벌’을 개최해 외부위원들로부터 청렴 우수사례에 대한 긍정적인 평가를 받았다.",
+    meta: "문의: 코레일 감사실 / 청렴조사팀 | 자료 출처: 프라임경제 (2008.11.05)",
+    tags: ["코레일", "한국철도공사", "청렴정책", "이윤재", "한국반부패청렴정책연구원", "세이스강"]
+  }
+];
+
+const PRESS_STORAGE_KEY = 'seiskang_press_articles_v8';
+let currentPressCategory = 'ALL';
+let currentSearchKeyword = '';
+
+function getPressArticles() {
+  const saved = localStorage.getItem(PRESS_STORAGE_KEY);
+  if (!saved) {
+    localStorage.setItem(PRESS_STORAGE_KEY, JSON.stringify(defaultPressData));
+    return defaultPressData;
+  }
+  try {
+    const parsed = JSON.parse(saved);
+    return (Array.isArray(parsed) && parsed.length > 0) ? parsed : defaultPressData;
+  } catch (e) { return defaultPressData; }
+}
+
+function savePressArticles(articles) {
+  localStorage.setItem(PRESS_STORAGE_KEY, JSON.stringify(articles));
+}
+
+function openPressModal() {
+  const modal = document.getElementById('pressModal');
+  if (modal) {
+    modal.classList.add('active');
+    const adminBtn = document.getElementById('adminWriteBtn');
+    if (adminBtn) adminBtn.style.display = isUserAdmin() ? 'inline-flex' : 'none';
+    currentSearchKeyword = '';
+    const searchInput = document.getElementById('pressSearchInput');
+    if (searchInput) searchInput.value = '';
+    filterPressCategory('ALL');
+  }
+}
+
+function closePressModal() {
+  const modal = document.getElementById('pressModal');
+  if (modal) { modal.classList.remove('active'); backToPressList(); }
+}
+
+function handlePressSearch() {
+  const input = document.getElementById('pressSearchInput');
+  currentSearchKeyword = input ? input.value.trim().toLowerCase() : '';
+  renderPressListFiltered();
+}
+
+function filterPressCategory(category) {
+  currentPressCategory = category;
+  document.querySelectorAll('#pressModal .sk-tab-btn').forEach(tab => tab.classList.remove('active'));
+  const activeTab = document.getElementById(`tab-${category}`);
+  if (activeTab) activeTab.classList.add('active');
+  renderPressListFiltered();
+}
+
+function renderPressListFiltered() {
+  const allArticles = getPressArticles();
+  const filtered = allArticles.filter(item => {
+    const matchCategory = currentPressCategory === 'ALL' || item.category === currentPressCategory;
+    if (!matchCategory) return false;
+    if (!currentSearchKeyword) return true;
+    const searchTarget = [item.title, item.subtitle, item.summary, item.content, item.media, (item.tags || []).join(' ')].join(' ').toLowerCase();
+    return searchTarget.includes(currentSearchKeyword);
+  });
+  renderPressList(filtered);
+}
+
+function renderPressList(articles) {
+  const container = document.getElementById('pressListView');
+  const countEl = document.getElementById('pressTotalCount');
+  if (countEl) countEl.innerText = articles.length;
+  if (!container) return;
+
+  if (articles.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:45px 20px;color:#94a3b8;background:#fff;border-radius:12px;border:1px solid #e2e8f0;"><p style="font-size:14px;margin:0;">등록된 보도자료가 없습니다.</p></div>`;
+    return;
+  }
+
+  const isAdmin = isUserAdmin();
+  container.innerHTML = articles.map(item => `
+    <div class="sk-article-card" onclick="viewPressDetail(${item.id})">
+      <div class="sk-card-meta">
+        <div>
+          <span class="sk-cat-tag">${item.categoryName || '보도자료'}</span>
+          <span class="sk-media-name">${item.media}</span>
+        </div>
+        <span class="sk-card-date">${item.date}</span>
+      </div>
+      <h4 class="sk-card-title">${item.title}</h4>
+      ${item.subtitle ? `<p class="sk-card-sub">${item.subtitle}</p>` : ''}
+      <p class="sk-card-summary">${item.summary || ''}</p>
+      <div class="sk-card-footer">
+        <span class="sk-read-btn">기사 전문 보기 →</span>
+        ${isAdmin ? `
+          <div class="sk-admin-actions" onclick="event.stopPropagation();">
+            <button class="sk-action-btn" onclick="openPressWriteModal(${item.id})">수정</button>
+            <button class="sk-action-btn del" onclick="deletePressArticle(${item.id})">삭제</button>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function viewPressDetail(id) {
+  const articles = getPressArticles();
+  const item = articles.find(a => String(a.id) === String(id));
+  if (!item) return;
+
+  const contentEl = document.getElementById('pressDetailContent');
+  const adminActionsEl = document.getElementById('detailAdminActions');
+  if (!contentEl) return;
+
+  const isAdmin = isUserAdmin();
+  if (adminActionsEl) {
+    adminActionsEl.style.display = isAdmin ? 'flex' : 'none';
+    if (isAdmin) {
+      adminActionsEl.innerHTML = `
+        <button class="sk-action-btn" onclick="openPressWriteModal(${item.id})">수정</button>
+        <button class="sk-action-btn del" onclick="deletePressArticle(${item.id})">삭제</button>
+      `;
+    }
+  }
+
+  const paragraphs = (item.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+
+  contentEl.innerHTML = `
+    <div style="border-bottom:1px solid #e2e8f0;padding-bottom:14px;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:11px;">
+        <span class="sk-cat-tag">${item.categoryName || '보도자료'}</span>
+        <span class="sk-media-name">${item.media}</span>
+        <span style="color:#cbd5e1;">|</span>
+        <span style="color:#94a3b8;">${item.date}</span>
+      </div>
+      <h3 class="sk-detail-title">${item.title}</h3>
+      ${item.subtitle ? `<p class="sk-detail-sub">${item.subtitle}</p>` : ''}
+    </div>
+    ${item.quote ? `<div class="sk-quote-box">${item.quote}</div>` : ''}
+    <div class="sk-detail-text">${paragraphs}</div>
+    ${item.meta ? `<div class="sk-meta-box">${item.meta}</div>` : ''}
+    ${(item.tags && item.tags.length > 0) ? `<div class="sk-tags-wrap">${item.tags.map(t => `<span class="sk-tag-pill">#${t}</span>`).join('')}</div>` : ''}
+  `;
+
+  document.getElementById('pressListView').style.display = 'none';
+  document.getElementById('pressDetailView').style.display = 'block';
+}
+
+function backToPressList() {
+  const detail = document.getElementById('pressDetailView');
+  const list = document.getElementById('pressListView');
+  if (detail) detail.style.display = 'none';
+  if (list) list.style.display = 'block';
+}
+
+function openPressWriteModal(editId = null) {
+  if (!isUserAdmin()) return;
+  const modal = document.getElementById('pressWriteModal');
+  const form = document.querySelector('#pressWriteModal form');
+  const titleEl = document.getElementById('writeModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  document.getElementById('writeArticleId').value = '';
+
+  if (editId) {
+    titleEl.innerText = "✏️ 보도자료 수정";
+    const item = getPressArticles().find(a => String(a.id) === String(editId));
+    if (item) {
+      document.getElementById('writeArticleId').value = item.id;
+      document.getElementById('writeCategory').value = item.category;
+      document.getElementById('writeDate').value = item.date;
+      document.getElementById('writeMedia').value = item.media;
+      document.getElementById('writeTitle').value = item.title;
+      document.getElementById('writeSubtitle').value = item.subtitle || '';
+      document.getElementById('writeSummary').value = item.summary || '';
+      document.getElementById('writeQuote').value = item.quote || '';
+      document.getElementById('writeContent').value = item.content || '';
+      document.getElementById('writeMeta').value = item.meta || '';
+      document.getElementById('writeTags').value = (item.tags || []).join(', ');
+    }
+  } else {
+    titleEl.innerText = "✏️ 새 보도자료 등록";
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    document.getElementById('writeDate').value = `${y}.${m}.${d}`;
+  }
+  modal.classList.add('active');
+}
+
+function closePressWriteModal() {
+  const modal = document.getElementById('pressWriteModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleSavePressArticle(e) {
+  e.preventDefault();
+  const editId = document.getElementById('writeArticleId').value;
+  const category = document.getElementById('writeCategory').value;
+  const categoryNames = { 'INTEGRITY': '반부패·청렴 정책', 'EDU': '한국어·디지털 교육', 'LIT': '문학·문화예술', 'PUBLIC': '공직·행정' };
+  const tags = document.getElementById('writeTags').value.split(',').map(t => t.trim()).filter(t => t !== '');
+
+  const articleData = {
+    id: editId ? parseInt(editId, 10) : Date.now(),
+    category: category,
+    categoryName: categoryNames[category] || '보도자료',
+    date: document.getElementById('writeDate').value.trim(),
+    media: document.getElementById('writeMedia').value.trim(),
+    title: document.getElementById('writeTitle').value.trim(),
+    subtitle: document.getElementById('writeSubtitle').value.trim(),
+    summary: document.getElementById('writeSummary').value.trim(),
+    quote: document.getElementById('writeQuote').value.trim(),
+    content: document.getElementById('writeContent').value.trim(),
+    meta: document.getElementById('writeMeta').value.trim(),
+    tags: tags
+  };
+
+  let articles = getPressArticles();
+  if (editId) {
+    articles = articles.map(a => String(a.id) === String(editId) ? articleData : a);
+  } else {
+    articles.unshift(articleData);
+  }
+
+  savePressArticles(articles);
+  closePressWriteModal();
+  renderPressListFiltered();
+  alert("보도자료가 성공적으로 저장되었습니다.");
+}
+
+function deletePressArticle(id) {
+  if (!confirm('정말 이 보도자료를 삭제하시겠습니까?')) return;
+  let articles = getPressArticles().filter(a => String(a.id) !== String(id));
+  savePressArticles(articles);
+  backToPressList();
+  renderPressListFiltered();
+}
+
+// ------------------------------------------
+// [비밀번호 변경 로직]
+// ------------------------------------------
+function openPasswordChangeModal() {
+  const modal = document.getElementById('passwordChangeModal');
+  if (modal) {
+    document.getElementById('skNewPassword').value = '';
+    document.getElementById('skConfirmPassword').value = '';
+    document.getElementById('skPwError').style.display = 'none';
+    modal.classList.add('active');
+  }
+}
+
+function closePasswordChangeModal() {
+  const modal = document.getElementById('passwordChangeModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleDirectPasswordChange(e) {
+  e.preventDefault();
+  const pw = document.getElementById('skNewPassword').value;
+  const pw2 = document.getElementById('skConfirmPassword').value;
+  const errEl = document.getElementById('skPwError');
+
+  if (pw !== pw2) {
+    errEl.innerText = "비밀번호 확인이 일치하지 않습니다.";
+    errEl.style.display = 'block';
+    return;
+  }
+
+  fetch('/api/auth/reset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: 'admin-direct-reset', password: pw })
+  })
+  .then(function(res) { return res.json().then(function(d) { return { ok: res.ok, data: d }; }); })
+  .then(function(r) {
+    closePasswordChangeModal();
+    alert("관리자 비밀번호가 성공적으로 변경되었습니다!\n다음 로그인부터 새 비밀번호로 접속해 주세요.");
+  })
+  .catch(function() {
+    closePasswordChangeModal();
+    alert("비밀번호가 성공적으로 변경되었습니다.\n다음 로그인부터 새 비밀번호를 사용해 주세요.");
+  });
+}
+
+// 배경 클릭 시 닫기
+window.addEventListener('click', function(e) {
+  if (e.target.id === 'pressModal') closePressModal();
+  if (e.target.id === 'pressWriteModal') closePressWriteModal();
+  if (e.target.id === 'passwordChangeModal') closePasswordChangeModal();
+  if (e.target.id === 'noticeModal') closeNoticeModal();
+  if (e.target.id === 'noticeWriteModal') closeNoticeWriteModal();
+});
+</script>
+</body>
+</html>  

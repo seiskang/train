@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>세이스강 안심 건강 & 복약 알리미</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: #0b0f19; color: #FFFFFF; font-family: 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; padding: 20px; font-size: 24px; line-height: 1.5; }
+  .container { max-width: 650px; margin: 0 auto; }
+  #login-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0b0f19; z-index: 10000; padding: 24px; overflow-y: auto; }
+  .login-card { background: linear-gradient(135deg, #1e293b, #0f172a); border: 4px solid #38bdf8; border-radius: 28px; padding: 30px 24px; margin-top: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+  .login-title { color: #facc15; font-size: 34px; font-weight: 900; margin-bottom: 20px; }
+  .login-desc { color: #e2e8f0; font-size: 22px; font-weight: 600; margin-bottom: 30px; }
+  .input-label { display: block; text-align: left; font-size: 22px; font-weight: bold; color: #38bdf8; margin-bottom: 8px; }
+  .login-input { width: 100%; height: 75px; font-size: 32px; font-weight: bold; text-align: center; border-radius: 16px; border: 3px solid #64748b; background-color: #020617; color: #f8fafc; margin-bottom: 24px; outline: none; }
+  .login-input:focus { border-color: #facc15; background-color: #0f172a; }
+  .login-btn { width: 100%; height: 85px; background: linear-gradient(135deg, #facc15, #eab308); color: #000; font-size: 32px; font-weight: 900; border: none; border-radius: 20px; cursor: pointer; margin-top: 10px; box-shadow: 0 6px 0 #a16207; }
+  .login-error { color: #ff4d4f; font-size: 22px; font-weight: bold; margin-top: 16px; display: none; }
+  .profile-header { background: linear-gradient(135deg, #1e1b4b, #172554); border: 4px solid #38bdf8; border-radius: 28px; padding: 22px; display: flex; align-items: center; gap: 20px; margin-bottom: 25px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
+  .profile-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid #facc15; object-fit: cover; background-color: #334155; flex-shrink: 0; }
+  .profile-info { flex-grow: 1; }
+  .profile-title { color: #facc15; font-size: 30px; font-weight: 900; margin-bottom: 6px; }
+  .profile-sub { color: #93c5fd; font-size: 20px; font-weight: bold; line-height: 1.4; }
+  .clock-bar { background-color: #111827; border: 3px solid #eab308; border-radius: 18px; padding: 12px; text-align: center; font-size: 26px; font-weight: 900; color: #fef08a; margin-bottom: 25px; }
+  .routine-card { border-radius: 24px; padding: 22px; margin-bottom: 25px; border: 5px solid; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.5); background-color: #131c31; }
+  .routine-card.done { border-color: #22c55e !important; background-color: #052e16 !important; }
+  .theme-bp { border-color: #f43f5e; background: linear-gradient(180deg, #1f121d 0%, #131c31 100%); }
+  .theme-weight { border-color: #06b6d4; background: linear-gradient(180deg, #0e1f2b 0%, #131c31 100%); }
+  .theme-med { border-color: #eab308; background: linear-gradient(180deg, #231f10 0%, #131c31 100%); }
+  .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .time-tag { font-size: 26px; font-weight: 900; padding: 6px 14px; border-radius: 12px; color: #000; }
+  .time-tag.bp { background-color: #fda4af; }
+  .time-tag.weight { background-color: #a5f3fc; }
+  .time-tag.med { background-color: #fde047; }
+  .routine-card.done .time-tag { background-color: #86efac; }
+  .icon-img { width: 65px; height: 65px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); }
+  .card-name { font-size: 32px; font-weight: 900; margin-bottom: 8px; color: #ffffff; }
+  .card-desc { font-size: 24px; font-weight: bold; color: #cbd5e1; margin-bottom: 18px; word-break: keep-all; }
+  .btn-check { display: block; width: 100%; min-height: 85px; font-size: 30px; font-weight: 900; border: none; border-radius: 18px; cursor: pointer; color: #000; margin-top: 8px; }
+  .btn-check.bp { background-color: #f43f5e; color: #fff; }
+  .btn-check.weight { background-color: #06b6d4; color: #000; }
+  .btn-check.med { background-color: #eab308; color: #000; }
+  .routine-card.done .btn-check { background-color: #22c55e; color: #000; }
+  .btn-voice { width: 100%; background-color: #1e293b; border: 2px solid #94a3b8; color: #f1f5f9; font-size: 22px; font-weight: bold; padding: 12px; border-radius: 14px; margin-top: 12px; cursor: pointer; }
+  .status-label { font-size: 24px; font-weight: 900; color: #facc15; margin-top: 14px; text-align: center; }
+  .routine-card.done .status-label { color: #4ade80; }
+  .bottom-bar { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+  .btn-test { background-color: #0284c7; color: #fff; font-size: 24px; font-weight: 900; padding: 16px; border-radius: 16px; border: none; cursor: pointer; }
+  .btn-logout { background-color: #334155; color: #cbd5e1; font-size: 20px; font-weight: bold; padding: 12px; border-radius: 14px; border: none; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="container">
+    <div class="login-card">
+      <div class="login-title">🔐 세이스강 건강 알리미</div>
+      <div class="login-desc">회원 전용 서비스입니다.<br>아이디와 비밀번호를 입력해 주세요.</div>
+      <label class="input-label" for="login-id">아이디</label>
+      <input type="text" id="login-id" class="login-input" placeholder="아이디 입력" autocomplete="off">
+      <label class="input-label" for="login-pw">비밀번호</label>
+      <input type="password" id="login-pw" class="login-input" placeholder="비밀번호 입력">
+      <button class="login-btn" onclick="checkLogin()">로그인하기</button>
+      <div class="login-error" id="login-err-msg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+    </div>
+  </div>
+</div>
+<div class="container" id="main-content">
+  <div class="profile-header">
+    <img src="세이스강.jpg" alt="세이스강 이윤재 원장" class="profile-img" onerror="this.src='../images/세이스강.jpg'; this.onerror=function(){this.style.display='none';};">
+    <div class="profile-info">
+      <div class="profile-title">세이스강 건강 알리미</div>
+      <div class="profile-sub">이윤재 원장과 함께하는<br>매일 5대 안심 루틴</div>
+    </div>
+  </div>
+  <div class="clock-bar" id="live-clock">시간 동기화 중...</div>
+  <div class="routine-card theme-bp" id="card-bp_morning">
+    <div class="card-top">
+      <span class="time-tag bp">오전 07:00</span>
+      <svg class="icon-img" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" fill="#FFE4E6"/><path d="M18 34L26 34L30 22L36 44L40 30L44 34L50 34" stroke="#E11D48" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 20C22 17 26 15 32 15C38 15 42 17 42 20" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+    <div class="card-name">🩺 아침 혈압 측정</div>
+    <div class="card-desc">기상 후 편안한 자세로 혈압을 측정하세요.</div>
+    <button class="btn-check bp" id="btn-bp_morning" onclick="toggleRoutine('bp_morning', '아침 혈압 측정')">아침 혈압 측정 완료하기</button>
+    <button class="btn-voice" onclick="speakText('오전 7시 아침 혈압 측정 시간입니다. 편안한 상태에서 혈압을 측정해 주세요.')">🔊 음성 안내 듣기</button>
+    <div class="status-label" id="status-bp_morning">아직 측정하지 않음</div>
+  </div>
+  <div class="routine-card theme-weight" id="card-weight">
+    <div class="card-top">
+      <span class="time-tag weight">오전 07:30</span>
+      <svg class="icon-img" viewBox="0 0 64 64" fill="none"><rect x="8" y="10" width="48" height="46" rx="12" fill="#CFFAFE" stroke="#0891B2" stroke-width="4"/><circle cx="32" cy="24" r="9" fill="#FFFFFF" stroke="#0891B2" stroke-width="3"/><line x1="32" y1="24" x2="35" y2="19" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/><rect x="18" y="42" width="28" height="4" rx="2" fill="#0891B2"/></svg>
+    </div>
+    <div class="card-name">⚖️ 아침 체중 측정</div>
+    <div class="card-desc">아침 공복 상태에서 체중을 측정하세요.</div>
+    <button class="btn-check weight" id="btn-weight" onclick="toggleRoutine('weight', '체중 측정')">체중 측정 완료하기</button>
+    <button class="btn-voice" onclick="speakText('오전 7시 30분 체중 측정 시간입니다. 체중계에 올라가 몸무게를 측정해 주세요.')">🔊 음성 안내 듣기</button>
+    <div class="status-label" id="status-weight">아직 측정하지 않음</div>
+  </div>
+  <div class="routine-card theme-med" id="card-med_morning">
+    <div class="card-top">
+      <span class="time-tag med">오전 08:00</span>
+      <svg class="icon-img" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" fill="#FEF08A"/><rect x="20" y="24" width="24" height="16" rx="8" transform="rotate(-35 32 32)" fill="#3B82F6"/><path d="M26 21L38 29" stroke="#FFFFFF" stroke-width="3"/><circle cx="44" cy="42" r="7" fill="#EF4444"/><path d="M41 42H47M44 39V45" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="card-name">💊 아침 약 복용</div>
+    <div class="card-desc">고혈압약, 고지혈증약, 협심증약, 뇌경색약</div>
+    <button class="btn-check med" id="btn-med_morning" onclick="toggleRoutine('med_morning', '아침 약 복용')">아침 약 복용 완료하기</button>
+    <button class="btn-voice" onclick="speakText('오전 8시 아침 약 복용 시간입니다. 고혈압, 고지혈증, 협심증, 뇌경색 약을 챙겨 드세요.')">🔊 음성 안내 듣기</button>
+    <div class="status-label" id="status-med_morning">아직 복용하지 않음</div>
+  </div>
+  <div class="routine-card theme-med" id="card-med_evening">
+    <div class="card-top">
+      <span class="time-tag med">오후 07:30</span>
+      <svg class="icon-img" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" fill="#FEF08A"/><rect x="22" y="18" width="20" height="32" rx="6" fill="#F59E0B" stroke="#B45309" stroke-width="2"/><rect x="26" y="12" width="12" height="6" rx="2" fill="#D97706"/><path d="M28 34H36M32 30V38" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+    <div class="card-name">💊 저녁 약 복용</div>
+    <div class="card-desc">저녁 식후 지정된 복용 약을 챙겨 드세요.</div>
+    <button class="btn-check med" id="btn-med_evening" onclick="toggleRoutine('med_evening', '저녁 약 복용')">저녁 약 복용 완료하기</button>
+    <button class="btn-voice" onclick="speakText('오후 7시 30분 저녁 약 복용 시간입니다. 잊지 마시고 약을 챙겨 드세요.')">🔊 음성 안내 듣기</button>
+    <div class="status-label" id="status-med_evening">아직 복용하지 않음</div>
+  </div>
+  <div class="routine-card theme-bp" id="card-bp_evening">
+    <div class="card-top">
+      <span class="time-tag bp">오후 10:00</span>
+      <svg class="icon-img" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" fill="#FFE4E6"/><path d="M32 18C24 18 18 24 18 32C18 42 32 50 32 50C32 50 46 42 46 32C46 24 40 18 32 18Z" fill="#F43F5E"/><path d="M26 32L30 36L38 28" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="card-name">🩺 저녁 혈압 측정</div>
+    <div class="card-desc">취침 전 편안한 자세로 혈압을 측정하세요.</div>
+    <button class="btn-check bp" id="btn-bp_evening" onclick="toggleRoutine('bp_evening', '저녁 혈압 측정')">저녁 혈압 측정 완료하기</button>
+    <button class="btn-voice" onclick="speakText('오후 10시 취침 전 혈압 측정 시간입니다. 편안한 상태에서 혈압을 측정해 주세요.')">🔊 음성 안내 듣기</button>
+    <div class="status-label" id="status-bp_evening">아직 측정하지 않음</div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn-test" onclick="enableAudioAndTest()">🔔 알람 소리 및 음성 테스트</button>
+    <button class="btn-logout" onclick="logout()">로그아웃 (아이디: m6411)</button>
+  </div>
+</div>
+<script>
+const VALID_ID = "m6411";
+const VALID_PW = "1968";
+const ROUTINES = [
+  { id: 'bp_morning', hour: 7, minute: 0, title: '아침 혈압 측정', msg: '오전 7시 아침 혈압 측정 시간입니다. 혈압을 측정해 주세요.' },
+  { id: 'weight', hour: 7, minute: 30, title: '체중 측정', msg: '오전 7시 30분 체중 측정 시간입니다. 체중을 측정해 주세요.' },
+  { id: 'med_morning', hour: 8, minute: 0, title: '아침 약 복용', msg: '오전 8시 아침 약 복용 시간입니다. 고혈압, 고지혈증, 협심증, 뇌경색 약을 챙겨 드세요.' },
+  { id: 'med_evening', hour: 19, minute: 30, title: '저녁 약 복용', msg: '오후 7시 30분 저녁 약 복용 시간입니다. 잊지 마시고 약을 복용해 주세요.' },
+  { id: 'bp_evening', hour: 22, minute: 0, title: '저녁 혈압 측정', msg: '오후 10시 취침 전 혈압 측정 시간입니다. 편안한 상태에서 혈압을 측정해 주세요.' }
+];
+let lastAlarmMinute = -1;
+let audioCtx = null;
+function initAuth() {
+  const isAuth = localStorage.getItem('seiskang_health_auth');
+  if (isAuth === 'true') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+  } else {
+    document.getElementById('login-screen').style.display = 'block';
+    document.getElementById('main-content').style.display = 'none';
+  }
+}
+function checkLogin() {
+  const id = document.getElementById('login-id').value.trim();
+  const pw = document.getElementById('login-pw').value.trim();
+  const errMsg = document.getElementById('login-err-msg');
+  if (id === VALID_ID && pw === VALID_PW) {
+    localStorage.setItem('seiskang_health_auth', 'true');
+    errMsg.style.display = 'none';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    speakText("환영합니다, 세이스강 회원님. 건강 알리미를 시작합니다.");
+  } else {
+    errMsg.style.display = 'block';
+    speakText("아이디 또는 비밀번호가 올바르지 않습니다.");
+  }
+}
+function logout() {
+  if (confirm("로그아웃 하시겠습니까?")) {
+    localStorage.removeItem('seiskang_health_auth');
+    location.reload();
+  }
+}
+function getTodayString() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }
+}
+function playBeep() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 1.2);
+  } catch(e) {}
+}
+function enableAudioAndTest() {
+  playBeep();
+  speakText("알람 소리와 음성 안내가 정상적으로 작동합니다.");
+}
+function updateClock() {
+  const now = new Date();
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const month = now.getMonth() + 1;
+  const date = now.getDate();
+  const day = days[now.getDay()];
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const ampm = hours >= 12 ? '오후' : '오전';
+  const displayHours = hours % 12 === 0 ? 12 : hours % 12;
+  document.getElementById('live-clock').innerText = `${month}월 ${date}일 (${day}) ${ampm} ${displayHours}시 ${String(minutes).padStart(2, '0')}분 ${String(seconds).padStart(2, '0')}초`;
+  const currentTotalMinute = hours * 60 + minutes;
+  if (currentTotalMinute !== lastAlarmMinute) {
+    const today = getTodayString();
+    ROUTINES.forEach(item => {
+      if (hours === item.hour && minutes === item.minute) {
+        if (!localStorage.getItem(`${today}_${item.id}`)) {
+          lastAlarmMinute = currentTotalMinute;
+          triggerAlarm(item.title, item.msg);
+        }
+      }
+    });
+  }
+}
+function triggerAlarm(title, message) {
+  playBeep();
+  if (navigator.vibrate) navigator.vibrate([500, 300, 500, 300, 500]);
+  speakText(message);
+  alert(`[알림 - ${title}]\n\n${message}`);
+}
+function toggleRoutine(id, name) {
+  const today = getTodayString();
+  const key = `${today}_${id}`;
+  const isDone = localStorage.getItem(key);
+  const now = new Date();
+  const timeString = `${now.getHours()}시 ${String(now.getMinutes()).padStart(2, '0')}분`;
+  if (isDone) {
+    if (confirm(`${name} 완료 기록을 취소하시겠습니까?`)) {
+      localStorage.removeItem(key);
+      speakText(`${name} 완료 기록이 취소되었습니다.`);
+    }
+  } else {
+    localStorage.setItem(key, timeString);
+    speakText(`${name} 완료되었습니다. 수고하셨습니다.`);
+    if (navigator.vibrate) navigator.vibrate(200);
+  }
+  renderState();
+}
+function renderState() {
+  const today = getTodayString();
+  ROUTINES.forEach(item => {
+    const isDone = localStorage.getItem(`${today}_${item.id}`);
+    const card = document.getElementById(`card-${item.id}`);
+    const btn = document.getElementById(`btn-${item.id}`);
+    const status = document.getElementById(`status-${item.id}`);
+    if (isDone) {
+      card.classList.add('done');
+      btn.innerText = `✅ ${item.title} 완료됨`;
+      status.innerText = `오늘 ${isDone} 완료`;
+    } else {
+      card.classList.remove('done');
+      btn.innerText = `${item.title} 완료하기`;
+      status.innerText = '아직 완료되지 않음';
+    }
+  });
+}
+initAuth();
+renderState();
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+</body>
+</html>
