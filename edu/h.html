@@ -1,50 +1,301 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>세이스강 안심 건강 &amp; 복약 알리미</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세이스강 안심 건강 & 복약 알리미</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background-color: #0b0f19; color: #FFFFFF; font-family: 'Pretendard', 'Malgun Gothic', sans-serif; padding: 20px; font-size: 24px; line-height: 1.5; }
-  .container { max-width: 650px; margin: 0 auto; }
-  .profile-header { background: linear-gradient(135deg, #1e1b4b, #172554); border: 4px solid #38bdf8; border-radius: 28px; padding: 22px; display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
-  .routine-card { border-radius: 24px; padding: 22px; margin-bottom: 25px; border: 5px solid; background-color: #131c31; }
-  .btn-check { width: 100%; min-height: 85px; font-size: 30px; font-weight: 900; border-radius: 18px; cursor: pointer; margin-top: 8px; }
-  .input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  input[type="number"] { width: 100px; height: 50px; font-size: 24px; text-align: center; border-radius: 10px; border: none; }
-  .med-toggle { display: flex; gap: 20px; }
-  .btn-med { flex: 1; height: 60px; font-size: 24px; border-radius: 12px; border: 2px solid #38bdf8; background: transparent; color: white; cursor: pointer; }
-  @media print { body { background: white; color: black; padding: 0; } .no-print { display: none; } .print-only { display: block; } .a4-page { width: 210mm; height: 297mm; padding: 20mm; margin: 0 auto; border: 1px solid #ccc; } }
-  .print-only { display: none; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0b0f19; color: #fff; font-family: sans-serif; padding: 15px; font-size: 22px; line-height: 1.5; }
+.container { max-width: 600px; margin: 0 auto; }
+#login-screen { display: none; position: fixed; inset: 0; background: #0b0f19; z-index: 9999; padding: 20px; }
+.login-card { background: #1e293b; border: 4px solid #38bdf8; border-radius: 24px; padding: 30px 20px; margin-top: 40px; text-align: center; }
+.login-input { width: 100%; height: 70px; font-size: 30px; font-weight: bold; text-align: center; border-radius: 14px; border: 3px solid #64748b; background: #020617; color: #fff; margin: 10px 0 20px; }
+.btn-main { width: 100%; min-height: 80px; font-size: 28px; font-weight: 900; border: none; border-radius: 16px; cursor: pointer; }
+.header { background: #172554; border: 3px solid #38bdf8; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.header img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #facc15; object-fit: cover; }
+.clock { background: #111827; border: 2px solid #eab308; border-radius: 14px; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; color: #fef08a; margin-bottom: 20px; }
+.card { border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 4px solid; background: #131c31; }
+.card.done { border-color: #22c55e !important; background: #052e16 !important; }
+.theme-bp { border-color: #f43f5e; }
+.theme-wt { border-color: #06b6d4; }
+.theme-med { border-color: #eab308; }
+.tag { display: inline-block; font-size: 22px; font-weight: 900; padding: 4px 12px; border-radius: 10px; color: #000; margin-bottom: 8px; }
+.tag.bp { background: #fda4af; }
+.tag.wt { background: #a5f3fc; }
+.tag.med { background: #fde047; }
+.card-title { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+.card-desc { font-size: 20px; color: #cbd5e1; margin-bottom: 12px; }
+.inputs { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
+.in-num { width: 120px; height: 65px; font-size: 32px; font-weight: 900; text-align: center; border-radius: 12px; border: 3px solid #38bdf8; background: #020617; color: #facc15; }
+.ox-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.btn-ox { height: 75px; font-size: 26px; font-weight: 900; border-radius: 14px; border: 2px solid #64748b; background: #1e293b; color: #fff; cursor: pointer; }
+.btn-ox.sel-o { background: #22c55e; color: #000; }
+.btn-ox.sel-x { background: #ef4444; color: #fff; }
+.btn-save { background: #facc15; color: #000; }
+.btn-voice { width: 100%; background: #1e293b; border: 2px solid #94a3b8; color: #fff; font-size: 20px; padding: 10px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
+.status { font-size: 22px; font-weight: bold; color: #facc15; text-align: center; margin-top: 10px; }
+.card.done .status { color: #4ade80; }
+.btn-print { background: #6366f1; color: #fff; margin-top: 20px; }
+#print-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; padding: 20px; }
+.modal-content { background: #0f172a; border: 4px solid #818cf8; border-radius: 20px; padding: 20px; max-width: 500px; margin: 40px auto; text-align: center; }
+.p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+.btn-p { padding: 12px; font-size: 20px; font-weight: bold; border-radius: 10px; border: 2px solid #64748b; background: #1e293b; color: #fff; cursor: pointer; }
+.btn-p.act { border-color: #facc15; color: #facc15; }
+#print-area { display: none; }
+@media print {
+@page { size: A4 portrait; margin: 12mm 10mm; }
+body * { visibility: hidden; }
+#print-area, #print-area * { visibility: visible; }
+#print-area { display: block !important; position: absolute; inset: 0; color: #000; background: #fff; font-size: 10pt; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #444; padding: 5px 3px; text-align: center; font-size: 9.5pt; }
+th { background: #eee; }
+}
 </style>
 </head>
 <body>
-<div class="container no-print" id="main-content">
-  <div class="profile-header">
-    <div class="profile-info"><div class="profile-title">세이스강 건강 알리미</div></div>
+<div id="login-screen">
+  <div class="login-card">
+    <h2 style="color:#facc15; font-size:32px; margin-bottom:15px;">세이스강 건강 알리미</h2>
+    <input type="text" id="l-id" class="login-input" placeholder="아이디(m6411)">
+    <input type="password" id="l-pw" class="login-input" placeholder="비밀번호(1968)">
+    <button class="btn-main" style="background:#facc15; color:#000;" onclick="doLogin()">로그인하기</button>
   </div>
-  <div class="routine-card" style="border-color: #38bdf8;">
-    <div>아침 혈압 (mmHg)</div>
-    <div class="input-group">
-      <input type="number" placeholder="수축기"> / <input type="number" placeholder="이완기">
-    </div>
-    <div style="margin-top: 15px;">오늘의 체중 (kg)</div>
-    <input type="number" step="0.1" placeholder="00.0">
-    <div style="margin-top: 15px;">복약 여부</div>
-    <div class="med-toggle">
-      <button class="btn-med">O (복용)</button>
-      <button class="btn-med">X (미복용)</button>
-    </div>
-  </div>
-  <button class="btn-check" style="background-color: #0284c7; color: white;" onclick="window.print()">📄 병원 제출용 A4 출력하기</button>
 </div>
-<div class="print-only a4-page">
-  <h1 style="text-align: center; margin-bottom: 30px;">주간 건강 및 복약 기록지</h1>
-  <table style="width: 100%; border-collapse: collapse; margin-top: 20px;" border="1">
-    <tr><th>날짜</th><th>아침 혈압</th><th>체중</th><th>복약 여부</th><th>저녁 혈압</th></tr>
-    <tr><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<div class="container" id="main-content">
+  <div class="header">
+    <img src="세이스강.jpg" onerror="this.src='../images/세이스강.jpg'; this.onerror=function(){this.style.display='none'};">
+    <div><div style="font-size:28px; font-weight:900; color:#facc15;">세이스강 건강 알리미</div><div style="font-size:18px; color:#93c5fd;">이윤재 원장과 함께하는 5대 루틴</div></div>
+  </div>
+  <div class="clock" id="live-clock">시계</div>
+  
+  <div class="card theme-bp" id="c-bpm">
+    <span class="tag bp">오전 07:00</span>
+    <div class="card-title">🩺 아침 혈압 측정</div>
+    <div class="card-desc">측정한 혈압 수치를 입력하세요.</div>
+    <div class="inputs">
+      <input type="number" id="in-bpm-s" class="in-num" placeholder="최고"> /
+      <input type="number" id="in-bpm-d" class="in-num" placeholder="최저"> mmHg
+    </div>
+    <button class="btn-main btn-save" onclick="saveBP('bpm')">아침 혈압 저장하기</button>
+    <button class="btn-voice" onclick="speak('오전 7시 아침 혈압 측정 시간입니다. 최고와 최저 혈압을 입력하고 저장하세요.')">🔊 음성 듣기</button>
+    <div class="status" id="s-bpm">아직 측정하지 않음</div>
+  </div>
+
+  <div class="card theme-wt" id="c-wt">
+    <span class="tag wt">오전 07:30</span>
+    <div class="card-title">⚖️ 아침 체중 측정</div>
+    <div class="card-desc">측정한 체중을 입력하세요.</div>
+    <div class="inputs"><input type="number" step="0.1" id="in-wt" class="in-num" style="width:160px;" placeholder="체중"> kg</div>
+    <button class="btn-main btn-save" onclick="saveWT()">체중 저장하기</button>
+    <button class="btn-voice" onclick="speak('오전 7시 30분 체중 측정 시간입니다. 몸무게를 입력하고 저장하세요.')">🔊 음성 듣기</button>
+    <div class="status" id="s-wt">아직 측정하지 않음</div>
+  </div>
+
+  <div class="card theme-med" id="c-medm">
+    <span class="tag med">오전 08:00</span>
+    <div class="card-title">💊 아침 약 복용 (O, X)</div>
+    <div class="card-desc">고혈압, 고지혈증, 협심증, 뇌경색약</div>
+    <div class="ox-box">
+      <button class="btn-ox" id="btn-medm-o" onclick="saveMed('medm','O')">⭕ 복용(O)</button>
+      <button class="btn-ox" id="btn-medm-x" onclick="saveMed('medm','X')">❌ 미복용(X)</button>
+    </div>
+    <button class="btn-voice" onclick="speak('오전 8시 아침 약 복용 시간입니다. 드셨으면 O, 안 드셨으면 X를 누르세요.')">🔊 음성 듣기</button>
+    <div class="status" id="s-medm">아직 체크하지 않음</div>
+  </div>
+
+  <div class="card theme-med" id="c-mede">
+    <span class="tag med">오후 07:30</span>
+    <div class="card-title">💊 저녁 약 복용 (O, X)</div>
+    <div class="card-desc">저녁 식후 약을 챙겨 드세요.</div>
+    <div class="ox-box">
+      <button class="btn-ox" id="btn-mede-o" onclick="saveMed('mede','O')">⭕ 복용(O)</button>
+      <button class="btn-ox" id="btn-mede-x" onclick="saveMed('mede','X')">❌ 미복용(X)</button>
+    </div>
+    <button class="btn-voice" onclick="speak('오후 7시 30분 저녁 약 복용 시간입니다. 드셨으면 O, 안 드셨으면 X를 누르세요.')">🔊 음성 듣기</button>
+    <div class="status" id="s-mede">아직 체크하지 않음</div>
+  </div>
+
+  <div class="card theme-bp" id="c-bpe">
+    <span class="tag bp">오후 10:00</span>
+    <div class="card-title">🩺 저녁 혈압 측정</div>
+    <div class="card-desc">취침 전 혈압 수치를 입력하세요.</div>
+    <div class="inputs">
+      <input type="number" id="in-bpe-s" class="in-num" placeholder="최고"> /
+      <input type="number" id="in-bpe-d" class="in-num" placeholder="최저"> mmHg
+    </div>
+    <button class="btn-main btn-save" onclick="saveBP('bpe')">저녁 혈압 저장하기</button>
+    <button class="btn-voice" onclick="speak('오후 10시 취침 전 혈압 측정 시간입니다. 최고와 최저 혈압을 입력하고 저장하세요.')">🔊 음성 듣기</button>
+    <div class="status" id="s-bpe">아직 측정하지 않음</div>
+  </div>
+
+  <button class="btn-main btn-print" onclick="openP()">🖨️ 병원 진료 제출용 A4 출력 (인쇄/PDF)</button>
+  <button class="btn-voice" style="margin-top:15px; font-size:22px; padding:15px;" onclick="speak('소리와 음성 안내가 정상 작동합니다.')">🔔 알람 소리 및 음성 테스트</button>
+</div>
+
+<div id="print-modal">
+  <div class="modal-content">
+    <h3 style="color:#facc15; font-size:28px; margin-bottom:10px;">🖨️ 병원 진료 기록 출력</h3>
+    <div class="p-grid">
+      <button class="btn-p act" id="bp1" onclick="setP('this')">이번 달</button>
+      <button class="btn-p" id="bp2" onclick="setP('last')">지난 달</button>
+      <button class="btn-p" id="bp3" onclick="setP('30')">최근 30일</button>
+      <button class="btn-p" id="bp4" onclick="setP('cust')">직접 지정</button>
+    </div>
+    <div style="margin-bottom:15px;">
+      <input type="date" id="p-s" style="padding:8px; font-size:18px;"> ~ <input type="date" id="p-e" style="padding:8px; font-size:18px;">
+    </div>
+    <button class="btn-main" style="background:#22c55e; color:#000; margin-bottom:10px;" onclick="doPrint()">📄 A4 세로 인쇄 / PDF 저장</button>
+    <button class="btn-voice" onclick="closeP()">닫기</button>
+  </div>
+</div>
+
+<div id="print-area">
+  <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:6px; margin-bottom:10px;">
+    <h2 style="font-size:18pt;">환자 건강 & 복약 기록표 (병원 제출용)</h2>
+  </div>
+  <div style="display:flex; justify-content:space-between; font-size:10pt; margin-bottom:8px;">
+    <div><b>성명:</b> 이윤재 | <b>조회 기간:</b> <span id="pr-range"></span></div>
+    <div><b>복용 약물:</b> 고혈압약, 고지혈증약, 협심증약, 뇌경색약</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th><th>아침 혈압 (07:00)</th><th>아침 체중 (07:30)</th><th>아침 약 (08:00)</th><th>저녁 약 (19:30)</th><th>저녁 혈압 (22:00)</th>
+      </tr>
+    </thead>
+    <tbody id="pr-tbody"></tbody>
   </table>
+  <div style="margin-top:15px; border:1px solid #777; padding:8px; font-size:9.5pt;">
+    <b>🩺 담당의 진료 소견 및 메모란:</b>
+    <div style="height:45px; border-bottom:1px dashed #aaa;"></div>
+    <div style="text-align:right; margin-top:10px;"><b>담당의 서명:</b> ____________________ (인)</div>
+  </div>
 </div>
+
+<script>
+function getToday() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function speak(t) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = 'ko-KR'; window.speechSynthesis.speak(u);
+  }
+}
+function doLogin() {
+  const id = document.getElementById('l-id').value.trim();
+  const pw = document.getElementById('l-pw').value.trim();
+  if ((id === 'm6411' || id === 'justice11419@naver.com') && (pw === '1968' || pw === '1968번')) {
+    localStorage.setItem('auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    speak('환영합니다. 건강 알리미를 시작합니다.');
+  } else {
+    alert('아이디 또는 비밀번호가 틀렸습니다.');
+  }
+}
+if (localStorage.getItem('auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+} else {
+  document.getElementById('login-screen').style.display = 'block';
+  document.getElementById('main-content').style.display = 'none';
+}
+function updateClock() {
+  const d = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('live-clock').innerText = `${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]}) ${d.getHours() >= 12 ? '오후':'오전'} ${d.getHours()%12||12}시 ${String(d.getMinutes()).padStart(2,'0')}분`;
+}
+setInterval(updateClock, 1000); updateClock();
+
+function saveBP(t) {
+  const s = document.getElementById(t==='bpm'?'in-bpm-s':'in-bpe-s').value;
+  const d = document.getElementById(t==='bpm'?'in-bpm-d':'in-bpe-d').value;
+  if (!s || !d) return alert('최고/최저 혈압을 모두 입력하세요.');
+  const now = new Date();
+  const val = `${s}/${d} (${now.getHours()}시 ${String(now.getMinutes()).padStart(2,'0')}분)`;
+  localStorage.setItem(`${getToday()}_${t}`, val);
+  speak(`혈압 ${s}에 ${d}가 저장되었습니다.`);
+  render();
+}
+function saveWT() {
+  const w = document.getElementById('in-wt').value;
+  if (!w) return alert('체중을 입력하세요.');
+  const now = new Date();
+  const val = `${w}kg (${now.getHours()}시 ${String(now.getMinutes()).padStart(2,'0')}분)`;
+  localStorage.setItem(`${getToday()}_wt`, val);
+  speak(`체중 ${w} 킬로그램이 저장되었습니다.`);
+  render();
+}
+function saveMed(t, s) {
+  const now = new Date();
+  const val = `${s} (${now.getHours()}시 ${String(now.getMinutes()).padStart(2,'0')}분)`;
+  localStorage.setItem(`${getToday()}_${t}`, val);
+  speak(s === 'O' ? '복용 완료가 기록되었습니다.' : '미복용으로 기록되었습니다.');
+  render();
+}
+function render() {
+  const td = getToday();
+  const b = localStorage.getItem(`${td}_bpm`);
+  document.getElementById('c-bpm').className = 'card theme-bp' + (b?' done':'');
+  document.getElementById('s-bpm').innerText = b ? `기록: ${b}` : '아직 측정하지 않음';
+
+  const w = localStorage.getItem(`${td}_wt`);
+  document.getElementById('c-wt').className = 'card theme-wt' + (w?' done':'');
+  document.getElementById('s-wt').innerText = w ? `기록: ${w}` : '아직 측정하지 않음';
+
+  const mm = localStorage.getItem(`${td}_medm`);
+  document.getElementById('c-medm').className = 'card theme-med' + (mm?' done':'');
+  document.getElementById('s-medm').innerText = mm ? `기록: ${mm}` : '아직 체크하지 않음';
+  document.getElementById('btn-medm-o').className = 'btn-ox' + (mm&&mm.startsWith('O')?' sel-o':'');
+  document.getElementById('btn-medm-x').className = 'btn-ox' + (mm&&mm.startsWith('X')?' sel-x':'');
+
+  const me = localStorage.getItem(`${td}_mede`);
+  document.getElementById('c-mede').className = 'card theme-med' + (me?' done':'');
+  document.getElementById('s-mede').innerText = me ? `기록: ${me}` : '아직 체크하지 않음';
+  document.getElementById('btn-mede-o').className = 'btn-ox' + (me&&me.startsWith('O')?' sel-o':'');
+  document.getElementById('btn-mede-x').className = 'btn-ox' + (me&&me.startsWith('X')?' sel-x':'');
+
+  const be = localStorage.getItem(`${td}_bpe`);
+  document.getElementById('c-bpe').className = 'card theme-bp' + (be?' done':'');
+  document.getElementById('s-bpe').innerText = be ? `기록: ${be}` : '아직 측정하지 않음';
+}
+render();
+
+function openP() { document.getElementById('print-modal').style.display='block'; setP('this'); }
+function closeP() { document.getElementById('print-modal').style.display='none'; }
+function setP(m) {
+  ['bp1','bp2','bp3','bp4'].forEach(id=>document.getElementById(id).classList.remove('act'));
+  const now = new Date(), y = now.getFullYear(), mon = now.getMonth();
+  let s = new Date(), e = new Date();
+  if (m==='this') { document.getElementById('bp1').classList.add('act'); s = new Date(y, mon, 1); e = new Date(y, mon+1, 0); }
+  if (m==='last') { document.getElementById('bp2').classList.add('act'); s = new Date(y, mon-1, 1); e = new Date(y, mon, 0); }
+  if (m==='30') { document.getElementById('bp3').classList.add('act'); s = new Date(now.getTime()-29*86400000); e = now; }
+  if (m==='cust') { document.getElementById('bp4').classList.add('act'); }
+  const f = d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('p-s').value = f(s); document.getElementById('p-e').value = f(e);
+}
+function doPrint() {
+  const sStr = document.getElementById('p-s').value, eStr = document.getElementById('p-e').value;
+  if (!sStr || !eStr) return alert('날짜를 선택하세요.');
+  document.getElementById('pr-range').innerText = `${sStr} ~ ${eStr}`;
+  const tbody = document.getElementById('pr-tbody'); tbody.innerHTML = '';
+  let cur = new Date(sStr), end = new Date(eStr);
+  const days = ['일','월','화','수','목','금','토'];
+  while (cur <= end) {
+    const y = cur.getFullYear(), m = String(cur.getMonth()+1).padStart(2,'0'), d = String(cur.getDate()).padStart(2,'0');
+    const k = `${y}-${m}-${d}`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><b>${m}/${d}(${days[cur.getDay()]})</b></td><td>${localStorage.getItem(k+'_bpm')||'-'}</td><td>${localStorage.getItem(k+'_wt')||'-'}</td><td>${localStorage.getItem(k+'_medm')||'-'}</td><td>${localStorage.getItem(k+'_mede')||'-'}</td><td>${localStorage.getItem(k+'_bpe')||'-'}</td>`;
+    tbody.appendChild(tr);
+    cur.setDate(cur.getDate()+1);
+  }
+  closeP(); setTimeout(()=>window.print(), 300);
+}
+</script>
 </body>
 </html>
