@@ -1,130 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시니어 디지털 배움터 | 생성형 AI로 만드는 나만의 명품 홈페이지</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-base: 19px;
+      --primary: #1e3a8a;
+      --primary-dark: #0f172a;
+      --teal: #0d9488;
+      --gold: #b45309;
+      --gold-light: #fefce8;
+      --bg-body: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --border-color: #e2e8f0;
+    }
 
-📚 시니어 생성형 AI 웹사이트 제작 교재
-글자 크기: 가 + 크게 가 - 작게 기본
-시니어 디지털 리터러시 특화 교재
-코딩 몰라도 뚝딱!
-생성형 AI로 만드는 나만의 명품 홈페이지
-말 한마디로 홈페이지가 완성되는 생성형 AI 시대! 복잡한 프로그래밍 언어 없이 나만의 멋진 인터넷 세상을 직접 열어보세요.
-👨‍🏫 강사: 청랑(淸浪) 이윤재 원장 🌐 플랫폼: seiskang.kr 📖 실습 기반 맞춤형 가이드
-🏷️ 1. 내 집 주소 (도메인) 닷홈(Dothome)에서 마련 🏛️ 2. 무료 땅과 건물 (GitHub) 평생 무료 웹 호스팅 🤖 3. AI 건축가 말만 하면 코딩 완성!
-[그림 1] 나만의 홈페이지를 완성하는 3가지 마법의 기둥
-제 1 장
-준비 운동: 크롬(Chrome) 브라우저와 친해지기
-인터넷 세상으로 나아갈 때 가장 먼저 열어야 하는 문이 바로 '웹 브라우저'입니다. 수많은 브라우저 중 인공지능 도구들과 가장 호환성이 뛰어난 구글 크롬(Google Chrome)을 기본 도구로 사용합니다.
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      word-break: keep-all;
+    }
 
+    body {
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--font-base);
+      line-height: 1.85;
+      color: var(--text-main);
+      background-color: var(--bg-body);
+    }
 
-1
+    /* 상단 고정 바 & 글자 조절기 */
+    .edu-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--teal);
+    }
+    .edu-topbar-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .font-resizer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .font-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #ffffff;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .font-btn:hover { background: var(--teal); }
 
-크롬 브라우저 실행하기
-바탕화면에서 빨강, 노랑, 초록, 파랑 4색 원형 아이콘(Chrome)을 찾아 마우스로 더블클릭합니다.
+    /* 본문 레이아웃 */
+    .edu-container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 30px 20px 80px 20px;
+    }
 
-2
+    /* 히어로 헤더 */
+    .edu-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0d9488 100%);
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 45px 36px;
+      margin-bottom: 36px;
+      box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.3);
+      text-align: center;
+    }
+    .edu-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #e2e8f0;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .edu-hero h1 {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+    .edu-hero p {
+      font-size: 18px;
+      color: #cbd5e1;
+      max-width: 680px;
+      margin: 0 auto 20px auto;
+    }
+    .edu-meta {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: #93c5fd;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 18px;
+    }
 
-주소창(URL)에 사이트 이름 입력하기
-화면 맨 위 길쭉한 흰색 검색창을 '주소창'이라고 부릅니다. 여기에 naver.com 이나 github.com 을 입력하고 엔터(Enter)를 치면 해당 사이트로 곧바로 이동합니다.
+    /* 챕터 카드 */
+    .edu-chapter {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 36px 32px;
+      margin-bottom: 36px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+    .chapter-num {
+      display: inline-block;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .chapter-title {
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--primary-dark);
+      margin-bottom: 18px;
+      line-height: 1.4;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 14px;
+    }
+    p { margin-bottom: 16px; color: var(--text-main); }
 
-💡 [시니어 꿀팁] 눈이 침침하고 글씨가 작을 때!
-키보드 왼쪽 아래의 `Ctrl` 키를 누른 채로 `+` 키를 1~2번 눌러보세요. 화면 글씨가 큼직하게 확대되어 눈이 아주 편안해집니다. (원래대로 돌리려면 `Ctrl` + `0`)
-제 2 장
-내 집 주소 만들기: 닷홈(Dothome) 가입과 도메인 준비
-현실 세계의 '도로명 주소'처럼, 인터넷 세상에서도 나만의 고유한 문패 주소가 필요합니다. 이것을 '도메인(Domain)'이라고 부릅니다. (예: seiskang.kr)
+    /* 단계별 리스트 */
+    .step-list { list-style: none; margin: 20px 0; padding: 0; }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+      background: #f8fafc;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border-left: 5px solid var(--teal);
+    }
+    .step-badge {
+      background: var(--teal);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+      min-width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+    .step-desc { font-size: 17px; color: var(--text-sub); line-height: 1.7; }
 
+    /* 인포그래픽 상자 */
+    .visual-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .visual-caption { font-size: 14px; font-weight: 700; color: #64748b; margin-top: 10px; }
 
-1
+    /* 꿀팁 상자 */
+    .tip-box {
+      background: var(--gold-light);
+      border: 2px solid #fde047;
+      border-left: 6px solid var(--gold);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+    .tip-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .tip-body { font-size: 17px; color: #78350f; line-height: 1.75; }
 
-닷홈 사이트 접속 및 회원가입
-크롬 주소창에 dothome.co.kr을 입력하고 엔터를 누릅니다. 우측 상단의 [회원가입]을 누른 뒤 휴대폰 인증을 거쳐 가입을 완료합니다.
+    /* 프롬프트 상자 */
+    .prompt-card {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .prompt-tag { color: #38bdf8; font-size: 13px; font-weight: 700; }
+    .copy-btn {
+      background: var(--teal);
+      border: none;
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .prompt-text {
+      font-family: monospace, sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+    }
 
-2
+    /* 단축키 표 */
+    .shortcut-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    .shortcut-table th, .shortcut-table td {
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 17px;
+    }
+    .shortcut-table th { background: #f8fafc; color: var(--primary); font-weight: 800; }
+    .key-badge {
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: 700;
+      color: #0f172a;
+    }
 
-원하는 도메인 이름 검색하기
-상단 메뉴 [도메인] ➔ [도메인 등록/검색]을 클릭합니다. 검색창에 본인의 영문 이름이나 호, 브랜드명(예: myname, yoonjae)을 입력하고 [검색]을 누릅니다.
+    .edu-footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+      font-size: 15px;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
 
-3
+  <!-- 상단 글자 조절 바 -->
+  <div class="edu-topbar">
+    <div class="edu-topbar-title">
+      <span>📚</span>
+      <span>시니어 생성형 AI 웹사이트 제작 교재</span>
+    </div>
+    <div class="font-resizer">
+      <span>글자 크기:</span>
+      <button onclick="changeFontSize(1)" class="font-btn">가 + 크게</button>
+      <button onclick="changeFontSize(-1)" class="font-btn">가 - 작게</button>
+      <button onclick="resetFontSize()" class="font-btn">기본</button>
+    </div>
+  </div>
 
-나만의 주소 신청 및 결제
-목록에서 마음에 드는 도메인(예: .kr 또는 .com) 옆의 [선택] 버튼을 누르고 등록을 완료합니다. (1년 기준 약 1~2만 원 선)
+  <div class="edu-container">
 
-💡 [시니어 꿀팁] 좋은 도메인 이름을 짓는 비결!
-1. 알파벳 5~8자 이내로 짧을수록 타이핑하기 좋습니다.
-2. 전화 통화로 상대방에게 말로 알려줄 때 발음하기 쉬운 단어가 최고입니다.
-3. 가입한 닷홈 아이디, 비밀번호, 구매한 도메인은 반드시 종이 수첩에 볼펜으로 메모해 두세요!
-제 3 장
-평생 무료 인터넷 보관 창고: 깃허브(GitHub) 가입하기
-깃허브(GitHub)는 마이크로소프트가 운영하는 전 세계 1위 소프트웨어 보관소입니다. 매월 나가는 서버 비용이 0원(평생 완전 무료)이며, 내 홈페이지 파일을 안전하게 평생 보관해 줍니다.
+    <!-- 히어로 표지 -->
+    <header class="edu-hero">
+      <span class="edu-badge">시니어 디지털 리터러시 특화 교재</span>
+      <h1>코딩 몰라도 뚝딱!<br>생성형 AI로 만드는 나만의 명품 홈페이지</h1>
+      <p>말 한마디로 홈페이지가 완성되는 생성형 AI 시대! 복잡한 프로그래밍 언어 없이 나만의 멋진 인터넷 세상을 직접 열어보세요.</p>
+      <div class="edu-meta">
+        <span>👨‍🏫 강사: 청랑(淸浪) 이윤재 원장</span>
+        <span>🌐 플랫폼: seiskang.kr</span>
+        <span>📖 실습 기반 맞춤형 가이드</span>
+      </div>
+    </header>
 
+    <!-- 인포그래픽: 3대 핵심 요소 -->
+    <div class="visual-box">
+      <svg viewBox="0 0 760 180" width="100%" height="160" xmlns="http://www.w3.org/2000/svg">
+        <rect width="760" height="180" rx="16" fill="#ffffff"/>
+        <rect x="25" y="25" width="220" height="130" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+        <text x="135" y="65" text-anchor="middle" font-size="28">🏷️</text>
+        <text x="135" y="98" text-anchor="middle" font-size="17" font-weight="bold" fill="#1e3a8a">1. 내 집 주소 (도메인)</text>
+        <text x="135" y="125" text-anchor="middle" font-size="13" fill="#475569">닷홈(Dothome)에서 마련</text>
 
-1
+        <path d="M 255 90 L 275 90" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="275,85 285,90 275,95" fill="#94a3b8"/>
 
-깃허브 사이트 가입 (github.com)
-주소창에 github.com을 입력하고 [Sign up]을 누릅니다.
-(영어 메뉴가 낯설다면 화면 빈 곳 우클릭 ➔ [한국어로 번역]을 누르세요!)
+        <rect x="295" y="25" width="220" height="130" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+        <text x="405" y="65" text-anchor="middle" font-size="28">🏛️</text>
+        <text x="405" y="98" text-anchor="middle" font-size="17" font-weight="bold" fill="#166534">2. 무료 땅과 건물 (GitHub)</text>
+        <text x="405" y="125" text-anchor="middle" font-size="13" fill="#475569">평생 무료 웹 호스팅</text>
 
-2
+        <path d="M 525 90 L 545 90" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="545,85 555,90 545,95" fill="#94a3b8"/>
 
-내 홈페이지 전용 저장소(Repository) 만들기
-로그인 후 좌측 상단의 초록색 [New] 버튼을 누릅니다. 저장소 이름(Repository name)에 homepage 라고 적고, [Public] 선택 후 맨 아래 [Create repository]를 누릅니다.
-제 4 장
-AI 비서에게 말로 시키기: 생성형 AI 프롬프트 실습
-옛날처럼 복잡한 프로그래밍 언어를 외울 필요가 없습니다. 생성형 AI(Gemini, ChatGPT)에게 한국말로 "어떤 홈페이지를 만들어줘"라고 사람에게 부탁하듯 대화하면 1초 만에 완성형 코드가 나옵니다.
+        <rect x="565" y="25" width="170" height="130" rx="12" fill="#faf5ff" stroke="#d8b4fe" stroke-width="2"/>
+        <text x="650" y="65" text-anchor="middle" font-size="28">🤖</text>
+        <text x="650" y="98" text-anchor="middle" font-size="17" font-weight="bold" fill="#6b21a8">3. AI 건축가</text>
+        <text x="650" y="125" text-anchor="middle" font-size="13" fill="#475569">말만 하면 코딩 완성!</text>
+      </svg>
+      <div class="visual-caption">[그림 1] 나만의 홈페이지를 완성하는 3가지 마법의 기둥</div>
+    </div>
 
-📋 그대로 복사해서 쓰는 생성형 AI 실전 프롬프트 프롬프트 복사하기
-안녕하세요? 저는 은퇴 후 인생 2막을 준비하는 60대 강사이자 작가 이윤재입니다. 외국인과 일반 학습자들을 위한 1:1 맞춤형 한국어 교육 플랫폼 홈페이지를 만들고 싶습니다. 다음 요구사항을 모두 충족하는 index.html 단일 완성 코드를 작성해 주세요: 1. 메인 헤더: '안녕하세요? 한국어 전문강사 세이스강 이윤재입니다' 2. 글자 크기: 시니어 방문자들도 편하게 읽을 수 있도록 폰트를 크고 시원하게 설정 3. 줄바꿈 비법: 한국어 문장이 어색하게 한 글자씩 잘리지 않도록 'word-break: keep-all;' 스타일 필수 적용 4. 소개 섹션: 32년 철도 공직 경력, 전문 자격증, 평생교육 활동 소개 5. 수강 안내: 1회 50분 $22 USD 맞춤형 수업 안내 및 환불 규정 표 6. 소통 버튼: 카카오톡 보이스톡 상담 및 이메일 문의 버튼 7. 추가 기능: 상단에 [공지사항]과 [언론보도]를 누르면 열리는 멋진 팝업 모달창 내장 8. 형식: 외부 도구 설치 없이 복사해서 바로 쓸 수 있는 단일 HTML 완성 코드로 작성해 주세요.
-위 프롬프트를 복사하여 AI 채팅창에 넣고 질문하시면, AI가 완벽한 HTML 코드를 작성해 줍니다.
-제 5 장
-마우스로 1분 만에 깃허브에 올리고 전 세계 배포하기
+    <!-- 제1장 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">제 1 장</span>
+      <h2 class="chapter-title">준비 운동: 크롬(Chrome) 브라우저와 친해지기</h2>
+      <p>인터넷 세상으로 나아갈 때 가장 먼저 열어야 하는 문이 바로 <strong>'웹 브라우저'</strong>입니다. 인공지능 도구들과 가장 호환성이 뛰어난 <strong>구글 크롬(Google Chrome)</strong>을 기본 도구로 사용합니다.</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-badge">1</div>
+          <div class="step-content">
+            <div class="step-title">크롬 브라우저 실행하기</div>
+            <div class="step-desc">바탕화면에서 빨강, 노랑, 초록, 파랑 4색 원형 아이콘(Chrome)을 찾아 마우스로 <strong>더블클릭</strong>합니다.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <div class="step-content">
+            <div class="step-title">주소창(URL)에 사이트 이름 입력하기</div>
+            <div class="step-desc">화면 맨 위 길쭉한 흰색 검색창을 '주소창'이라고 부릅니다. 여기에 <code>naver.com</code> 이나 <code>github.com</code> 을 입력하고 엔터(Enter)를 치면 해당 사이트로 곧바로 이동합니다.</div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-header">💡 [시니어 꿀팁] 눈이 침침하고 글씨가 작을 때!</div>
+        <div class="tip-body">
+          키보드 왼쪽 아래의 <strong>`Ctrl` 키를 누른 채로 `+` 키</strong>를 1~2번 눌러보세요. 화면 글씨가 큼직하게 확대되어 눈이 아주 편안해집니다. (원래대로 돌리려면 `Ctrl` + `0`)
+        </div>
+      </div>
+    </article>
 
+    <!-- 제2장 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">제 2 장</span>
+      <h2 class="chapter-title">내 집 주소 만들기: 닷홈(Dothome) 가입과 도메인 준비</h2>
+      <p>현실 세계의 <strong>'도로명 주소'</strong>처럼, 인터넷 세상에서도 나만의 고유한 문패 주소가 필요합니다. 이것을 <strong>'도메인(Domain)'</strong>이라고 부릅니다. (예: <code>seiskang.kr</code>)</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-badge">1</div>
+          <div class="step-content">
+            <div class="step-title">닷홈 사이트 접속 및 회원가입</div>
+            <div class="step-desc">크롬 주소창에 <strong><code>dothome.co.kr</code></strong>을 입력하고 엔터를 누릅니다. 우측 상단의 <strong>[회원가입]</strong>을 누른 뒤 휴대폰 인증을 거쳐 가입을 완료합니다.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <div class="step-content">
+            <div class="step-title">원하는 도메인 이름 검색하기</div>
+            <div class="step-desc">상단 메뉴 <strong>[도메인] ➔ [도메인 등록/검색]</strong>을 클릭합니다. 본인의 영문 이름이나 호, 브랜드명(예: <code>myname</code>, <code>yoonjae</code>)을 입력하고 [검색]을 누릅니다.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">3</div>
+          <div class="step-content">
+            <div class="step-title">나만의 주소 신청 및 결제</div>
+            <div class="step-desc">마음에 드는 도메인(예: <code>.kr</code> 또는 <code>.com</code>) 옆의 <strong>[선택]</strong> 버튼을 누르고 등록을 완료합니다. (1년 기준 약 1~2만 원 선)</div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-header">💡 [시니어 꿀팁] 좋은 도메인 이름을 짓는 비결!</div>
+        <div class="tip-body">
+          1. 알파벳 5~8자 이내로 짧을수록 타이핑하기 좋습니다.<br>
+          2. 전화 통화로 상대방에게 말로 알려줄 때 발음하기 쉬운 단어가 최고입니다.<br>
+          3. 가입한 닷홈 아이디, 비밀번호, 구매한 도메인은 반드시 <strong>종이 수첩에 볼펜으로 메모</strong>해 두세요!
+        </div>
+      </div>
+    </article>
 
-1
+    <!-- 제3장 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">제 3 장</span>
+      <h2 class="chapter-title">평생 무료 인터넷 보관 창고: 깃허브(GitHub) 가입하기</h2>
+      <p><strong>깃허브(GitHub)</strong>는 마이크로소프트가 운영하는 전 세계 1위 소프트웨어 보관소입니다. 매월 나가는 서버 비용이 <strong>0원(평생 완전 무료)</strong>이며, 내 홈페이지 파일을 안전하게 평생 보관해 줍니다.</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-badge">1</div>
+          <div class="step-content">
+            <div class="step-title">깃허브 사이트 가입 (github.com)</div>
+            <div class="step-desc">주소창에 <strong><code>github.com</code></strong>을 입력하고 [Sign up]을 누릅니다. <br><em>(영어 메뉴가 낯설다면 화면 빈 곳 우클릭 ➔ <strong>[한국어로 번역]</strong>을 누르세요!)</em></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <div class="step-content">
+            <div class="step-title">내 홈페이지 전용 저장소(Repository) 만들기</div>
+            <div class="step-desc">로그인 후 좌측 상단의 초록색 <strong>[New]</strong> 버튼을 누릅니다. 저장소 이름(Repository name)에 <code>homepage</code> 라고 적고, <strong>[Public]</strong> 선택 후 맨 아래 <strong>[Create repository]</strong>를 누릅니다.</div>
+          </div>
+        </div>
+      </div>
+    </article>
 
-깃허브에서 index.html 파일 만들기
-저장소 화면에서 [Add file] ➔ [Create new file]을 누릅니다. 파일 이름에 반드시 index.html을 소문자로 적습니다.
+    <!-- 제4장 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">제 4 장</span>
+      <h2 class="chapter-title">AI 비서에게 말로 시키기: 생성형 AI 프롬프트 실습</h2>
+      <p>복잡한 프로그래밍 언어를 외울 필요가 없습니다. <strong>생성형 AI(Gemini, ChatGPT)</strong>에게 한국말로 <em>"어떤 홈페이지를 만들어줘"</em>라고 사람에게 부탁하듯 대화하면 1초 만에 완성형 코드가 나옵니다.</p>
 
-2
+      <div class="prompt-card">
+        <div class="prompt-header">
+          <span class="prompt-tag">📋 그대로 복사해서 쓰는 생성형 AI 실전 프롬프트</span>
+          <button class="copy-btn" onclick="copyPrompt()">프롬프트 복사하기</button>
+        </div>
+        <div class="prompt-text" id="promptContent">안녕하세요? 저는 은퇴 후 인생 2막을 준비하는 60대 강사이자 작가 이윤재입니다.
+외국인과 일반 학습자들을 위한 1:1 맞춤형 한국어 교육 플랫폼 홈페이지를 만들고 싶습니다.
 
-코드 붙여넣기 및 저장(Commit)
-넓은 입력창에 마우스를 대고 `Ctrl + V` (붙여넣기)를 한 뒤, 우측 상단 초록색 [Commit changes...] 버튼을 2번 누릅니다.
+다음 요구사항을 모두 충족하는 index.html 단일 완성 코드를 작성해 주세요:
+1. 메인 헤더: '안녕하세요? 한국어 전문강사 세이스강 이윤재입니다'
+2. 글자 크기: 시니어 방문자들도 편하게 읽을 수 있도록 폰트를 크고 시원하게 설정
+3. 줄바꿈 비법: 한국어 문장이 어색하게 한 글자씩 잘리지 않도록 'word-break: keep-all;' 스타일 필수 적용
+4. 소개 섹션: 32년 철도 공직 경력, 전문 자격증, 평생교육 활동 소개
+5. 수강 안내: 1회 50분 $22 USD 맞춤형 수업 안내 및 환불 규정 표
+6. 소통 버튼: 카카오톡 보이스톡 상담 및 이메일 문의 버튼
+7. 추가 기능: 상단에 [공지사항]과 [언론보도]를 누르면 열리는 멋진 팝업 모달창 내장
+8. 형식: 외부 도구 설치 없이 복사해서 바로 쓸 수 있는 단일 HTML 완성 코드로 작성해 주세요.</div>
+      </div>
+      <p style="font-size:16px; color:#64748b;">위 프롬프트를 복사하여 AI 채팅창에 넣고 질문하시면, AI가 완벽한 HTML 코드를 작성해 줍니다.</p>
+    </article>
 
-3
+    <!-- 제5장 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">제 5 장</span>
+      <h2 class="chapter-title">마우스로 1분 만에 깃허브에 올리고 전 세계 배포하기</h2>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-badge">1</div>
+          <div class="step-content">
+            <div class="step-title">깃허브에서 index.html 파일 만들기</div>
+            <div class="step-desc">저장소 화면에서 <strong>[Add file] ➔ [Create new file]</strong>을 누릅니다. 파일 이름에 반드시 <strong><code>index.html</code></strong>을 소문자로 적습니다.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <div class="step-content">
+            <div class="step-title">코드 붙여넣기 및 저장(Commit)</div>
+            <div class="step-desc">넓은 입력창에 마우스를 대고 <strong>`Ctrl + V` (붙여넣기)</strong>를 한 뒤, 우측 상단 초록색 <strong>[Commit changes...]</strong> 버튼을 2번 누릅니다.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">3</div>
+          <div class="step-content">
+            <div class="step-title">무료 배포 켜기 (GitHub Pages)</div>
+            <div class="step-desc">저장소 상단 <strong>[Settings] ➔ [Pages]</strong>로 들어간 뒤, Branch를 <strong>`main`</strong>으로 바꾸고 [Save]를 누르면 1분 뒤 전 세계 어디서든 열리는 사이트가 완성됩니다!</div>
+          </div>
+        </div>
+      </div>
+    </article>
 
-무료 배포 켜기 (GitHub Pages)
-저장소 상단 [Settings] ➔ [Pages]로 들어간 뒤, Branch를 `main`으로 바꾸고 [Save]를 누르면 1분 뒤 전 세계 어디서든 열리는 사이트가 완성됩니다!
-제 6 장
-직접 겪어본 실전 노하우: 명품 디테일 완성하기
-✨ 비법 1: 한국어 글자가 한 글자씩 쪼개지지 않는 비결
-컴퓨터 화면 너비가 줄어들 때 "이윤재입니 / 다." 처럼 한 글자만 어색하게 다음 줄로 떨어지는 것을 막으려면 CSS 스타일에 딱 한 줄만 추가하면 됩니다:
-word-break: keep-all;
-이 코드가 들어가면 단어(띄어쓰기) 단위로 통째로 줄바꿈이 일어나 문장이 아주 단정해집니다.
-🔒 비법 2: 관리자만 글을 쓸 수 있는 공지·보도자료 게시판
-일반 방문자에게는 글쓰기/수정/삭제 버튼이 일체 보이지 않고, 원장님이 관리자로 로그인했을 때만 화면 상단에 [✏️ 새 글 등록] 버튼이 나타나도록 설계하여 안전하게 사이트를 운영할 수 있습니다.
-부 록
-시니어 학습자 필수 컴퓨터 단축키 7선
+    <!-- 제6장 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">제 6 장</span>
+      <h2 class="chapter-title">직접 겪어본 실전 노하우: 명품 디테일 완성하기</h2>
+      <p><strong>✨ 비법 1: 한국어 글자가 한 글자씩 쪼개지지 않는 비결</strong><br>
+      컴퓨터 화면 너비가 줄어들 때 "이윤재입니 / <strong>다.</strong>" 처럼 한 글자만 어색하게 다음 줄로 떨어지는 것을 막으려면 CSS 스타일에 <code>word-break: keep-all;</code> 속성을 넣어주면 단어 단위로 깔끔하게 떨어집니다.</p>
 
-단축키
-이름
-기능 설명
- 
-Ctrl + C
-복사하기
-선택한 글자나 코드를 컴퓨터 메모리에 복사합니다.
-Ctrl + V
-붙여넣기
-복사한 내용을 원하는 위치에 그대로 붙여넣습니다.
-Ctrl + A
-전체 선택
-문서나 코드 전체를 한 번에 파랗게 선택합니다.
-Ctrl + Z
-되돌리기
-실수로 글자를 지웠을 때 방금 전 상태로 복구합니다.
-Ctrl + F
-단어 찾기
-긴 코드 중에서 내가 찾는 단어로 바로 이동합니다.
-Ctrl + (+)
-화면 확대
-글자와 화면을 크게 키워 눈을 편안하게 만듭니다.
-Ctrl + 0
-원래 크기
-확대된 화면을 기본 표준 배율(100%)로 되돌립니다.
+      <p><strong>🔒 비법 2: 관리자만 글을 쓸 수 있는 공지·보도자료 게시판</strong><br>
+      일반 방문자에게는 글쓰기/수정/삭제 버튼이 일체 보이지 않고, 원장님이 관리자로 로그인했을 때만 화면 상단에 <code>[✏️ 새 글 등록]</code> 버튼이 나타나도록 설계하여 안전하게 사이트를 운영할 수 있습니다.</p>
+    </article>
 
-"배움에는 나이가 없습니다. 생성형 AI와 함께 여러분의 멋진 인생 2막을 펼쳐보세요!"
-© 2026 청랑 이윤재 원장 | 세이스강 (seiskang.kr) 평생교육 & AI 실습 교재
+    <!-- 부록 -->
+    <article class="edu-chapter">
+      <span class="chapter-num">부 록</span>
+      <h2 class="chapter-title">시니어 학습자 필수 컴퓨터 단축키 7선</h2>
+      <table class="shortcut-table">
+        <thead>
+          <tr>
+            <th>단축키</th>
+            <th>이름</th>
+            <th>기능 설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="key-badge">Ctrl + C</span></td>
+            <td><strong>복사하기</strong></td>
+            <td>선택한 글자나 코드를 컴퓨터 메모리에 복사합니다.</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">Ctrl + V</span></td>
+            <td><strong>붙여넣기</strong></td>
+            <td>복사한 내용을 원하는 위치에 그대로 붙여넣습니다.</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">Ctrl + A</span></td>
+            <td><strong>전체 선택</strong></td>
+            <td>문서나 코드 전체를 한 번에 파랗게 선택합니다.</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">Ctrl + Z</span></td>
+            <td><strong>되돌리기</strong></td>
+            <td>실수로 글자를 지웠을 때 방금 전 상태로 복구합니다.</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">Ctrl + F</span></td>
+            <td><strong>단어 찾기</strong></td>
+            <td>긴 코드 중에서 내가 찾는 단어로 바로 이동합니다.</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">Ctrl + (+)</span></td>
+            <td><strong>화면 확대</strong></td>
+            <td>글자와 화면을 크게 키워 눈을 편안하게 만듭니다.</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">Ctrl + 0</span></td>
+            <td><strong>원래 크기</strong></td>
+            <td>확대된 화면을 기본 표준 배율(100%)로 되돌립니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+
+    <footer class="edu-footer">
+      <p style="font-size:18px; font-weight:bold; color:var(--primary-dark); margin-bottom:8px;">
+        "배움에는 나이가 없습니다. 생성형 AI와 함께 여러분의 멋진 인생 2막을 펼쳐보세요!"
+      </p>
+      <p>© 2026 청랑 이윤재 원장 | 세이스강 (seiskang.kr) 평생교육 & AI 실습 교재</p>
+    </footer>
+
+  </div>
+
+  <script>
+    let currentFontSize = 19;
+    function changeFontSize(delta) {
+      currentFontSize = Math.min(26, Math.max(16, currentFontSize + delta));
+      document.documentElement.style.setProperty('--font-base', currentFontSize + 'px');
+    }
+    function resetFontSize() {
+      currentFontSize = 19;
+      document.documentElement.style.setProperty('--font-base', '19px');
+    }
+    function copyPrompt() {
+      const text = document.getElementById('promptContent').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('프롬프트가 복사되었습니다! 생성형 AI(Gemini / ChatGPT) 채팅창에 붙여넣기(Ctrl+V)하세요.');
+      });
+    }
+  </script>
+</body>
+</html>
