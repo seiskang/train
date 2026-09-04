@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>세이스강(seiskang.kr) 홈페이지 5대 핵심 강점 인포그래픽 (A4 세로형)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      word-break: keep-all;
+    }
+    body {
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #060911;
+      color: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* A4 비율 포스터 컨테이너 (210mm x 297mm 규격) */
+    .a4-poster {
+      width: 794px;
+      height: 1123px;
+      background: radial-gradient(circle at 50% 10%, #172554 0%, #0b1120 45%, #050811 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(56, 189, 248, 0.15);
+      border-radius: 20px;
+      padding: 44px 44px 36px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header {
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 16px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .header h1 span {
+      background: linear-gradient(90deg, #38bdf8, #2dd4bf, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-sub {
+      font-size: 15px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* 프로필 & 브랜딩 사진 배너 */
+    .profile-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border-radius: 18px;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 10;
+      margin: 14px 0 16px 0;
+    }
+    .photo-frame {
+      width: 102px;
+      height: 125px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+      flex-shrink: 0;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .profile-details { flex: 1; }
+    .profile-name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .profile-name {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+    .profile-tag {
+      font-size: 12.5px;
+      color: #38bdf8;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .slogan-box {
+      background: rgba(14, 165, 233, 0.12);
+      border-left: 4px solid #38bdf8;
+      padding: 6px 12px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 6px;
+    }
+    .slogan-text {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #fef08a;
+      line-height: 1.4;
+    }
+    .profile-credentials {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    /* 5대 강점 카드 */
+    .strengths-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      position: relative;
+      z-index: 10;
+    }
+    .strength-card {
+      background: rgba(19, 29, 53, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .sc-num-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 900;
+    }
+    .badge-blue { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; }
+    .badge-teal { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; }
+    .badge-yellow { background: linear-gradient(135deg, #ca8a04, #a16207); color: #fff; }
+    .badge-purple { background: linear-gradient(135deg, #4f46e5, #3730a3); color: #fff; }
+    .badge-emerald { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; }
+    .sc-num-badge .sc-ico { font-size: 16px; line-height: 1; }
+    .sc-num-badge .sc-n { font-size: 11px; font-family: "IBM Plex Mono", monospace; margin-top: 2px; }
+
+    .strength-content { flex: 1; }
+    .sc-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+    .sc-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sc-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      color: #94a3b8;
+    }
+    .sc-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .sc-desc strong { color: #38bdf8; }
+
+    /* 3대 지표 배너 */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+      position: relative;
+      z-index: 10;
+    }
+    .kpi-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+    .kpi-num {
+      font-size: 21px;
+      font-weight: 900;
+      color: #facc15;
+      font-family: "IBM Plex Mono", monospace;
+    }
+    .kpi-label {
+      font-size: 11.5px;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* 푸터 */
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    .footer-left { font-size: 13px; color: #ffffff; font-weight: 800; }
+    .footer-left span { color: #38bdf8; font-family: "IBM Plex Mono", monospace; font-size: 14px; }
+    .footer-right { font-size: 11.5px; color: #64748b; }
+
+    @media print {
+      body { background: none; padding: 0; }
+      .a4-poster {
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        width: 100vw;
+        height: 100vh;
+        padding: 12mm 14mm 10mm 14mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="a4-poster">
+    <header class="header">
+      <div class="brand-pill">
+        <span>🌐</span>
+        <span>글로벌 1:1 한국어 교육 플랫폼 & 시니어 AI 배움터</span>
+      </div>
+      <h1><span>세이스강 (seiskang.kr)</span> 5대 핵심 강점</h1>
+      <p class="header-sub">32년 공직 경륜과 생성형 AI 기술이 융합된 1인 1웹사이트 성공 모델</p>
+    </header>
+
+    <section class="profile-banner">
+      <div class="photo-frame">
+        <img src="세이스강.jpg" alt="세이스강 브랜딩 사진">
+      </div>
+      <div class="profile-details">
+        <div class="profile-name-row">
+          <span class="profile-name">세이스강 (청랑 이윤재)</span>
+          <span class="profile-tag">한국어 전문강사 & 행정사</span>
+        </div>
+        <div class="slogan-box">
+          <p class="slogan-text">"세상을 이롭게 하는 스마트한 강사!"</p>
+        </div>
+        <p class="profile-credentials">
+          • 공직 32년 근속 (철도청 9급 ➔ 5급 사무관 ➔ 코레일 1급 명퇴)<br>
+          • 한국어교원 2급, 평생교육사 2급, 일반행정사, 사회복지사 등 자격 36종<br>
+          • 한국반부패청렴정책연구원(KACIPI) 원장 | 음악시협회 협회장
+        </p>
+      </div>
+    </section>
+
+    <main class="strengths-grid">
+      <div class="strength-card">
+        <div class="sc-num-badge badge-blue">
+          <span class="sc-ico">💎</span>
+          <span class="sc-n">01</span>
+        </div>
+        <div class="strength-content">
+          <div class="sc-header-row">
+            <h2 class="sc-title">월 유지비 0원의 완전한 기술적 독립</h2>
+            <span class="sc-pill" style="color:#38bdf8;">인프라 혁신</span>
+          </div>
+          <p class="sc-desc">
+            매월 호스팅비가 드는 상용 빌더 대신 <strong>마이크로소프트 GitHub Pages</strong>를 활용하여 <strong>도메인 비용 외 유지비 0원</strong>을 달성했습니다. 타사 종속 없는 100% 완전한 코드 소유권을 가집니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="strength-card">
+        <div class="sc-num-badge badge-teal">
+          <span class="sc-ico">✏️</span>
+          <span class="sc-n">02</span>
+        </div>
+        <div class="strength-content">
+          <div class="sc-header-row">
+            <h2 class="sc-title">코드 수정이 필요 없는 독자 CMS 게시판</h2>
+            <span class="sc-pill" style="color:#2dd4bf;">운영 편의성</span>
+          </div>
+          <p class="sc-desc">
+            소스 코드를 열 필요 없이, 관리자로 로그인하면 나타나는 <strong>[새 글 등록], [수정], [삭제]</strong> 버튼으로 사이트 화면에서 10초 만에 공지사항과 언론 기사를 즉시 등록하고 관리합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="strength-card">
+        <div class="sc-num-badge badge-yellow">
+          <span class="sc-ico">👓</span>
+          <span class="sc-n">03</span>
+        </div>
+        <div class="strength-content">
+          <div class="sc-header-row">
+            <h2 class="sc-title">시니어 & 글로벌 학습자를 배려한 특화 UX</h2>
+            <span class="sc-pill" style="color:#facc15;">인간공학 설계</span>
+          </div>
+          <p class="sc-desc">
+            글자가 어색하게 쪼개지지 않는 <strong>단어 단위 줄바꿈(keep-all)</strong>, 원클릭 <strong>돋보기 글자 크기 조절기</strong>, 시력 보호 다크 테마를 탑재하여 시니어와 외국인 누구나 편안하게 읽을 수 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="strength-card">
+        <div class="sc-num-badge badge-purple">
+          <span class="sc-ico">🏛️</span>
+          <span class="sc-n">04</span>
+        </div>
+        <div class="strength-content">
+          <div class="sc-header-row">
+            <h2 class="sc-title">32년 공직 경력 기반의 압도적 공신력</h2>
+            <span class="sc-pill" style="color:#818cf8;">브랜드 신뢰도</span>
+          </div>
+          <p class="sc-desc">
+            메인 첫 화면에 <strong>[공지사항]과 [언론 보도 / 뉴스룸]</strong>을 전진 배치하여 반부패 청렴 전문가의 권위를 증명하고, <strong>1회 50분 $22 USD</strong> 선입금 기준과 투명한 환불 규정으로 높은 신뢰를 형성합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="strength-card">
+        <div class="sc-num-badge badge-emerald">
+          <span class="sc-ico">🌱</span>
+          <span class="sc-n">05</span>
+        </div>
+        <div class="strength-content">
+          <div class="sc-header-row">
+            <h2 class="sc-title">살아있는 생성형 AI 실전 배움터 자산</h2>
+            <span class="sc-pill" style="color:#4ade80;">교육적 가치</span>
+          </div>
+          <p class="sc-desc">
+            홈페이지 자체가 60대 은퇴자가 직접 부딪히며 완성한 <strong>실전 5대 실수담 교재(/edu/homepage.html)</strong>와 연계되어 있어, 시니어 세대에게 "나도 할 수 있다"는 강력한 영감과 실습 지침을 제공합니다.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <section class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-num">₩ 0</div>
+        <div class="kpi-label">월 서버 호스팅 유지비</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">32 Years</div>
+        <div class="kpi-label">철도 공직 및 청렴 정책 경륜</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">100 %</div>
+        <div class="kpi-label">생성형 AI 자립형 코드 구축</div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        공식 홈페이지 : <span>https://seiskang.kr</span>
+      </div>
+      <div class="footer-right">
+        © 2026 세이스강 (seiskang) | All Rights Reserved
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>
