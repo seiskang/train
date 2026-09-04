@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>시니어 디지털 배움터 | 생성형 AI로 만드는 나만의 명품 홈페이지 (실전 분투기 & 교재)</title>
+  <title>시니어 디지털 배움터 | 생성형 AI로 만드는 나만의 명품 홈페이지 (종합 기획 & 실전 교재)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -34,14 +34,13 @@
       -webkit-font-smoothing: antialiased;
       padding-bottom: 120px;
     }
+
+    /* 상단 네비게이션 & 돋보기 조절기 */
     .sk-topbar {
       position: sticky; top: 0; z-index: 1000;
-      background: rgba(9, 13, 22, 0.96);
-      backdrop-filter: blur(12px);
-      padding: 14px 24px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid var(--neon-cyan);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      background: rgba(9, 13, 22, 0.96); backdrop-filter: blur(12px);
+      padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 2px solid var(--neon-cyan); box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     }
     .sk-topbar-left { display: flex; align-items: center; gap: 12px; }
     .sk-topbar-badge {
@@ -56,26 +55,28 @@
     .sk-resizer-btn {
       background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
       color: #ffffff; padding: 4px 12px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer;
+      transition: all 0.2s;
     }
     .sk-resizer-btn:hover { background: var(--neon-cyan); color: #090d16; }
     .sk-container { max-width: 920px; margin: 0 auto; padding: 36px 20px; }
+
+    /* 표지 */
     .sk-hero {
       background: linear-gradient(145deg, #0f172a 0%, #1e293b 45%, #0c4a6e 100%);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      border-radius: 28px; padding: 50px 40px; text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); margin-bottom: 45px;
+      border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 28px;
+      padding: 50px 40px; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); margin-bottom: 45px;
     }
     .sk-hero-pill {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.5);
       color: var(--neon-cyan); font-size: 14px; font-weight: 800; padding: 6px 16px; border-radius: 30px; margin-bottom: 20px;
     }
-    .sk-hero h1 { font-size: 36px; font-weight: 900; line-height: 1.35; color: #ffffff; margin-bottom: 18px; }
+    .sk-hero h1 { font-size: 35px; font-weight: 900; line-height: 1.35; color: #ffffff; margin-bottom: 18px; }
     .sk-hero h1 span {
       background: linear-gradient(to right, #38bdf8, #2dd4bf, #facc15);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .sk-hero p { font-size: 20px; color: var(--text-sub); max-width: 760px; margin: 0 auto 24px auto; line-height: 1.8; }
+    .sk-hero p { font-size: 20px; color: var(--text-sub); max-width: 780px; margin: 0 auto 24px auto; line-height: 1.8; }
     .sk-hero-meta {
       display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;
       font-size: 15px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;
@@ -94,6 +95,32 @@
     .sk-comfort-tit { font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
     .sk-comfort-txt { font-size: 16px; color: var(--text-sub); line-height: 1.65; }
 
+    /* 일러스트 박스 */
+    .sk-illustration-box {
+      background: #020617; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 20px;
+      padding: 24px; margin: 28px 0; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .sk-illustration-title {
+      font-size: 15px; font-weight: 800; color: var(--neon-cyan); margin-top: 14px; display: flex; justify-content: center; align-items: center; gap: 6px;
+    }
+
+    /* 와이어프레임 설계도 */
+    .sk-wireframe-box {
+      background: #020617; border: 2px solid var(--neon-teal); border-radius: 24px; padding: 30px; margin-bottom: 45px;
+    }
+    .sk-wireframe-title {
+      font-size: 22px; font-weight: 900; color: var(--neon-teal); margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+    }
+    .sk-floor-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 12px; border-left: 6px solid var(--neon-cyan);
+    }
+    .sk-floor-num {
+      display: inline-block; background: var(--neon-cyan); color: #090d16; font-size: 12px; font-weight: 900; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px;
+    }
+    .sk-floor-name { font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
+    .sk-floor-desc { font-size: 16px; color: var(--text-sub); line-height: 1.65; }
+
     /* 실물 시연 모형 */
     .sk-showcase-box {
       background: #020617; border: 2px solid var(--neon-cyan); border-radius: 24px; padding: 30px; margin-bottom: 50px;
@@ -109,17 +136,11 @@
       padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; cursor: pointer;
     }
     .sk-admin-toggle.active { background: #dc2626; border-color: #ef4444; }
-    .sk-mini-browser {
-      background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 18px; overflow: hidden;
-    }
-    .sk-mini-bar {
-      background: #1e293b; padding: 10px 16px; display: flex; align-items: center; gap: 8px;
-    }
+    .sk-mini-browser { background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 18px; overflow: hidden; }
+    .sk-mini-bar { background: #1e293b; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
     .sk-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
     .sk-dot-r { background: #ef4444; } .sk-dot-y { background: #f59e0b; } .sk-dot-g { background: #10b981; }
-    .sk-mini-url {
-      flex: 1; background: #090d16; border: 1px solid #334155; padding: 5px 14px; border-radius: 8px; font-family: monospace; font-size: 14px; color: #38bdf8;
-    }
+    .sk-mini-url { flex: 1; background: #090d16; border: 1px solid #334155; padding: 5px 14px; border-radius: 8px; font-family: monospace; font-size: 14px; color: #38bdf8; }
     .sk-mini-body { padding: 36px 24px; text-align: center; background: radial-gradient(circle at 50% 30%, #1e293b, #090d16); }
     .sk-mini-greeting { font-size: 26px; font-weight: 900; color: #ffffff; line-height: 1.4; margin-bottom: 20px; }
     .sk-demo-btn-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
@@ -130,7 +151,7 @@
     .sk-demo-btn-press { background: #1e40af; color: #ffffff; }
     .sk-mini-intro { max-width: 580px; margin: 0 auto; font-size: 16px; color: #94a3b8; line-height: 1.7; }
 
-    /* 모달 팝업 */
+    /* 시연 팝업 모달 */
     .sk-demo-modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 99999;
@@ -144,7 +165,7 @@
     .sk-demo-body { padding: 24px; overflow-y: auto; flex: 1; background: #f8fafc; font-size: 16px; line-height: 1.7; }
     .sk-demo-footer { padding: 14px 20px; background: #ffffff; border-top: 1px solid #e2e8f0; text-align: right; }
 
-    /* 챕터 & 실수담 */
+    /* 챕터 공통 */
     .sk-chapter {
       background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px 36px; margin-bottom: 45px;
     }
@@ -169,7 +190,14 @@
     .sk-step-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 8px; }
     .sk-step-desc { font-size: 18px; color: var(--text-sub); line-height: 1.75; }
 
-    /* 실수담 스토리 박스 */
+    .sk-rbac-table {
+      width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--bg-surface); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .sk-rbac-table th, .sk-rbac-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 17px; }
+    .sk-rbac-table th { background: #1e293b; color: var(--neon-cyan); font-weight: 800; }
+    .sk-rbac-table td { color: var(--text-sub); }
+
+    /* 스토리텔링 실수담 상자 */
     .sk-story-box {
       background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(15, 23, 42, 0.85));
       border: 2px solid rgba(248, 113, 113, 0.4); border-radius: 20px; padding: 26px 30px; margin: 28px 0;
@@ -190,12 +218,11 @@
     .sk-tip-header { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: var(--neon-yellow); margin-bottom: 10px; }
     .sk-tip-text { font-size: 17.5px; color: #fef08a; line-height: 1.8; }
 
-    /* 프롬프트 카드 */
     .sk-prompt-card {
       background: #020617; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 18px; padding: 26px; margin: 28px 0;
     }
     .sk-prompt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .sk-prompt-badge { color: var(--neon-cyan); font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .sk-prompt-badge { color: var(--neon-cyan); font-size: 14px; font-weight: 800; }
     .sk-copy-button {
       background: linear-gradient(135deg, #0284c7, #0d9488); border: none; color: #ffffff; padding: 8px 18px; border-radius: 20px;
       font-size: 14px; font-weight: 800; cursor: pointer;
@@ -206,11 +233,6 @@
       display: inline-block; background: #1e293b; border: 1px solid #475569; border-bottom: 3px solid #334155;
       color: #f8fafc; padding: 3px 10px; border-radius: 8px; font-family: "IBM Plex Mono", monospace; font-size: 15px; font-weight: 700; margin: 0 4px;
     }
-    .sk-compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 24px 0; }
-    .sk-compare-box { background: var(--bg-surface); border-radius: 16px; padding: 22px; border: 1px solid rgba(255,255,255,0.08); }
-    .sk-compare-bad { border-top: 5px solid #ef4444; }
-    .sk-compare-good { border-top: 5px solid #10b981; }
-    .sk-compare-demo { background: #090d16; border: 1px solid #334155; padding: 18px; border-radius: 12px; font-size: 20px; font-weight: 700; color: #ffffff; }
 
     .sk-table { width: 100%; border-collapse: collapse; margin: 24px 0; background: var(--bg-surface); border-radius: 16px; overflow: hidden; }
     .sk-table th, .sk-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 17px; }
@@ -224,11 +246,10 @@
 </head>
 <body>
 
-  <!-- 상단 바 -->
   <header class="sk-topbar">
     <div class="sk-topbar-left">
-      <span class="sk-topbar-badge">실전 분투기 교재</span>
-      <span class="sk-topbar-title">시니어 생성형 AI 웹사이트 제작 실습서</span>
+      <span class="sk-topbar-badge">종합 기획 실습서</span>
+      <span class="sk-topbar-title">시니어 생성형 AI 웹사이트 구축 정석</span>
     </div>
     <div class="sk-resizer-wrap">
       <span style="font-size:13px; color:#94a3b8; font-weight:600;">돋보기 글자:</span>
@@ -240,23 +261,22 @@
 
   <main class="sk-container">
 
-    <!-- 교재 표지 -->
     <section class="sk-hero">
       <div class="sk-hero-pill">
         <span>👨‍🏫</span>
-        <span>청랑 이윤재 원장의 seiskang.kr 100% 실전 성공 스토리</span>
+        <span>청랑 이윤재 원장의 seiskang.kr 기획부터 배포까지 완결판</span>
       </div>
-      <h1>코딩 몰라도 뚝딱!<br><span>생성형 AI로 만드는 나만의 명품 홈페이지</span></h1>
-      <p>32년 철도 공직 은퇴 후 60대에 코드 한 줄 모르던 저도 해냈습니다.<br>
-      수많은 시행착오와 실수담을 있는 그대로 담았습니다. 여러분은 제가 겪은 실패를 건너뛰고 바로 성공하세요!</p>
+      <h1>기획부터 완성까지!<br><span>시니어를 위한 나만의 명품 홈페이지 구축 정석</span></h1>
+      <p>종이와 연필로 내 집 청사진을 그리는 기획 단계부터,<br>
+      일반 손님과 관리자의 권한 분리, 이메일 인증, 그리고 실제 겪은 5대 실수담까지 체계적으로 담았습니다.</p>
+      
       <div class="sk-hero-meta">
         <span><strong>집필 및 실전 감수:</strong> 청랑(淸浪) 이윤재 원장</span>
-        <span><strong>실제 제작 사이트:</strong> seiskang.kr</span>
-        <span><strong>교육 대상:</strong> 만 55세 이상 컴퓨터 초보 시니어</span>
+        <span><strong>실전 모델:</strong> 세이스강 (seiskang.kr)</span>
+        <span><strong>대상:</strong> 만 55세 이상 완전 초보 시니어</span>
       </div>
     </section>
 
-    <!-- 안심 3원칙 -->
     <section class="sk-comfort-box">
       <div class="sk-comfort-header">
         <span>🛡️</span>
@@ -281,9 +301,35 @@
       </div>
     </section>
 
-    <!-- ========================================================== -->
-    <!-- 🌟 실제 seiskang.kr 시연 모형 (Interactive Live Showcase) -->
-    <!-- ========================================================== -->
+    <!-- [일러스트 1] 3대 마법 기둥 인포그래픽 -->
+    <div class="sk-illustration-box">
+      <svg viewBox="0 0 760 170" width="100%" height="150" xmlns="http://www.w3.org/2000/svg">
+        <rect width="760" height="170" rx="16" fill="#0f172a"/>
+        <rect x="25" y="20" width="220" height="130" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+        <text x="135" y="60" text-anchor="middle" font-size="28">🏷️</text>
+        <text x="135" y="95" text-anchor="middle" font-size="17" font-weight="bold" fill="#38bdf8">1. 내 집 문패 (도메인)</text>
+        <text x="135" y="122" text-anchor="middle" font-size="13" fill="#94a3b8">닷홈(Dothome) 구매</text>
+
+        <path d="M 255 85 L 275 85" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="275,80 285,85 275,90" fill="#64748b"/>
+
+        <rect x="295" y="20" width="220" height="130" rx="12" fill="#1e293b" stroke="#4ade80" stroke-width="2"/>
+        <text x="405" y="60" text-anchor="middle" font-size="28">🏛️</text>
+        <text x="405" y="95" text-anchor="middle" font-size="17" font-weight="bold" fill="#4ade80">2. 무료 창고 (GitHub)</text>
+        <text x="405" y="122" text-anchor="middle" font-size="13" fill="#94a3b8">평생 무료 웹 호스팅</text>
+
+        <path d="M 525 85 L 545 85" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="545,80 555,85 545,90" fill="#64748b"/>
+
+        <rect x="565" y="20" width="170" height="130" rx="12" fill="#1e293b" stroke="#facc15" stroke-width="2"/>
+        <text x="650" y="60" text-anchor="middle" font-size="28">🤖</text>
+        <text x="650" y="95" text-anchor="middle" font-size="17" font-weight="bold" fill="#facc15">3. AI 건축가</text>
+        <text x="650" y="122" text-anchor="middle" font-size="13" fill="#94a3b8">말만 하면 코딩 완성!</text>
+      </svg>
+      <div class="sk-illustration-title"><span>🎨</span> [그림 1] 나만의 명품 홈페이지를 완성하는 3가지 마법의 기둥</div>
+    </div>
+
+    <!-- 🌟 실제 seiskang.kr 시연 모형 -->
     <section class="sk-showcase-box">
       <div class="sk-showcase-header">
         <div class="sk-showcase-title">
@@ -292,15 +338,14 @@
         </div>
         <button id="demoAdminBtn" onclick="toggleDemoAdmin()" class="sk-admin-toggle">
           <span>👤</span>
-          <span id="demoAdminText">현재 모드: 일반 방문자 (클릭 시 관리자 전환)</span>
+          <span id="demoAdminText">현재 모드: 일반 손님 (클릭 시 관리자 전환)</span>
         </button>
       </div>
 
       <p style="font-size:16px; color:#94a3b8; margin-bottom:18px;">
-        💡 <strong>체험 안내:</strong> 아래 실제 홈페이지 화면에서 <strong>[📢 공지사항]</strong> 또는 <strong>[📰 언론 보도 / 뉴스룸]</strong> 버튼을 직접 클릭해 보세요! 실제 사이트처럼 세련된 팝업창이 바로 열립니다.
+        💡 <strong>체험 안내:</strong> 아래 실제 홈페이지 화면에서 <strong>[📢 공지사항]</strong> 또는 <strong>[📰 언론 보도 / 뉴스룸]</strong> 버튼을 직접 클릭해 보세요! 우측 상단 스위치로 관리자 모드로 바꾸면 글쓰기/수정/삭제 버튼이 나타납니다.
       </p>
 
-      <!-- 미니 브라우저 시연 창 -->
       <div class="sk-mini-browser">
         <div class="sk-mini-bar">
           <span class="sk-dot sk-dot-r"></span>
@@ -316,6 +361,7 @@
             <span style="color:#38bdf8;">세이스강(SEISKANG) 이윤재입니다.</span>
           </div>
 
+          <!-- 상단 듀얼 버튼 -->
           <div class="sk-demo-btn-group">
             <button onclick="openDemoModal('notice')" class="sk-demo-btn sk-demo-btn-notice">
               <span>📢</span><span>공지사항</span>
@@ -332,7 +378,7 @@
       </div>
     </section>
 
-    <!-- 시연 모달: 공지사항 팝업 -->
+    <!-- 시연 모달: 공지사항 -->
     <div id="demoNoticeModal" class="sk-demo-modal-overlay">
       <div class="sk-demo-modal">
         <div class="sk-demo-header" style="background:linear-gradient(135deg, #0d9488, #0f766e);">
@@ -346,7 +392,7 @@
           </div>
         </div>
         <div class="sk-demo-body">
-          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-bottom:12px;">
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
             <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
               <span style="background:#fee2e2; color:#dc2626; font-weight:bold; padding:2px 6px; border-radius:4px;">필독·중요</span>
               <span style="color:#94a3b8;">2026.09.01</span>
@@ -365,7 +411,7 @@
       </div>
     </div>
 
-    <!-- 시연 모달: 언론 보도 팝업 -->
+    <!-- 시연 모달: 언론 보도 -->
     <div id="demoPressModal" class="sk-demo-modal-overlay">
       <div class="sk-demo-modal">
         <div class="sk-demo-header" style="background:linear-gradient(135deg, #1e3a8a, #0c4a6e);">
@@ -401,176 +447,205 @@
       </div>
     </div>
 
-    <!-- CHAPTER 01 -->
+    <!-- CHAPTER 01: 종합 기획 및 화면 배치도 -->
     <article class="sk-chapter" id="ch1">
       <span class="sk-chapter-tag">CHAPTER 01</span>
-      <h2 class="sk-chapter-title">인공지능 비서 부르기: 생성형 AI에게 내 32년 인생 이야기 말하기</h2>
-      <p class="sk-lead-p">"코딩 문법? 영어 약어? 하나도 외우실 필요 없습니다!"</p>
-      <p>홈페이지의 핵심은 현란한 기술이 아니라 <strong>'나의 진솔한 인생 스토리와 전문성'</strong>입니다. 저는 32년 철도 공직 경력과 한국어 강사로서의 포부를 AI에게 한국말로 다정하게 이야기했습니다.</p>
+      <h2 class="sk-chapter-title">내 집 청사진 그리기: 화면 구성 계획과 5층 와이어프레임</h2>
+      <p class="sk-lead-p">"집을 지을 때 벽돌부터 쌓지 않듯이, 홈페이지도 설계도부터 그려야 합니다."</p>
+      
+      <p>컴퓨터를 켜기 전에 종이와 연필을 들고 <strong>'방문자(손님)가 들어왔을 때 위에서 아래로 무엇을 보게 할 것인가'</strong>를 정하는 작업입니다. seiskang.kr의 5층 평면도를 그대로 따라 해 보세요.</p>
+
+      <div class="sk-wireframe-box">
+        <div class="sk-wireframe-title">
+          <span>📐</span><span>seiskang.kr 화면 배치 설계도 (와이어프레임)</span>
+        </div>
+        <div class="sk-floor-card">
+          <span class="sk-floor-num">1층 대문 / 헤더</span>
+          <div class="sk-floor-name">브랜드 로고 & 관리자 보안 구역</div>
+          <div class="sk-floor-desc">세이스강 로고, 관리자 로그인 상태 표시, 🔒 비밀번호 변경 버튼, 로그아웃 버튼 배치</div>
+        </div>
+        <div class="sk-floor-card">
+          <span class="sk-floor-num">2층 응접실 / 히어로</span>
+          <div class="sk-floor-name">첫인상 환영 인사 & 핵심 듀얼 버튼</div>
+          <div class="sk-floor-desc">"안녕하세요? 한국어 전문강사 세이스강 이윤재입니다" 환영사 바로 아래에 <strong>[📢 공지사항]과 [📰 언론 보도 / 뉴스룸] 버튼을 당당히 전진 배치</strong>하여 즉각적인 공신력 부여</div>
+        </div>
+        <div class="sk-floor-card">
+          <span class="sk-floor-num">3층 서재 / 프로필</span>
+          <div class="sk-floor-name">강사 상세 소개 및 전문성 증명</div>
+          <div class="sk-floor-desc">32년 공직 경력(9급 ➔ 5급 행정사무관 ➔ 1급 퇴직), 보유 자격증 36종, 학력, 저서 소개 및 프로필 자세히 보기 모달 연동</div>
+        </div>
+        <div class="sk-floor-card">
+          <span class="sk-floor-num">4층 안내소 / 수강 정보</span>
+          <div class="sk-floor-name">커리큘럼 & 투명한 수강료 규정</div>
+          <div class="sk-floor-desc">1회 50분 $22 USD 선입금 기준 및 안심 환불 규정(시작 전 90%, 30% 진행 50%, 50% 진행 후 환불 불가) 표 제공</div>
+        </div>
+        <div class="sk-floor-card">
+          <span class="sk-floor-num">5층 상담실 / 소통 창구</span>
+          <div class="sk-floor-name">카카오톡 보이스톡 상담 & 이메일 가입</div>
+          <div class="sk-floor-desc">외국인과 성인 학습자가 가장 편하게 연락할 수 있는 카카오톡/위챗 상담 버튼과 간편 회원가입 상자 배치</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- CHAPTER 02: 게시판과 3단계 권한(RBAC) 체계 -->
+    <article class="sk-chapter" id="ch2">
+      <span class="sk-chapter-tag">CHAPTER 02</span>
+      <h2 class="sk-chapter-title">출입증과 열쇠 만들기: 게시판 운영과 3단계 권한(RBAC) 설계</h2>
+      <p class="sk-lead-p">"누구나 글을 쓸 수 있게 열어두면 내 홈페이지가 광고 쓰레기통이 됩니다!"</p>
+
+      <p>홈페이지를 만들 때 가장 중요한 질문: <strong>"게시판을 만들 것인가? 만든다면 누가 글을 쓰고 누가 읽을 것인가?"</strong>입니다. seiskang.kr은 3단계 권한 체계로 철통 보안을 유지합니다.</p>
+
+      <table class="sk-rbac-table">
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>대상</th>
+            <th>부여된 권한</th>
+            <th>보안 조치</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:#94a3b8;">1. 일반 손님</strong><br>(Visitor)</td>
+            <td>로그인 안 한 첫 방문자, 학부모, 학생</td>
+            <td>공지사항 읽기, 언론보도 읽기, 실시간 검색, 말머리 탭 분류</td>
+            <td>글쓰기, 수정, 삭제 버튼이 <strong>일체 보이지 않음</strong></td>
+          </tr>
+          <tr>
+            <td><strong style="color:#38bdf8;">2. 수강생</strong><br>(Student)</td>
+            <td>회원가입 후 <strong>이메일 검증(인증)</strong>을 통과한 학생</td>
+            <td>1:1 맞춤 교재 열람, 과제방 제출, 진도율 확인, 피드백 열람</td>
+            <td>공지/보도자료 관리 권한 없음 (본인 학습에만 집중)</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#facc15;">3. 원장님</strong><br>(Admin)</td>
+            <td>관리자 비밀번호로 로그인한 홈페이지 주인장</td>
+            <td><strong>[✏️ 새 글 작성], [수정], [삭제] 전권 보유</strong>, 수강료 정산, 학생 관리</td>
+            <td>비밀번호 직접 변경 권한, 관리자 전용 CMS 활성화</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sk-tip-gold">
+        <div class="sk-tip-header">💡 [기획 비법] 회원가입 시 '이메일 검증(인증)'이 왜 반드시 필요할까요?</div>
+        <div class="sk-tip-text">
+          만약 이메일 인증이 없다면, 악성 로봇이나 장난치는 사람들이 `abc@fake.com` 같은 가짜 주소로 수백 개 계정을 만들어 홈페이지를 어지럽힙니다.<br>
+          가입 시 회원의 실제 이메일로 <strong>'1회용 인증 링크'</strong>를 보내 본인 확인을 거치게 해야만 진짜 학생들만 안전하게 보호할 수 있습니다!
+        </div>
+      </div>
+    </article>
+
+    <!-- CHAPTER 03: 실제 겪은 5대 실수담 -->
+    <article class="sk-chapter" id="ch3">
+      <span class="sk-chapter-tag">CHAPTER 03</span>
+      <h2 class="sk-chapter-title">실전 분투기: 이윤재 원장이 밤새 직접 겪은 5대 실수와 극복 비법</h2>
+      <p class="sk-lead-p">"책에서는 절대 알려주지 않는, 실제 시니어가 부딪히는 현실의 벽과 명쾌한 해결책!"</p>
+
+      <!-- 실수 1 -->
+      <div class="sk-story-box">
+        <span class="sk-story-badge">실제 사건 ①</span>
+        <div class="sk-story-title">🚨 파워쉘의 배신: git 용어가 인식되지 않습니다</div>
+        <div class="sk-story-desc">
+          파워쉘 창에서 `git pull`을 쳤더니 화면 가득 빨간색 에러 메시지가 쏟아졌습니다. 컴퓨터가 망가진 줄 알고 깜짝 놀랐습니다.
+        </div>
+        <div class="sk-story-solution">
+          <strong>💡 원인과 해결책:</strong><br>
+          컴퓨터에 'Git' 프로그램이 안 깔려 있었던 것뿐이었습니다!<br>
+          하지만 프로그램을 힘들게 깔 필요가 없었습니다. <strong>깃허브 웹사이트([github.com])에서 연필 모양(수정)을 누르고, 코드를 붙여넣은 뒤 초록색 [Commit changes] 버튼만 누르면 마우스 클릭 2번으로 전 세계에 1초 만에 배포</strong>되었습니다!
+        </div>
+      </div>
+
+      <!-- 실수 2 -->
+      <div class="sk-story-box">
+        <span class="sk-story-badge">실제 사건 ②</span>
+        <div class="sk-story-title">🚨 화면 쏟아짐 참사: "너무 허접해 보임..."</div>
+        <div class="sk-story-desc">
+          코드를 넣고 사이트를 열었더니, 팝업창은커녕 로그인 화면 밑으로 글씨가 수십 줄 쏟아져 나와 한 덩어리로 깨져 있었습니다. 절로 <em>"너무 허접해 보임..."</em>이라는 한숨이 나왔습니다.
+        </div>
+        <div class="sk-story-solution">
+          <strong>💡 원인과 해결책:</strong><br>
+          외부 디자인 도구(Tailwind)가 연결되지 않아 팝업을 숨기는 기능이 꺼져 있었던 것입니다.<br>
+          외부 도구에 기대지 않고 <strong>다크 네이비 색상과 테두리 서식(CSS)을 파일 안에 100% 자체 내장시키는 '일체형 완성 코드'로 교체하자마자</strong>, 거짓말처럼 널려 있던 글씨들이 싹 사라지고 우아한 팝업창으로 대변신했습니다!
+        </div>
+      </div>
+
+      <!-- 실수 3 -->
+      <div class="sk-story-box">
+        <span class="sk-story-badge">실제 사건 ③</span>
+        <div class="sk-story-title">🚨 "이윤재입니 / 다." 글자 쪼개짐 참사</div>
+        <div class="sk-story-desc">
+          화면 너비가 조금만 바뀌면 "세이스강(SEISKANG) 이윤재입니 / 다." 처럼 '다' 한 글자만 다음 줄로 넘어가서 볼품없었습니다.
+        </div>
+        <div class="sk-story-solution">
+          <strong>💡 해결 비법:</strong><br>
+          스타일 시트에 <code>word-break: keep-all;</code> 딱 한 줄을 넣었습니다. 그 순간 한국어 단어가 한 글자씩 쪼개지지 않고 띄어쓰기 단위로 통째로 넘어가 문장이 아주 기품 있게 정돈되었습니다!
+        </div>
+      </div>
+
+      <!-- 실수 4 -->
+      <div class="sk-story-box">
+        <span class="sk-story-badge">실제 사건 ④</span>
+        <div class="sk-story-title">🚨 "어디에 있어? 없거든!" 숨바꼭질 사건</div>
+        <div class="sk-story-desc">
+          버튼을 분명히 만들었다는데, 관리자로 로그인하니까 화면 어디에도 안 보였습니다.
+        </div>
+        <div class="sk-story-solution">
+          <strong>💡 디자인 혁신과 해결:</strong><br>
+          로그인 전 첫 화면에만 버튼을 달아놔서 관리자 대시보드로 화면이 바뀌자 버튼이 숨어버린 것이었습니다.<br>
+          기존 메인의 파란 타원 배지(`이윤재 선생님`)를 과감히 삭제하고, 그 자리에 <strong>`[📢 공지사항]`과 `[📰 언론 보도 / 뉴스룸]` 듀얼 버튼을 상단에 전진 배치</strong>하여 방문자도 관리자도 한눈에 볼 수 있게 해결했습니다!
+        </div>
+      </div>
+
+      <!-- 실수 5 -->
+      <div class="sk-story-box">
+        <span class="sk-story-badge">실제 사건 ⑤</span>
+        <div class="sk-story-title">🚨 비밀번호 변경 실패와 토큰 오타 잡기</div>
+        <div class="sk-story-desc">
+          비밀번호를 바꿨다고 알림이 떴는데 실제로는 새 비밀번호로 로그인이 안 되는 기막힌 상황이 발생했습니다.
+        </div>
+        <div class="sk-story-solution">
+          <strong>💡 원인과 해결:</strong><br>
+          코드에서 토큰 번호가 빠져 깨진 글자가 서버로 전달되었던 작은 오타 때문이었습니다.<br>
+          이를 계기로 매번 링크를 찾아다니지 않고, 관리자 화면에서 버튼 하나만 누르면 새 비밀번호를 즉시 바꾸는 [비밀번호 직접 변경 팝업]을 만들어 영구 해결했습니다.
+        </div>
+      </div>
+    </article>
+
+    <!-- CHAPTER 04: 실전 프롬프트 -->
+    <article class="sk-chapter" id="ch4">
+      <span class="sk-chapter-tag">CHAPTER 04</span>
+      <h2 class="sk-chapter-title">생성형 AI에게 기획서 전달하기: 실전 프롬프트</h2>
+      <p class="sk-lead-p">"기획서가 완성되었으니, AI에게 명령서(프롬프트)로 전달할 차례입니다!"</p>
 
       <div class="sk-prompt-card">
         <div class="sk-prompt-top">
-          <span class="sk-prompt-badge">📋 실제 seiskang.kr 완성에 사용된 마법의 실전 프롬프트</span>
+          <span class="sk-prompt-badge">📋 기획이 완벽히 반영된 실전 프롬프트 (원클릭 복사)</span>
           <button class="sk-copy-button" onclick="copyPrompt('p1')">
             <span>📄</span><span>원클릭 복사하기</span>
           </button>
         </div>
-        <div class="sk-prompt-text" id="p1">안녕하세요? 저는 은퇴 후 인생 2막을 준비하는 60대 강사이자 작가 이윤재입니다.
-외국인과 성인 학습자들을 위한 1:1 맞춤형 한국어 교육 플랫폼(seiskang.kr) 홈페이지를 만들고 싶습니다.
+        <div class="sk-prompt-text" id="p1">너는 시니어 대상 친절한 최고급 웹 디자이너이자 풀스택 개발자야.
+32년 철도 공직 경력의 60대 한국어 강사 이윤재 원장의 1:1 맞춤 교육 플랫폼(seiskang.kr) 단일 index.html 코드를 작성해줘.
 
-다음 요구사항을 모두 충족하는 index.html 단일 완성 코드를 작성해 주세요:
-1. 헤더: '안녕하세요? 한국어 전문강사 세이스강 이윤재입니다'
-2. 큰 글씨: 시니어 방문자들도 돋보기 없이 편안하게 읽을 수 있도록 본문 글씨를 크고 시원하게 설정
-3. 줄바꿈 비법: 한국어 문장이 어색하게 한 글자씩 쪼개지지 않도록 'word-break: keep-all;' 스타일 필수 적용
-4. 소개 섹션: 32년 철도 공직 경력, 전문 자격증, 평생교육 활동 소개
-5. 수강 안내: 1회 50분 $22 USD 맞춤형 수업 안내 및 환불 규정 표
-6. 소통 버튼: 카카오톡 보이스톡 상담 및 이메일 문의 버튼
-7. 추가 기능: 상단에 [📢 공지사항]과 [📰 언론 보도]를 누르면 열리는 멋진 팝업 모달창 내장
-8. 형식: 복잡한 외부 도구 없이 파일 하나만 복사해서 바로 열 수 있는 완전한 HTML 단일 코드로 제공해 주세요.</div>
+[화면 배치 요구사항 - 5층 설계도]
+1. 1층 헤더: 세이스강 브랜드 로고, 관리자 로그인 상태, 비밀번호 변경 버튼
+2. 2층 히어로: '안녕하세요? 한국어 전문강사 세이스강 이윤재입니다'
+3. 상단 듀얼 버튼: 메인 상단에 [📢 공지사항]과 [📰 언론 보도 / 뉴스룸] 버튼을 나란히 배치
+4. 3층 소개: 32년 철도 공직 경력, 전문 자격증, 평생교육 활동
+5. 4층 안내: 1회 50분 $22 USD 맞춤형 수업 및 환불 규정 표
+6. 5층 소통: 카카오톡 보이스톡 및 위챗 상담 버튼
+
+[권한 및 기능 요구사항]
+1. 공지사항 & 언론보도 게시판 모달: 실시간 검색창, 말머리 탭 분류 기능 내장
+2. 3단계 권한 제어: 일반 방문자에게는 검색과 열람만 제공하고, 관리자(Admin) 로그인 시에만 [새 글 작성], [수정], [삭제] 버튼 활성화
+3. 이메일 검증: 회원가입 시 안전한 이메일 인증 절차 지원
+4. 데이터 저장: 외부 유료 서버 없이 브라우저 자체 저장소(localStorage)를 활용하여 영구 저장
+5. 시니어 특화 줄바꿈: 문장이 한 글자씩 쪼개지지 않도록 CSS에 'word-break: keep-all;' 필수 적용
+6. 단일 완성형: 외부 도구 없이 파일 하나만 복사해서 바로 열리는 완전한 코드로 출력해줘.</div>
       </div>
     </article>
 
-    <!-- CHAPTER 02 & 03 -->
-    <article class="sk-chapter" id="ch2">
-      <span class="sk-chapter-tag">CHAPTER 02 & 03</span>
-      <h2 class="sk-chapter-title">내 집 문패(닷홈)와 평생 무료 창고(깃허브) 마련하기</h2>
-      <p class="sk-lead-p">"인터넷 세상에 내 이름의 도로명 주소와 땅이 생겼습니다!"</p>
-
-      <div class="sk-step-list">
-        <div class="sk-step-card">
-          <div class="sk-step-badge">1</div>
-          <div class="sk-step-content">
-            <div class="sk-step-title">닷홈(dothome.co.kr)에서 도메인 구매</div>
-            <div class="sk-step-desc">회원가입 ➔ 도메인 검색 ➔ <code>seiskang.kr</code> (1년 약 1~2만 원 선) 신청 완료. <strong>★ 아이디와 비밀번호는 반드시 종이 수첩에 볼펜으로 메모하기!</strong></div>
-          </div>
-        </div>
-        <div class="sk-step-card">
-          <div class="sk-step-badge">2</div>
-          <div class="sk-step-content">
-            <div class="sk-step-title">깃허브(github.com) 평생 무료 창고 개설</div>
-            <div class="sk-step-desc">무료 가입 ➔ 영어가 나오면 마우스 우클릭 [한국어로 번역] ➔ 초록색 [New] 버튼을 눌러 내 저장소(<code>train</code>)를 개설합니다. 매월 나가는 서버 비용이 0원입니다!</div>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- CHAPTER 04: 실수담 1 -->
-    <article class="sk-chapter" id="ch4">
-      <span class="sk-chapter-tag">CHAPTER 04</span>
-      <h2 class="sk-chapter-title">실수담 ① 파워쉘의 배신과 마우스 웹 배포의 대반전!</h2>
-      <p class="sk-lead-p">"컴퓨터 화면에 온통 붉은 글씨가 떴을 때 심장이 덜컥 내려앉았습니다."</p>
-
-      <div class="sk-story-box">
-        <span class="sk-story-badge">실제 사건</span>
-        <div class="sk-story-title">🚨 파워쉘 빨간 글씨 참사: git 용어가 인식되지 않습니다</div>
-        <div class="sk-story-desc">
-          파워쉘 창을 켜고 `git pull`을 쳤더니 화면 가득 빨간색 에러 메시지가 쏟아졌습니다.<br>
-          <em>"git: 'git' 용어가 cmdlet, 함수, 스크립트 파일 또는 실행할 수 있는 프로그램 이름으로 인식되지 않습니다."</em><br>
-          순간 컴퓨터가 고장 난 줄 알고 식은땀을 흘렸습니다.
-        </div>
-        <div class="sk-story-solution">
-          <strong>💡 명쾌한 대반전과 해결책:</strong><br>
-          알고 보니 컴퓨터에 'Git'이라는 프로그램이 안 깔려 있었던 것뿐이었습니다!<br>
-          하지만 프로그램을 힘들게 깔 필요가 전혀 없었습니다. <strong>깃허브 웹사이트([github.com])에서 연필 아이콘(수정)을 누르고, 코드를 붙여넣은 뒤 초록색 [Commit changes] 버튼만 누르면 마우스 클릭 2번으로 1초 만에 전 세계에 똑같이 배포</strong>되었습니다!
-        </div>
-      </div>
-    </article>
-
-    <!-- CHAPTER 05: 실수담 2 -->
-    <article class="sk-chapter" id="ch5">
-      <span class="sk-chapter-tag">CHAPTER 05</span>
-      <h2 class="sk-chapter-title">실수담 ② 화면 폭망 사건: "너무 허접해 보임..."</h2>
-      <p class="sk-lead-p">"코드를 넣고 신나서 사이트를 열었더니... 텍스트가 와르르 쏟아져 나왔습니다."</p>
-
-      <div class="sk-story-box">
-        <span class="sk-story-badge">실제 사건</span>
-        <div class="sk-story-title">🚨 서식 쏟아짐 참사: 팝업은 안 뜨고 로그인 밑으로 글씨가 와르르</div>
-        <div class="sk-story-desc">
-          기대감에 부풀어 seiskang.kr을 새로고침했는데, 팝업창은커녕 로그인 화면 밑으로 글씨가 수십 줄 쏟아져 나와 한 덩어리로 깨져 있었습니다. 절로 <em>"너무 허접해 보임..."</em>이라는 한숨이 나왔습니다.
-        </div>
-        <div class="sk-story-solution">
-          <strong>💡 원인과 해결책:</strong><br>
-          외부 디자인 도구(Tailwind)가 연결되지 않아 팝업을 숨겨주는 기능이 작동하지 않았던 것입니다.<br>
-          외부 도구에 기대지 않고 <strong>다크 네이비 색상과 테두리 서식(CSS)을 파일 안에 100% 자체 내장시키는 '일체형 완성 코드'로 교체하자마자</strong>, 거짓말처럼 널려 있던 글씨들이 싹 사라지고 우아한 팝업창으로 대변신했습니다!
-        </div>
-      </div>
-    </article>
-
-    <!-- CHAPTER 06: 실수담 3 -->
-    <article class="sk-chapter" id="ch6">
-      <span class="sk-chapter-tag">CHAPTER 06</span>
-      <h2 class="sk-chapter-title">실수담 ③ "이윤재입니 / 다." 글자 쪼개짐 참사</h2>
-      <p class="sk-lead-p">"컴퓨터 화면 너비가 조금만 바뀌면 '다' 한 글자만 다음 줄로 넘어가 못생겨 보였습니다."</p>
-
-      <div class="sk-compare-grid">
-        <div class="sk-compare-box sk-compare-bad">
-          <div class="sk-compare-title" style="color:#f87171;">❌ 글자 쪼개짐 참사</div>
-          <div class="sk-compare-demo" style="word-break: break-all;">
-            세이스강(SEISKANG) 이윤재입니<br>
-            <span style="color:#ef4444; font-weight:900;">다.</span>
-          </div>
-        </div>
-        <div class="sk-compare-box sk-compare-good">
-          <div class="sk-compare-title" style="color:#4ade80;">✅ 단어 단위 찰떡 정렬</div>
-          <div class="sk-compare-demo" style="word-break: keep-all;">
-            세이스강(SEISKANG)<br>
-            <span style="color:#4ade80; font-weight:900;">이윤재입니다.</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="sk-tip-gold">
-        <div class="sk-tip-header">💡 [해결 비법] 스타일에 딱 한 줄만 넣으세요!</div>
-        <div class="sk-tip-text">
-          <code>word-break: keep-all;</code><br>
-          이 코드 한 줄을 넣는 순간, 한국어 단어가 한 글자씩 쪼개지지 않고 띄어쓰기 단위로 통째로 넘어가 문장이 아주 기품 있게 정돈됩니다!
-        </div>
-      </div>
-    </article>
-
-    <!-- CHAPTER 07: 실수담 4 -->
-    <article class="sk-chapter" id="ch7">
-      <span class="sk-chapter-tag">CHAPTER 07</span>
-      <h2 class="sk-chapter-title">실수담 ④ "어디에 있어? 없거든!" ➔ 상단 전진 배치의 대승리</h2>
-      <p class="sk-lead-p">"버튼을 만들었다는데... 화면 어디에도 안 보이는 숨바꼭질이 시작되었습니다."</p>
-
-      <div class="sk-story-box">
-        <span class="sk-story-badge">실제 사건</span>
-        <div class="sk-story-title">🚨 버튼 실종 사건: 관리자로 로그인하면 사라지는 버튼</div>
-        <div class="sk-story-desc">
-          버튼을 넣었다고 해서 확인하러 들어갔는데, <em>"뭐야, 어디에 있어? 없거든!"</em> 소리가 절로 나왔습니다.<br>
-          알고 보니 로그인 전 첫 화면에만 버튼을 달아놔서, 관리자로 로그인하니까 대시보드 화면으로 전환되면서 버튼이 쏙 숨어버린 것이었습니다.
-        </div>
-        <div class="sk-story-solution">
-          <strong>💡 디자인 혁신과 해결책:</strong><br>
-          1. 관리자 상단 로그아웃 옆에 <strong>`[📰 언론 보도 관리]`</strong> 버튼을 추가했습니다.<br>
-          2. 그리고 기존 메인의 파란색 타원 배지(`이윤재 선생님`)를 과감히 삭제하고, 그 자리에 <strong>`[📢 공지사항]`과 `[📰 언론 보도 / 뉴스룸]` 듀얼 버튼을 전진 배치</strong>했습니다!<br>
-          ➔ 이제 손님들이 사이트에 오자마자 신뢰도 높은 공지사항과 언론 기사를 1초 만에 볼 수 있게 되었습니다.
-        </div>
-      </div>
-    </article>
-
-    <!-- CHAPTER 08: 실수담 5 -->
-    <article class="sk-chapter" id="ch8">
-      <span class="sk-chapter-tag">CHAPTER 08</span>
-      <h2 class="sk-chapter-title">실수담 ⑤ 가짜 비번 사건과 토큰 오타 잡기</h2>
-      <p class="sk-lead-p">"비밀번호를 바꿨다는데 새 비번으로 로그인이 안 되는 기막힌 순간!"</p>
-
-      <div class="sk-story-box">
-        <span class="sk-story-badge">실제 사건</span>
-        <div class="sk-story-title">🚨 비번 미반영 사건: 유효하지 않은 링크 오류</div>
-        <div class="sk-story-desc">
-          재설정 링크를 아무리 눌러도 "유효하지 않은 링크입니다"라고 뜨고, 임시 창에서 변경 성공이라고 떴는데도 실제로는 로그인이 안 되었습니다.
-        </div>
-        <div class="sk-story-solution">
-          <strong>💡 진짜 원인과 해결:</strong><br>
-          코드에서 <code>resetTokenMatch</code> 뒤에 <strong>``</strong> 번호가 빠져서 깨진 글자가 서버로 전달되었던 작은 오타 때문이었습니다!<br>
-          이를 계기로 매번 링크를 찾아다니지 않고, 관리자 화면에서 버튼 하나만 누르면 새 비밀번호를 즉시 바꾸는 [비밀번호 직접 변경 팝업]을 구축하여 영구 해결했습니다.
-        </div>
-      </div>
-    </article>
-
-    <!-- 부록 -->
+    <!-- 부록: 단축키 -->
     <article class="sk-chapter" id="appendix">
       <span class="sk-chapter-tag">부 록</span>
       <h2 class="sk-chapter-title">시니어 학습자 필수 컴퓨터 단축키 총정리</h2>
@@ -579,7 +654,7 @@
           <tr>
             <th>단축키</th>
             <th>이름</th>
-            <th>언제 쓰나요? (시니어 맞춤 설명)</th>
+            <th>언제 쓰나요?</th>
           </tr>
         </thead>
         <tbody>
@@ -604,11 +679,6 @@
             <td>실수로 글자를 지웠거나 엉뚱한 걸 눌렀을 때 방금 전으로 되돌릴 때</td>
           </tr>
           <tr>
-            <td><span class="sk-key">Ctrl</span> + <span class="sk-key">F</span></td>
-            <td><strong>단어 찾기</strong></td>
-            <td>수천 줄의 긴 코드 중에서 '이윤재'나 '공지사항'을 1초 만에 찾을 때</td>
-          </tr>
-          <tr>
             <td><span class="sk-key">Ctrl</span> + <span class="sk-key">+</span></td>
             <td><strong>화면 확대</strong></td>
             <td>눈이 침침하고 글씨가 작아 보일 때 시원시원하게 키울 때</td>
@@ -622,13 +692,10 @@
       </table>
     </article>
 
-    <!-- 푸터 -->
     <footer class="sk-footer">
       <div class="sk-footer-quote">
-        "나이 60을 훌쩍 넘긴 저 역시 코드 한 줄 쓸 줄 몰랐지만,<br>
-        생성형 AI라는 다정한 파트너와 함께 저만의 멋진 세이스강(seiskang.kr) 세상을 직접 열었습니다.<br>
-        두려워하지 말고 천천히 마우스를 움직여 보세요.<br>
-        여러분의 인생 경륜과 지혜가 담긴 나만의 홈페이지가 세상과 이어지는 기적을 경험하시게 될 것입니다!"
+        "배움에는 정년이 없습니다.<br>
+        생성형 AI라는 다정한 파트너와 함께라면, 시니어 누구나 나만의 멋진 인터넷 세상을 직접 열 수 있습니다!"
       </div>
       <div class="sk-footer-copy">
         © 2026 청랑(淸浪) 이윤재 원장 | 세이스강 (seiskang.kr) 평생교육 & AI 실습 교재
@@ -640,12 +707,23 @@
   <script>
     let currentScale = 19;
     function zoomText(delta) {
-      currentScale = Math.min(28, Math.max(16, currentScale + delta));
-      document.documentElement.style.setProperty('--font-scale', currentScale + 'px');
+      currentScale = Math.min(32, Math.max(15, currentScale + (delta * 3)));
+      let styleSheet = document.getElementById('sk-dynamic-zoom');
+      if (!styleSheet) {
+        styleSheet = document.createElement('style');
+        styleSheet.id = 'sk-dynamic-zoom';
+        document.head.appendChild(styleSheet);
+      }
+      styleSheet.innerHTML = 
+        'body, p, .sk-step-desc, .sk-comfort-txt, .sk-floor-desc, .sk-tip-text, .sk-story-desc, .sk-story-solution, .sk-table td, .sk-mini-intro, .sk-prompt-text { font-size: ' + currentScale + 'px !important; line-height: 1.85 !important; }' +
+        '.sk-lead-p { font-size: ' + (currentScale + 3) + 'px !important; }' +
+        '.sk-step-title, .sk-floor-name, .sk-comfort-tit, .sk-tip-header, .sk-story-title { font-size: ' + (currentScale + 4) + 'px !important; }';
     }
+
     function resetText() {
       currentScale = 19;
-      document.documentElement.style.setProperty('--font-scale', '19px');
+      const styleSheet = document.getElementById('sk-dynamic-zoom');
+      if (styleSheet) styleSheet.remove();
     }
 
     function copyPrompt(id) {
@@ -653,18 +731,16 @@
       if (!el) return;
       navigator.clipboard.writeText(el.innerText).then(() => {
         alert('🎉 프롬프트가 복사되었습니다!\n\nAI(Gemini / ChatGPT) 대화창에 가셔서 붙여넣기(Ctrl + V) 하시면 됩니다.');
-      }).catch(() => {
-        alert('복사에 실패했습니다. 마우스로 직접 드래그해서 복사해 주세요.');
       });
     }
 
-    function openDemoModal(type) {
-      if (type === 'notice') document.getElementById('demoNoticeModal').classList.add('active');
-      if (type === 'press') document.getElementById('demoPressModal').classList.add('active');
+    function openDemoModal(t) {
+      if (t === 'notice') document.getElementById('demoNoticeModal').classList.add('active');
+      if (t === 'press') document.getElementById('demoPressModal').classList.add('active');
     }
-    function closeDemoModal(type) {
-      if (type === 'notice') document.getElementById('demoNoticeModal').classList.remove('active');
-      if (type === 'press') document.getElementById('demoPressModal').classList.remove('active');
+    function closeDemoModal(t) {
+      if (t === 'notice') document.getElementById('demoNoticeModal').classList.remove('active');
+      if (t === 'press') document.getElementById('demoPressModal').classList.remove('active');
     }
 
     let isDemoAdmin = false;
@@ -672,33 +748,26 @@
       isDemoAdmin = !isDemoAdmin;
       const btn = document.getElementById('demoAdminBtn');
       const txt = document.getElementById('demoAdminText');
-      const nwBtn = document.getElementById('demoNoticeWriteBtn');
-      const pwBtn = document.getElementById('demoPressWriteBtn');
+      const nw = document.getElementById('demoNoticeWriteBtn');
+      const pw = document.getElementById('demoPressWriteBtn');
       const na = document.getElementById('demoNoticeAdminActions');
       const pa = document.getElementById('demoPressAdminActions');
-
       if (isDemoAdmin) {
         btn.classList.add('active');
         txt.innerText = "현재 모드: 관리자 로그인 상태 (수정/삭제/글쓰기 활성)";
-        nwBtn.style.display = 'inline-block';
-        pwBtn.style.display = 'inline-block';
-        na.style.display = 'flex';
-        pa.style.display = 'flex';
+        nw.style.display = 'inline-block'; pw.style.display = 'inline-block';
+        na.style.display = 'flex'; pa.style.display = 'flex';
       } else {
         btn.classList.remove('active');
-        txt.innerText = "현재 모드: 일반 방문자 (클릭 시 관리자 전환)";
-        nwBtn.style.display = 'none';
-        pwBtn.style.display = 'none';
-        na.style.display = 'none';
-        pa.style.display = 'none';
+        txt.innerText = "현재 모드: 일반 손님 (클릭 시 관리자 전환)";
+        nw.style.display = 'none'; pw.style.display = 'none';
+        na.style.display = 'none'; pa.style.display = 'none';
       }
     }
 
     window.addEventListener('click', function(e) {
-      const nm = document.getElementById('demoNoticeModal');
-      const pm = document.getElementById('demoPressModal');
-      if (e.target === nm) closeDemoModal('notice');
-      if (e.target === pm) closeDemoModal('press');
+      if (e.target.id === 'demoNoticeModal') closeDemoModal('notice');
+      if (e.target.id === 'demoPressModal') closeDemoModal('press');
     });
   </script>
 </body>
