@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>구글 드라이브 대용량 파일 연동 및 보안 관리 가이드 | 인포그래픽</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 15mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      word-break: keep-all;
+    }
+    body {
+      font-family: "Pretendard", sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* A4 인포그래픽 컨테이너 (고대비 및 뛰어난 시인성 구조) */
+    .infographic-container {
+      width: 794px;
+      min-height: 1123px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      padding: 45px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* 헤더 디자인 */
+    .info-header {
+      border-bottom: 3px solid #0f172a;
+      padding-bottom: 22px;
+      margin-bottom: 25px;
+    }
+    .header-badge {
+      display: inline-block;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .header-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+    }
+    .header-title span {
+      color: #2563eb;
+    }
+
+    /* 본문 섹션 그리드 */
+    .info-body {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      flex: 1;
+    }
+
+    .section-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 6px solid #2563eb;
+      border-radius: 8px;
+      padding: 22px 24px;
+    }
+    .section-box.security {
+      border-left-color: #059669;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step-item {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #334155;
+      display: flex;
+      gap: 10px;
+    }
+    .step-bullet {
+      font-weight: 700;
+      color: #2563eb;
+      min-width: 18px;
+    }
+    .security .step-bullet {
+      color: #059669;
+    }
+
+    /* 코드 및 URL 박스 (시인성 극대화) */
+    .code-box {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12.5px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-top: 8px;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+    .code-box .highlight {
+      color: #facc15;
+      font-weight: 700;
+    }
+
+    /* 푸터 디자인 */
+    .info-footer {
+      border-top: 2px solid #e2e8f0;
+      padding-top: 16px;
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    /* 인쇄 전용 최적화 스타일 */
+    @media print {
+      body { background: #ffffff; padding: 0; }
+      .infographic-container {
+        width: 100%;
+        height: 100vh;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="infographic-container">
+    
+    <!-- 헤더 영역 -->
+    <header class="info-header">
+      <div class="header-badge">Google Drive 200GB Pro Guide</div>
+      <h1 class="header-title">구글 드라이브 대용량 파일 연동 및 <span>공유 보안 관리</span></h1>
+    </header>
+
+    <!-- 본문 영역 -->
+    <main class="info-body">
+      
+      <!-- 파트 1: HTML 직접 연동 -->
+      <section class="section-box">
+        <h2 class="section-title">📂 PART 1. 웹(HTML) 대용량 파일 직접 연동 가이드</h2>
+        <div class="step-list">
+          <div class="step-item">
+            <span class="step-bullet">01</span>
+            <div><strong>파일 업로드 및 공유 권한 설정:</strong> 구글 드라이브에 오디오·이미지 업로드 후, 우클릭 ➔ <strong>[공유] ➔ [공유]</strong> 진입. 일반 접근 권한을 <span style="color:#2563eb; font-weight:700;">'링크가 있는 모든 사용자에게 공개'</span>로 변경 후 링크 복사.</div>
+          </div>
+          <div class="step-item">
+            <span class="step-bullet">02</span>
+            <div><strong>웹 전용 직접 재생(Download) URL 변환:</strong> 웹페이지(&lt;audio&gt; 또는 &lt;a&gt; 태그)에서 막힘없이 재생되도록 아래 형식으로 변환하여 적용</div>
+          </div>
+          <div class="code-box">
+            <div>📌 <b>원본 링크:</b> https://drive.google.com/file/d/<span class="highlight">【파일ID】</span>/view?usp=sharing</div>
+            <div style="margin-top:4px;">🚀 <b>변환 형식:</b> https://docs.google.com/uc?export=download&id=<span class="highlight">【파일ID】</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 파트 2: 공유 상태 점검 -->
+      <section class="section-box security">
+        <h2 class="section-title" style="color: #059669;">🔒 PART 2. 드라이브 파일 공유 상태 점검 및 확인 방법</h2>
+        <div class="step-list">
+          <div class="step-item">
+            <span class="step-bullet">A</span>
+            <div><strong>웹 메뉴에서 직접 확인:</strong> 왼쪽 메뉴 <strong>[공유 문서함]</strong> 확인 및 개별 파일 우클릭 ➔ [공유]에서 권한 확인·차단(제한됨). <em>(※ 파일 아이콘에 사람 그림이 있으면 공유 중인 상태)</em></div>
+          </div>
+          <div class="step-item">
+            <span class="step-bullet">B</span>
+            <div><strong>검색창 명령어로 전체 공개 파일 일괄 조회:</strong> 드라이브 상단 검색창에 아래 명령어를 입력하여 의도치 않은 외부 노출 파일 점검</div>
+          </div>
+          <div class="code-box" style="background: #064e3b; color: #ecfdf5;">
+            🔍 <b>검색 명령어 입력:</b> visibility:public_on 또는 sharedwith:public
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 푸터 영역 -->
+    <footer class="info-footer">
+      <div>Professional Web Development & Data Management Infographic</div>
+      <div>Google Drive Pro 200GB Optimized</div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
