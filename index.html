@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>세이스강 이윤재 클래스 매니저</title>
+<title>세이스강(SEISKANG) 이윤재 클래스 매니저</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
+  @keyframes blingPulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); box-shadow: 0 4px 15px rgba(196,104,74,0.4); }
+  50% { transform: scale(1.05); filter: brightness(1.25); box-shadow: 0 0 25px rgba(250,204,21,0.85); }
+}
   /* 사이트 전체 한국어 단어 단위 줄바꿈 */
 body, h1, h2, h3, h4, p, span, div {
   word-break: keep-all;
@@ -1657,8 +1661,8 @@ button { font-family: var(--font-sans); }
       '<a href="#auth-form-anchor" class="btn-hero ghost">이미 계정이 있어요</a>' +
       '</div></div></section>' +
 
-      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>세이스강 이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 세이스강 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-cta">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
-      '<div class="enroll-steps">' +
+      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>세이스강 이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 세이스강 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-cta" style="display:inline-block;animation:blingPulse 1.5s infinite ease-in-out;box-shadow:0 4px 15px rgba(196,104,74,0.4);">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
+      '<div class="enroll-steps" style="max-width:480px;margin:24px auto 0 auto;display:flex;flex-direction:column;gap:16px;">' +
       '<div class="enroll-step"><span class="num">1</span><div><div class="title">회원가입 후 로그인</div><div class="desc">아래에서 회원가입하시면 바로 이용하실 수 있습니다.</div></div></div>' +
       '<div class="enroll-step"><span class="num">2</span><div><div class="title">레벨 테스트 상담</div><div class="desc">한국어 실력에 맞는 수업을 위해 먼저 상담을 진행합니다.</div></div></div>' +
       '<div class="enroll-step"><span class="num">3</span><div><div class="title">주 1~2회, 회당 50분</div><div class="desc">보이스톡으로 1:1 맞춤 수업을 진행합니다.</div></div></div>' +
