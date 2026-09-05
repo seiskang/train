@@ -30,7 +30,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* 상단 조작 바 (모바일 반응형 개선) */
+    /* 상단 조작 바 */
     .top-toolbar {
       display: flex;
       gap: 12px;
@@ -88,7 +88,6 @@
       margin-bottom: 30px;
     }
 
-    /* 배경 장식 원광 */
     .a4-container::before {
       content: '';
       position: absolute;
@@ -112,7 +111,6 @@
       flex: 1;
     }
 
-    /* 상단 감성 태그 */
     .poem-badge {
       font-size: 13px;
       letter-spacing: 0.25em;
@@ -125,7 +123,6 @@
       background: rgba(251, 191, 36, 0.05);
     }
 
-    /* 시 제목 */
     .poem-title {
       font-size: 38px;
       font-weight: 900;
@@ -135,7 +132,6 @@
       text-align: center;
     }
 
-    /* 저자 및 낙인 */
     .author-box {
       display: flex;
       align-items: center;
@@ -158,7 +154,6 @@
       border: 1px solid #b91c1c;
     }
 
-    /* 시 본문 텍스트 */
     .poem-body {
       font-size: 17px;
       line-height: 1.9;
@@ -177,7 +172,6 @@
       gap: 4px;
     }
 
-    /* 하단 푸터 */
     .a4-footer {
       position: relative;
       z-index: 2;
@@ -190,26 +184,10 @@
       letter-spacing: 0.05em;
     }
 
-    /* ==========================================================
-       스마트폰 화면 대응 반응형 미디어 쿼리 (핵심 수정 부분)
-       ========================================================== */
     @media print {
-      body {
-        background: #fff;
-        color: #000;
-        padding: 0;
-      }
-      .top-toolbar {
-        display: none !important;
-      }
-      .a4-container {
-        box-shadow: none;
-        border: none;
-        margin: 0;
-        width: 100%;
-        min-height: auto;
-        background: #fff !important;
-      }
+      body { background: #fff; color: #000; padding: 0; }
+      .top-toolbar { display: none !important; }
+      .a4-container { box-shadow: none; border: none; margin: 0; width: 100%; min-height: auto; background: #fff !important; }
       .poem-title { color: #111 !important; }
       .poem-body { color: #334155 !important; }
       .poem-badge { color: #b45309 !important; border-color: #b45309 !important; }
@@ -217,38 +195,17 @@
     }
 
     @media (max-width: 768px) {
-      body {
-        padding: 12px 8px;
-      }
-      .top-toolbar {
-        gap: 8px;
-        margin-bottom: 16px;
-      }
-      .tool-btn {
-        padding: 8px 12px;
-        font-size: 12px;
-      }
-      .a4-container {
-        width: 100% !important;
-        min-height: auto !important;
-        padding: 30px 16px !important;
-      }
-      .poem-title {
-        font-size: 26px !important;
-      }
-      .poem-body {
-        font-size: 15px !important;
-        line-height: 1.8 !important;
-        gap: 18px !important;
-      }
+      body { padding: 12px 8px; }
+      .top-toolbar { gap: 8px; margin-bottom: 16px; }
+      .tool-btn { padding: 8px 12px; font-size: 12px; }
+      .a4-container { width: 100% !important; min-height: auto !important; padding: 30px 16px !important; }
+      .poem-title { font-size: 26px !important; }
+      .poem-body { font-size: 15px !important; line-height: 1.8 !important; gap: 18px !important; }
     }
   </style>
 </head>
 <body>
 
-  <body>
-
-  <!-- 👇 바로 이 위치(<body> 열린 직후)에 넣어주세요 -->
   <!-- 상단 조작 버튼 바 -->
   <div class="top-toolbar">
     <button class="tool-btn primary" id="bgmToggleBtn" onclick="toggleBGM()">
@@ -265,14 +222,10 @@
     </a>
   </div>
 
-  <!-- 숨겨진 배경음악 오디오 -->
+  <!-- 배경음악 오디오 -->
   <audio id="bgmAudio" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=meditation-flute-and-ambient-111440.mp3" type="audio/mpeg">
   </audio>
-  <!-- 👆 여기까지 붙여넣기 하신 후, 아래에 기존의 A4 시화 본문 코드가 이어지면 됩니다. -->
-
-  <!-- A4 시화 컨테이너 -->
-  <div class="a4-container">
 
   <!-- A4 시화 컨테이너 -->
   <div class="a4-container">
@@ -364,37 +317,38 @@
     const audio = document.getElementById('bgmAudio');
     const bgmText = document.getElementById('bgmText');
     const bgmIcon = document.getElementById('bgmIcon');
-    let isPlaying = false;
 
+    // 배경음악 켜기/끄기 토글 함수
     function toggleBGM() {
-      if (isPlaying) {
+      if (audio.paused) {
+        audio.play().then(() => {
+          bgmText.textContent = '음악 일시정지';
+          bgmIcon.textContent = '⏸️';
+        }).catch(e => {
+          alert('오디오 재생을 시작할 수 없습니다.');
+        });
+      } else {
         audio.pause();
         bgmText.textContent = '배경음악 재생';
         bgmIcon.textContent = '🎵';
-        isPlaying = false;
-      } else {
-        audio.play().then(() => {
-          bgmText.textContent = '음악 일시정지';
-          bgmIcon.textContent = '⏸️';
-          isPlaying = true;
-        }).catch(e => {
-          alert('브라우저 정책에 의해 오디오 재생이 차단되었습니다. 화면을 터치한 후 다시 시도해 주세요.');
-        });
       }
     }
 
-    // 모바일 자동 재생 대응 (사용자 첫 터치 시 허용)
-    function autoPlayOnFirstClick() {
-      if (!isPlaying) {
+    // 화면 아무 곳이나 처음 터치/클릭했을 때 자동 재생되도록 설정
+    function handleFirstInteraction() {
+      if (audio.paused) {
         audio.play().then(() => {
           bgmText.textContent = '음악 일시정지';
           bgmIcon.textContent = '⏸️';
-          isPlaying = true;
         }).catch(() => {});
       }
+      // 첫 터치 이후에는 이벤트 리스너 제거
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
     }
-    window.addEventListener('click', autoPlayOnFirstClick, { once: true });
-    window.addEventListener('touchstart', autoPlayOnFirstClick, { once: true });
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
 
     function copyPoem() {
       const text = `템플스테이 첫 아침 / 세이스강(이윤재)
