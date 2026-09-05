@@ -540,6 +540,38 @@ button { font-family: var(--font-sans); }
   .engine-input { width: 100%; border: 1px solid var(--hanji-line); border-radius: var(--radius-sm); height: 38px; margin-bottom: 8px; padding: 0 10px; background: var(--surface-page); }
   .engine-btn { width: 100%; height: 38px; }
 }
+/* 프로필 버튼 블링블링 애니메이션 */
+    @keyframes blingPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(196, 104, 74, 0.4);
+        filter: brightness(1);
+      }
+      50% {
+        transform: scale(1.06);
+        box-shadow: 0 8px 25px rgba(196, 104, 74, 0.8), 0 0 25px rgba(250, 204, 21, 0.9);
+        filter: brightness(1.25);
+      }
+    }
+    .btn-cta {
+      display: inline-block !important;
+      animation: blingPulse 1.4s infinite ease-in-out !important;
+    }
+
+    /* 수강신청 1, 2, 3 가운데 중앙 정렬 */
+    .enroll-steps {
+      max-width: 480px !important;
+      margin: 24px auto 0 auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+    }
+    .enroll-step {
+      display: flex !important;
+      align-items: flex-start !important;
+      gap: 16px !important;
+      text-align: left !important;
+    }  
 </style>
 </head>
 <body>
