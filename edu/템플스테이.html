@@ -10,7 +10,7 @@
   <style>
     @page {
       size: A4 portrait;
-      margin: 0;
+      margin: 15mm 0;
     }
     * {
       box-sizing: border-box;
@@ -26,32 +26,34 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 30px 16px;
+      padding: 20px 12px;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* 상단 조작 바 */
+    /* 상단 액션 바 (모바일 대응 유연성 강화) */
     .top-toolbar {
       display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      background: rgba(15, 23, 42, 0.85);
+      gap: 8px;
+      margin-bottom: 20px;
+      background: rgba(15, 23, 42, 0.9);
       backdrop-filter: blur(10px);
-      padding: 10px 22px;
-      border-radius: 40px;
+      padding: 10px 16px;
+      border-radius: 30px;
       border: 1px solid rgba(250, 204, 21, 0.3);
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      position: sticky;
-      top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 794px;
+      width: 100%;
       z-index: 9999;
     }
     .toolbar-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #ffffff;
-      padding: 8px 18px;
+      padding: 8px 14px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
       font-family: "Pretendard", sans-serif;
       font-weight: 700;
       cursor: pointer;
@@ -64,7 +66,6 @@
       background: #facc15;
       color: #090d16;
       border-color: #facc15;
-      transform: translateY(-1px);
     }
     .toolbar-btn.primary {
       background: linear-gradient(135deg, #ca8a04, #eab308);
@@ -73,10 +74,10 @@
       box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35);
     }
 
-    /* A4 세로 규격 포스터 */
+    /* A4 세로 규격 포스터 (반응형 대응) */
     .a4-canvas {
       width: 794px;
-      height: 1123px;
+      min-height: 1123px;
       background: radial-gradient(circle at 50% 15%, #172554 0%, #0d1527 40%, #060913 100%);
       border: 1px solid rgba(250, 204, 21, 0.35);
       border-radius: 16px;
@@ -226,6 +227,56 @@
       font-family: monospace;
     }
 
+    /* 스마트폰 대응 미디어 쿼리 (핵심 수정) */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px 6px;
+      }
+      .top-toolbar {
+        padding: 8px 10px;
+        gap: 6px;
+        border-radius: 20px;
+        margin-bottom: 14px;
+      }
+      .toolbar-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+      .a4-canvas {
+        width: 100% !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 24px 16px 20px 16px !important;
+        border-radius: 12px;
+      }
+      .poem-title {
+        font-size: 24px !important;
+      }
+      .poem-author {
+        font-size: 14px;
+      }
+      .poem-body {
+        grid-template-columns: 1fr !important; /* 스마트폰에서는 세로 1단으로 변경하여 잘림 방지 */
+        gap: 16px !important;
+        padding: 5px 0 !important;
+      }
+      .poem-stanza {
+        font-size: 15px !important;
+        line-height: 1.7 !important;
+      }
+      .poem-footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        padding-top: 12px;
+        margin-top: 15px;
+      }
+      .footer-branding {
+        text-align: center;
+      }
+    }
+
     @media print {
       body { background: none; padding: 0; }
       .top-toolbar { display: none !important; }
@@ -235,14 +286,14 @@
         border: none;
         box-shadow: none;
         border-radius: 0;
-        padding: 18mm 20mm 16mm 20mm;
+        padding: 15mm 20mm;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 오디오 요소 (수노 템플스테이.mp3 연결) -->
+  <!-- 오디오 요소 -->
   <audio id="bgmAudio" src="템플스테이.mp3" loop preload="auto"></audio>
 
   <!-- 상단 액션 바 -->
@@ -251,13 +302,13 @@
       <span id="bgmIcon">🎵</span><span id="bgmText">배경음악 재생</span>
     </button>
     <button onclick="window.print()" class="toolbar-btn primary">
-      <span>🖨️</span><span>A4 인쇄 / PDF 저장</span>
+      <span>🖨️</span><span>A4 인쇄 / PDF</span>
     </button>
     <button onclick="copyPoem()" class="toolbar-btn">
-      <span>📄</span><span>시 전문 복사</span>
+      <span>📄</span><span>시 복사</span>
     </button>
     <a href="https://seiskang.kr" class="toolbar-btn" style="text-decoration:none;">
-      <span>🏠</span><span>seiskang.kr 홈</span>
+      <span>🏠</span><span>홈</span>
     </a>
   </div>
 
@@ -284,13 +335,13 @@
       <h1 class="poem-title"><span>템플스테이 첫 아침</span></h1>
       <div class="poem-author">
         <span>세이스강 (이윤재)</span>
-        <span class="author-seal">淸浪</span>
+        <span class="author-seal">淸朗</span>
       </div>
     </header>
 
     <main class="poem-body" id="poemText">
       
-      <!-- 왼쪽 열 (1~4연) -->
+      <!-- 왼쪽 열 (모바일에서는 위쪽으로 배치) -->
       <div class="poem-column">
         <div class="poem-stanza">
           <div class="verse-break">첫 새벽부터</div>
@@ -323,7 +374,7 @@
         </div>
       </div>
 
-      <!-- 오른쪽 열 (5~8연) -->
+      <!-- 오른쪽 열 (모바일에서는 아래쪽으로 배치) -->
       <div class="poem-column">
         <div class="poem-stanza">
           <div class="verse-break">나머지는</div>
@@ -356,7 +407,7 @@
           <br>
           <div class="verse-break">오늘 아침</div>
           <div class="verse-break">차가운 산바람 한 자락에도</div>
-          <div style="font-size:18px; color:#facc15; font-weight:700;">마음은 오히려 따뜻하구나</div>
+          <div style="font-size:17px; color:#facc15; font-weight:700;">마음은 오히려 따뜻하구나</div>
         </div>
       </div>
 
@@ -401,7 +452,6 @@
       }
     }
 
-    // 첫 터치/클릭 시 음악 자동 재생
     function autoPlayOnFirstClick() {
       if (!isPlaying && bgm) {
         bgm.play().then(() => {
@@ -450,7 +500,7 @@
 
 오는 것은 오는 대로 맞이하고
 가는 것은 가는 대로 보내며
-세상사 그러려니 
+se상사 그러려니 
 내 인생 또한 그러려니 하자 
 
 산사의 처마 끝에 매달린 풍경처럼
