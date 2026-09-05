@@ -246,6 +246,9 @@
 </head>
 <body>
 
+  <body>
+
+  <!-- 👇 바로 이 위치(<body> 열린 직후)에 넣어주세요 -->
   <!-- 상단 조작 버튼 바 -->
   <div class="top-toolbar">
     <button class="tool-btn primary" id="bgmToggleBtn" onclick="toggleBGM()">
@@ -262,10 +265,14 @@
     </a>
   </div>
 
-  <!-- 숨겨진 배경음악 오디오 (저작권 무료 템플스테이/명상 풍류 음악) -->
+  <!-- 숨겨진 배경음악 오디오 -->
   <audio id="bgmAudio" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=meditation-flute-and-ambient-111440.mp3" type="audio/mpeg">
   </audio>
+  <!-- 👆 여기까지 붙여넣기 하신 후, 아래에 기존의 A4 시화 본문 코드가 이어지면 됩니다. -->
+
+  <!-- A4 시화 컨테이너 -->
+  <div class="a4-container">
 
   <!-- A4 시화 컨테이너 -->
   <div class="a4-container">
