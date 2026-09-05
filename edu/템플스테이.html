@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>템플스테이 첫 아침 | 세이스강(이윤재) 시화</title>
+  <title>템플스테이 첫 아침 | 세이스강(이윤재) 시화 (BGM 음악 감상)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700;900&family=Pretendard:wght@400;600;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* 상단 조작 바 (인쇄시 숨김) */
+    /* 상단 조작 바 */
     .top-toolbar {
       display: flex;
       gap: 12px;
@@ -73,7 +73,7 @@
       box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35);
     }
 
-    /* A4 세로 규격 포스터 (210mm x 297mm / 794px x 1123px) */
+    /* A4 세로 규격 포스터 */
     .a4-canvas {
       width: 794px;
       height: 1123px;
@@ -89,7 +89,6 @@
       overflow: hidden;
     }
 
-    /* 처마 끝 풍경(風磬) 벡터 일러스트 */
     .temple-art {
       position: absolute;
       top: 0;
@@ -109,7 +108,6 @@
       pointer-events: none;
     }
 
-    /* 1. 시 제목 및 작가 헤더 */
     .poem-header {
       text-align: center;
       position: relative;
@@ -170,7 +168,6 @@
       font-family: "Pretendard", sans-serif;
     }
 
-    /* 2. 시 본문 (2열 균형 배치) */
     .poem-body {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -199,7 +196,6 @@
       margin-bottom: 4px;
     }
 
-    /* 3. 하단 여운 및 낙관 영역 */
     .poem-footer {
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       padding-top: 16px;
@@ -230,15 +226,9 @@
       font-family: monospace;
     }
 
-    /* 인쇄 모드 최적화 (A4 딱 맞춤) */
     @media print {
-      body {
-        background: none;
-        padding: 0;
-      }
-      .top-toolbar {
-        display: none !important;
-      }
+      body { background: none; padding: 0; }
+      .top-toolbar { display: none !important; }
       .a4-canvas {
         width: 100vw;
         height: 100vh;
@@ -252,8 +242,14 @@
 </head>
 <body>
 
+  <!-- 오디오 요소 (수노 템플스테이.mp3 연결) -->
+  <audio id="bgmAudio" src="템플스테이.mp3" loop preload="auto"></audio>
+
   <!-- 상단 액션 바 -->
   <div class="top-toolbar">
+    <button id="bgmBtn" onclick="toggleBgm()" class="toolbar-btn" style="background:linear-gradient(135deg,#0d9488,#0f766e);border-color:#2dd4bf;color:#fff;">
+      <span id="bgmIcon">🎵</span><span id="bgmText">배경음악 재생</span>
+    </button>
     <button onclick="window.print()" class="toolbar-btn primary">
       <span>🖨️</span><span>A4 인쇄 / PDF 저장</span>
     </button>
@@ -268,7 +264,6 @@
   <!-- A4 포스터 캔버스 -->
   <div class="a4-canvas" id="printArea">
     
-    <!-- 처마 끝 풍경(風磬) 벡터 일러스트 -->
     <svg class="temple-art" viewBox="0 0 300 360" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0 40 Q 150 20, 290 85 L 285 95 Q 150 35, 0 52 Z" fill="#facc15"/>
       <path d="M30 65 Q 160 45, 270 100" stroke="#facc15" stroke-width="2"/>
@@ -281,7 +276,6 @@
 
     <div class="mountain-fog"></div>
 
-    <!-- 1. 헤더 영역 -->
     <header class="poem-header">
       <div class="temple-tag">
         <span>🔔</span>
@@ -294,12 +288,10 @@
       </div>
     </header>
 
-    <!-- 2. 시 본문 (2열 균형 정갈한 구성) -->
     <main class="poem-body" id="poemText">
       
       <!-- 왼쪽 열 (1~4연) -->
       <div class="poem-column">
-        
         <div class="poem-stanza">
           <div class="verse-break">첫 새벽부터</div>
           <div class="verse-break">산사의 바람이 제법 차갑다</div>
@@ -329,12 +321,10 @@
           <div class="verse-break">내 힘으로 어찌할 수 있는 일이</div>
           <div>고작 몇 푼의 몫이나 될까 싶다</div>
         </div>
-
       </div>
 
       <!-- 오른쪽 열 (5~8연) -->
       <div class="poem-column">
-
         <div class="poem-stanza">
           <div class="verse-break">나머지는</div>
           <div class="verse-break">시간에 맡기고</div>
@@ -368,12 +358,10 @@
           <div class="verse-break">차가운 산바람 한 자락에도</div>
           <div style="font-size:18px; color:#facc15; font-weight:700;">마음은 오히려 따뜻하구나</div>
         </div>
-
       </div>
 
     </main>
 
-    <!-- 3. 푸터 영역 -->
     <footer class="poem-footer">
       <div class="footer-quote">
         "바람이 불면 울고, 바람이 잦으면 잠잠해지듯… 그러려니 살아가는 지혜"
@@ -387,6 +375,46 @@
   </div>
 
   <script>
+    const bgm = document.getElementById('bgmAudio');
+    const bgmBtn = document.getElementById('bgmBtn');
+    const bgmIcon = document.getElementById('bgmIcon');
+    const bgmText = document.getElementById('bgmText');
+    let isPlaying = false;
+
+    function toggleBgm() {
+      if (!bgm) return;
+      if (isPlaying) {
+        bgm.pause();
+        isPlaying = false;
+        bgmIcon.innerText = '🎵';
+        bgmText.innerText = '배경음악 재생';
+        bgmBtn.style.background = 'rgba(255, 255, 255, 0.08)';
+      } else {
+        bgm.play().then(() => {
+          isPlaying = true;
+          bgmIcon.innerText = '⏸️';
+          bgmText.innerText = '배경음악 정지';
+          bgmBtn.style.background = 'linear-gradient(135deg, #0d9488, #0f766e)';
+        }).catch(err => {
+          console.log('재생 대기중 (사용자 터치 필요):', err);
+        });
+      }
+    }
+
+    // 첫 터치/클릭 시 음악 자동 재생
+    function autoPlayOnFirstClick() {
+      if (!isPlaying && bgm) {
+        bgm.play().then(() => {
+          isPlaying = true;
+          bgmIcon.innerText = '⏸️';
+          bgmText.innerText = '배경음악 정지';
+          bgmBtn.style.background = 'linear-gradient(135deg, #0d9488, #0f766e)';
+        }).catch(() => {});
+      }
+    }
+    window.addEventListener('click', autoPlayOnFirstClick, { once: true });
+    window.addEventListener('touchstart', autoPlayOnFirstClick, { once: true });
+
     function copyPoem() {
       const text = `템플스테이 첫 아침 / 세이스강(이윤재)
 
