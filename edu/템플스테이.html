@@ -10,7 +10,7 @@
   <style>
     @page {
       size: A4 portrait;
-      margin: 0;
+      margin: 15mm 0; /* 인쇄 시 상단과 하단 여백 15mm 고정 */
     }
     * {
       box-sizing: border-box;
@@ -77,7 +77,7 @@
       width: 210mm;
       min-height: 297mm;
       background: radial-gradient(circle at 50% 30%, #0f172a 0%, #090d16 100%);
-      padding: 25mm 20mm;
+      padding: 15mm 20mm; /* 상하 여백 15mm 반영 */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -136,7 +136,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       font-size: 16px;
       color: #94a3b8;
     }
@@ -155,21 +155,21 @@
     }
 
     .poem-body {
-      font-size: 17px;
-      line-height: 1.9;
+      font-size: 16px;
+      line-height: 1.8;
       text-align: center;
       color: #e2e8f0;
       font-weight: 300;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 18px;
       max-width: 540px;
       width: 100%;
     }
     .poem-stanza {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
     .a4-footer {
@@ -179,15 +179,15 @@
       font-size: 12px;
       color: #64748b;
       border-top: 1px solid rgba(255,255,255,0.06);
-      padding-top: 20px;
-      margin-top: 20px;
+      padding-top: 15px;
+      margin-top: 15px;
       letter-spacing: 0.05em;
     }
 
     @media print {
       body { background: #fff; color: #000; padding: 0; }
       .top-toolbar { display: none !important; }
-      .a4-container { box-shadow: none; border: none; margin: 0; width: 100%; min-height: auto; background: #fff !important; }
+      .a4-container { box-shadow: none; border: none; margin: 0; width: 100%; min-height: auto; background: #fff !important; padding: 15mm 20mm !important; }
       .poem-title { color: #111 !important; }
       .poem-body { color: #334155 !important; }
       .poem-badge { color: #b45309 !important; border-color: #b45309 !important; }
@@ -318,14 +318,13 @@
     const bgmText = document.getElementById('bgmText');
     const bgmIcon = document.getElementById('bgmIcon');
 
-    // 배경음악 켜기/끄기 토글 함수
     function toggleBGM() {
       if (audio.paused) {
         audio.play().then(() => {
           bgmText.textContent = '음악 일시정지';
           bgmIcon.textContent = '⏸️';
-        }).catch(e => {
-          alert('오디오 재생을 시작할 수 없습니다.');
+        }).catch(error => {
+          console.log("오디오 재생 대기 중:", error);
         });
       } else {
         audio.pause();
@@ -334,21 +333,19 @@
       }
     }
 
-    // 화면 아무 곳이나 처음 터치/클릭했을 때 자동 재생되도록 설정
-    function handleFirstInteraction() {
+    function initAudioOnTouch() {
       if (audio.paused) {
         audio.play().then(() => {
           bgmText.textContent = '음악 일시정지';
           bgmIcon.textContent = '⏸️';
         }).catch(() => {});
       }
-      // 첫 터치 이후에는 이벤트 리스너 제거
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('click', initAudioOnTouch);
+      window.removeEventListener('touchstart', initAudioOnTouch);
     }
 
-    window.addEventListener('click', handleFirstInteraction);
-    window.addEventListener('touchstart', handleFirstInteraction);
+    window.addEventListener('click', initAudioOnTouch);
+    window.addEventListener('touchstart', initAudioOnTouch);
 
     function copyPoem() {
       const text = `템플스테이 첫 아침 / 세이스강(이윤재)
