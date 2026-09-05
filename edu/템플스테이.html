@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>템플스테이 첫 아침 | 세이스강(이윤재) 시화</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700;900&family=Pretendard:wght@400;600;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      word-break: keep-all;
+    }
+    body {
+      font-family: "Noto Serif KR", "Nanum Myeongjo", serif;
+      background: #050811;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 상단 조작 바 (인쇄시 숨김) */
+    .top-toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 10px 22px;
+      border-radius: 40px;
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 15px;
+      z-index: 9999;
+    }
+    .toolbar-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-family: "Pretendard", sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .toolbar-btn:hover {
+      background: #facc15;
+      color: #090d16;
+      border-color: #facc15;
+      transform: translateY(-1px);
+    }
+    .toolbar-btn.primary {
+      background: linear-gradient(135deg, #ca8a04, #eab308);
+      color: #090d16;
+      border: none;
+      box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35);
+    }
+
+    /* A4 세로 규격 포스터 (210mm x 297mm / 794px x 1123px) */
+    .a4-canvas {
+      width: 794px;
+      height: 1123px;
+      background: radial-gradient(circle at 50% 15%, #172554 0%, #0d1527 40%, #060913 100%);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 40px rgba(250, 204, 21, 0.1);
+      padding: 50px 54px 44px 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 처마 끝 풍경(風磬) 벡터 일러스트 */
+    .temple-art {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 380px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .mountain-fog {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 220px;
+      background: linear-gradient(to top, rgba(6, 9, 19, 0.95), transparent);
+      pointer-events: none;
+    }
+
+    /* 1. 시 제목 및 작가 헤더 */
+    .poem-header {
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid rgba(250, 204, 21, 0.25);
+      padding-bottom: 20px;
+    }
+    .temple-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      color: #facc15;
+      font-family: "Pretendard", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    .poem-title {
+      font-size: 34px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1.5px;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .poem-title span {
+      background: linear-gradient(to right, #fef08a, #facc15, #e2e8f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .poem-author {
+      font-size: 17px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .author-seal {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      line-height: 20px;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 4px;
+      text-align: center;
+      background: rgba(239, 68, 68, 0.08);
+      font-family: "Pretendard", sans-serif;
+    }
+
+    /* 2. 시 본문 (2열 균형 배치) */
+    .poem-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      position: relative;
+      z-index: 10;
+      padding: 10px 10px 0 10px;
+    }
+    .poem-column {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .poem-stanza {
+      font-size: 16.5px;
+      line-height: 1.85;
+      color: #e2e8f0;
+      font-weight: 400;
+      position: relative;
+    }
+    .stanza-highlight {
+      color: #fef08a;
+      font-weight: 600;
+    }
+    .verse-break {
+      margin-bottom: 4px;
+    }
+
+    /* 3. 하단 여운 및 낙관 영역 */
+    .poem-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 10;
+    }
+    .footer-quote {
+      font-size: 13.5px;
+      color: #94a3b8;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    .footer-branding {
+      text-align: right;
+      font-family: "Pretendard", sans-serif;
+    }
+    .brand-kr {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #facc15;
+    }
+    .brand-url {
+      font-size: 11.5px;
+      color: #64748b;
+      font-family: monospace;
+    }
+
+    /* 인쇄 모드 최적화 (A4 딱 맞춤) */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .top-toolbar {
+        display: none !important;
+      }
+      .a4-canvas {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 18mm 20mm 16mm 20mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 액션 바 -->
+  <div class="top-toolbar">
+    <button onclick="window.print()" class="toolbar-btn primary">
+      <span>🖨️</span><span>A4 인쇄 / PDF 저장</span>
+    </button>
+    <button onclick="copyPoem()" class="toolbar-btn">
+      <span>📄</span><span>시 전문 복사</span>
+    </button>
+    <a href="https://seiskang.kr" class="toolbar-btn" style="text-decoration:none;">
+      <span>🏠</span><span>seiskang.kr 홈</span>
+    </a>
+  </div>
+
+  <!-- A4 포스터 캔버스 -->
+  <div class="a4-canvas" id="printArea">
+    
+    <!-- 처마 끝 풍경(風磬) 벡터 일러스트 -->
+    <svg class="temple-art" viewBox="0 0 300 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40 Q 150 20, 290 85 L 285 95 Q 150 35, 0 52 Z" fill="#facc15"/>
+      <path d="M30 65 Q 160 45, 270 100" stroke="#facc15" stroke-width="2"/>
+      <line x1="200" y1="50" x2="200" y2="130" stroke="#e2e8f0" stroke-width="1.5"/>
+      <path d="M 180 130 Q 200 120, 220 130 L 225 170 Q 200 180, 175 170 Z" fill="#ca8a04"/>
+      <line x1="200" y1="175" x2="200" y2="210" stroke="#e2e8f0" stroke-width="1.5"/>
+      <path d="M 200 210 Q 185 225, 185 245 Q 195 265, 200 270 Q 205 265, 215 245 Q 215 225, 200 210 Z" fill="#facc15"/>
+      <polygon points="200,270 190,290 200,285 210,290" fill="#facc15"/>
+    </svg>
+
+    <div class="mountain-fog"></div>
+
+    <!-- 1. 헤더 영역 -->
+    <header class="poem-header">
+      <div class="temple-tag">
+        <span>🔔</span>
+        <span>산사의 새벽 바람과 세월의 성찰</span>
+      </div>
+      <h1 class="poem-title"><span>템플스테이 첫 아침</span></h1>
+      <div class="poem-author">
+        <span>세이스강 (이윤재)</span>
+        <span class="author-seal">淸浪</span>
+      </div>
+    </header>
+
+    <!-- 2. 시 본문 (2열 균형 정갈한 구성) -->
+    <main class="poem-body" id="poemText">
+      
+      <!-- 왼쪽 열 (1~4연) -->
+      <div class="poem-column">
+        
+        <div class="poem-stanza">
+          <div class="verse-break">첫 새벽부터</div>
+          <div class="verse-break">산사의 바람이 제법 차갑다</div>
+          <div class="verse-break">어제 낮만 하여도</div>
+          <div class="verse-break">덥다고 난리법석을 떨었건만</div>
+          <div>밤새 계절이 한 걸음 물러선 모양이다</div>
+        </div>
+
+        <div class="poem-stanza">
+          <div class="verse-break">예순을 넘기고</div>
+          <div class="verse-break">일흔을 지척에 두고 보니</div>
+          <div>살아온 세월이 새삼스럽다</div>
+        </div>
+
+        <div class="poem-stanza">
+          <div class="verse-break">내 뜻대로 이루어진 일도 있었고</div>
+          <div class="verse-break">뜻과는 달리 흘러간 일도 참으로 많았다</div>
+          <div class="verse-break">애써 붙잡으려 했던 일들이</div>
+          <div class="verse-break">어느 날 문득 돌아보니</div>
+          <div>세월이 알아서 풀어놓은 것도 많고 많았다</div>
+        </div>
+
+        <div class="poem-stanza">
+          <div class="verse-break">세상 근심 걱정</div>
+          <div class="verse-break">한 보따리 가득 짊어지고 살아왔지만</div>
+          <div class="verse-break">가만히 헤아려 보니</div>
+          <div class="verse-break">내 힘으로 어찌할 수 있는 일이</div>
+          <div>고작 몇 푼의 몫이나 될까 싶다</div>
+        </div>
+
+      </div>
+
+      <!-- 오른쪽 열 (5~8연) -->
+      <div class="poem-column">
+
+        <div class="poem-stanza">
+          <div class="verse-break">나머지는</div>
+          <div class="verse-break">시간에 맡기고</div>
+          <div class="verse-break">인연에 맡기고</div>
+          <div>때로는 바람에 흘려보내야 할 일들이다</div>
+        </div>
+
+        <div class="poem-stanza stanza-highlight">
+          <div class="verse-break">그러니 이제는</div>
+          <div class="verse-break">쓸데없이 헛심 쓰지 말자</div>
+          <br>
+          <div class="verse-break">오는 것은 오는 대로 맞이하고</div>
+          <div class="verse-break">가는 것은 가는 대로 보내며</div>
+          <div class="verse-break">세상사 그러려니</div>
+          <div>내 인생 또한 그러려니 하자</div>
+        </div>
+
+        <div class="poem-stanza">
+          <div class="verse-break">산사의 처마 끝에 매달린 풍경처럼</div>
+          <div class="verse-break">바람이 불면 울고</div>
+          <div>바람이 잦으면 잠잠해지듯</div>
+        </div>
+
+        <div class="poem-stanza stanza-highlight">
+          <div class="verse-break">남은 날들은</div>
+          <div class="verse-break">조금 덜 애쓰고</div>
+          <div class="verse-break">조금 더 웃으며</div>
+          <div class="verse-break">좋은 인연들과 오손도손 살아가세</div>
+          <br>
+          <div class="verse-break">오늘 아침</div>
+          <div class="verse-break">차가운 산바람 한 자락에도</div>
+          <div style="font-size:18px; color:#facc15; font-weight:700;">마음은 오히려 따뜻하구나</div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- 3. 푸터 영역 -->
+    <footer class="poem-footer">
+      <div class="footer-quote">
+        "바람이 불면 울고, 바람이 잦으면 잠잠해지듯… 그러려니 살아가는 지혜"
+      </div>
+      <div class="footer-branding">
+        <div class="brand-kr">세이스강 (seiskang.kr) 문학 서재</div>
+        <div class="brand-url">https://seiskang.kr/edu/템플스테이.html</div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    function copyPoem() {
+      const text = `템플스테이 첫 아침 / 세이스강(이윤재)
+
+첫 새벽부터
+산사의 바람이 제법 차갑다 
+어제 낮만 하여도
+덥다고 난리법석을 떨었건만
+밤새 계절이 한 걸음 물러선 모양이다 
+
+예순을 넘기고
+일흔을 지척에 두고 보니
+살아온 세월이 새삼스럽다 
+
+내 뜻대로 이루어진 일도 있었고
+뜻과는 달리 흘러간 일도 참으로 많았다 
+애써 붙잡으려 했던 일들이
+어느 날 문득 돌아보니
+세월이 알아서 풀어놓은 것도 많고 많았다 
+
+세상 근심 걱정
+한 보따리 가득 짊어지고 살아왔지만
+가만히 헤아려 보니
+내 힘으로 어찌할 수 있는 일이
+고작 몇 푼의 몫이나 될까 싶다 
+
+나머지는
+시간에 맡기고
+인연에 맡기고
+때로는 바람에 흘려보내야 할 일들이다 
+
+그러니 이제는
+쓸데없이 헛심 쓰지 말자 
+
+오는 것은 오는 대로 맞이하고
+가는 것은 가는 대로 보내며
+세상사 그러려니 
+내 인생 또한 그러려니 하자 
+
+산사의 처마 끝에 매달린 풍경처럼
+바람이 불면 울고
+바람이 잦으면 잠잠해지듯
+
+남은 날들은
+조금 덜 애쓰고
+조금 더 웃으며
+좋은 인연들과 오손도손 살아가세 
+
+오늘 아침
+차가운 산바람 한 자락에도
+마음은 오히려 따뜻하구나`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert('📜 시 전문이 복사되었습니다! 원하시는 곳에 붙여넣기(Ctrl+V) 하세요.');
+      });
+    }
+  </script>
+</body>
+</html>
