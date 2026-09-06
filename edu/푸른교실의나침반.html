@@ -1,69 +1,495 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>푸른 교실의 나침반 | 세이스강(이윤재)</title>
-<style>
-body{max-width:780px;margin:0 auto;padding:48px 24px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.9;color:#222}
-h1{text-align:center;font-size:2.2rem;margin-bottom:.3em}
-h2{margin-top:2.5em;border-bottom:1px solid #ddd;padding-bottom:.4em}
-h3{margin-top:2em}
-.author{text-align:center;color:#666;margin-bottom:3em}
-p{margin:.35em 0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>푸른 교실의 나침반 | 세이스강(이윤재) 시화 (BGM 음악 감상)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700;900&family=Pretendard:wght@400;600;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      word-break: keep-all;
+    }
+    body {
+      font-family: "Noto Serif KR", "Nanum Myeongjo", serif;
+      background: #030d0a;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 상단 조작 바 */
+    .top-toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: rgba(6, 30, 23, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 10px 22px;
+      border-radius: 40px;
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 15px;
+      z-index: 9999;
+    }
+    .toolbar-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-family: "Pretendard", sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .toolbar-btn:hover {
+      background: #4ade80;
+      color: #03140e;
+      border-color: #4ade80;
+      transform: translateY(-1px);
+    }
+    .toolbar-btn.primary {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    /* A4 세로 규격 포스터 (210mm x 297mm) */
+    .a4-canvas {
+      width: 794px;
+      height: 1123px;
+      background: radial-gradient(circle at 50% 12%, #064e3b 0%, #03231a 45%, #02110c 100%);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(52, 211, 153, 0.15);
+      padding: 48px 52px 40px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 배경 나침반 아트 */
+    .compass-art {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 320px;
+      height: 320px;
+      opacity: 0.14;
+      pointer-events: none;
+    }
+    .emerald-glow {
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .poem-header {
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.25);
+      padding-bottom: 18px;
+    }
+    .song-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #4ade80;
+      font-family: "Pretendard", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .poem-title {
+      font-size: 34px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1.5px;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .poem-title span {
+      background: linear-gradient(to right, #a7f3d0, #34d399, #fef08a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .poem-author {
+      font-size: 16.5px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .author-seal {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      line-height: 20px;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 4px;
+      text-align: center;
+      background: rgba(239, 68, 68, 0.08);
+      font-family: "Pretendard", sans-serif;
+    }
+
+    .poem-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      position: relative;
+      z-index: 10;
+      padding: 6px 10px 0 10px;
+    }
+    .poem-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .poem-section-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-family: "Pretendard", sans-serif;
+      font-weight: 800;
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      width: fit-content;
+    }
+    .poem-stanza {
+      font-size: 15.5px;
+      line-height: 1.8;
+      color: #e2e8f0;
+      font-weight: 400;
+    }
+    .stanza-chorus {
+      background: rgba(16, 185, 129, 0.07);
+      border-left: 3px solid #10b981;
+      padding: 8px 12px;
+      border-radius: 0 8px 8px 0;
+      color: #fef08a;
+      font-weight: 600;
+    }
+    .verse-break {
+      margin-bottom: 3px;
+    }
+
+    .poem-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 10;
+    }
+    .footer-quote {
+      font-size: 13px;
+      color: #94a3b8;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    .footer-branding {
+      text-align: right;
+      font-family: "Pretendard", sans-serif;
+    }
+    .brand-kr {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #4ade80;
+    }
+    .brand-url {
+      font-size: 11px;
+      color: #64748b;
+      font-family: monospace;
+    }
+
+    @media print {
+      body { background: none; padding: 0; }
+      .top-toolbar { display: none !important; }
+      .a4-canvas {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 16mm 18mm 14mm 18mm;
+      }
+    }
+  </style>
 </head>
 <body>
-<p>title: &quot;푸른 교실의 나침반&quot;</p>
-<p>author: &quot;세이스강(이윤재)&quot;</p>
-<p>type: &quot;현대 트로트&quot;</p>
-<h1>푸른 교실의 나침반</h1>
-<p class='author'>세이스강(이윤재)</p>
-<h2>가사</h2>
-<p>차가운 성적표 흑백의 벽돌 </p>
-<p>교실엔 웃음보다 그림자가 길고 </p>
-<p>교사가 교사다워야 교사라고 </p>
-<p>어른들은 오늘도 목소리를 높이네 </p>
-<p>학생들의 눈동자 바라보면 </p>
-<p>갈 길 잃은 작은 희망 보이네 </p>
-<p>위아래 알고 보고체계를 알아야 한다는 말 </p>
-<p>낡은 닻이 되어 아이들을 붙잡네 </p>
-<h3>후렴</h3>
-<p>성적보다 사람이 먼저야 </p>
-<p>꿈보다 점수가 먼저일 순 없어 </p>
-<p>푸른 교실 문을 활짝 열고 </p>
-<p>우리 함께 미래로 가자 </p>
-<p>꿈과 희망 가슴에 안고 </p>
-<p>씩씩하게 세상으로 가자 </p>
-<p>세상을 이롭게 하는 스마트한 바람 </p>
-<p>푸른 교실 나침반이 되리라 </p>
-<p>서른두 해 공직의 길 </p>
-<p>튼튼한 나무처럼 살아왔지만 </p>
-<p>그 아래 돋아나는 새순들은 </p>
-<p>숨 쉬기조차 버거웠구나 </p>
-<p>점수 따기에 급급한 아이들 </p>
-<p>거대한 세상 앞에 움츠러들 때 </p>
-<p>이제는 낡은 교단의 관행 </p>
-<p>송두리째 뒤엎어야 하리라 </p>
-<h3>2절 후렴</h3>
-<p>성적보다 인간이 먼저야 </p>
-<p>경쟁보다 함께가 더 소중해 </p>
-<p>아이들의 눈빛이 깨어날 때 </p>
-<p>대한민국 미래가 열리리라 </p>
-<p>꿈과 희망 가슴에 안고 </p>
-<p>씩씩하게 세상으로 가자 </p>
-<p>세상을 이롭게 하는 스마트한 바람 </p>
-<p>푸른 교실 나침반이 되리라 </p>
-<h3>마지막 후렴</h3>
-<p>성적보다 사람이 먼저야 </p>
-<p>꿈보다 점수가 먼저일 순 없어 </p>
-<p>푸른 교실 문을 활짝 열고 </p>
-<p>우리 함께 미래로 가자 </p>
-<p>꿈과 희망 가슴에 안고 </p>
-<p>씩씩하게 세상으로 가자 </p>
-<p>세상을 이롭게 하는 스마트한 바람 </p>
-<p>대한민국 교육의 나침반 </p>
-<p>푸른 교실의 나침반 </p>
-<p>우리 아이들의 희망이 되리라</p>
+
+  <!-- 오디오 요소 (수노 푸른교실의나침반.mp3 연결) -->
+  <audio id="bgmAudio" src="푸른교실의나침반.mp3" loop preload="auto"></audio>
+
+  <!-- 상단 액션 바 -->
+  <div class="top-toolbar">
+    <button id="bgmBtn" onclick="toggleBgm()" class="toolbar-btn" style="background:linear-gradient(135deg,#059669,#10b981);border-color:#34d399;color:#fff;">
+      <span id="bgmIcon">🎵</span><span id="bgmText">배경음악 재생</span>
+    </button>
+    <button onclick="window.print()" class="toolbar-btn primary">
+      <span>🖨️</span><span>A4 인쇄 / PDF 저장</span>
+    </button>
+    <button onclick="copyPoem()" class="toolbar-btn">
+      <span>📄</span><span>가사 전문 복사</span>
+    </button>
+    <a href="https://seiskang.kr" class="toolbar-btn" style="text-decoration:none;">
+      <span>🏠</span><span>seiskang.kr 홈</span>
+    </a>
+  </div>
+
+  <!-- A4 포스터 캔버스 -->
+  <div class="a4-canvas" id="printArea">
+    
+    <!-- 나침반 벡터 일러스트 -->
+    <svg class="compass-art" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" stroke="#34d399" stroke-width="2"/>
+      <circle cx="100" cy="100" r="82" stroke="#34d399" stroke-width="1" stroke-dasharray="4 4"/>
+      <polygon points="100,20 112,90 100,100 88,90" fill="#facc15"/>
+      <polygon points="100,180 112,110 100,100 88,110" fill="#34d399"/>
+      <circle cx="100" cy="100" r="6" fill="#fff"/>
+      <text x="100" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#facc15">N</text>
+      <text x="100" y="195" text-anchor="middle" font-size="12" font-weight="bold" fill="#34d399">S</text>
+      <text x="15" y="104" text-anchor="middle" font-size="12" font-weight="bold" fill="#94a3b8">W</text>
+      <text x="185" y="104" text-anchor="middle" font-size="12" font-weight="bold" fill="#94a3b8">E</text>
+    </svg>
+
+    <div class="emerald-glow"></div>
+
+    <header class="poem-header">
+      <div class="song-pill">
+        <span>🧭</span>
+        <span>현대 트로트 · 세이스강의 참교육 철학시</span>
+      </div>
+      <h1 class="poem-title"><span>푸른 교실의 나침반</span></h1>
+      <div class="poem-author">
+        <span>세이스강 (이윤재)</span>
+        <span class="author-seal">淸浪</span>
+      </div>
+    </header>
+
+    <main class="poem-body" id="poemText">
+      
+      <!-- 왼쪽 열 (1절 & 후렴) -->
+      <div class="poem-column">
+        <div class="poem-stanza">
+          <span class="poem-section-tag">[1절]</span>
+          <div class="verse-break">차가운 성적표 흑백의 벽돌</div>
+          <div class="verse-break">교실엔 웃음보다 그림자가 길고</div>
+          <div class="verse-break">교사가 교사다워야 교사라고</div>
+          <div class="verse-break">어른들은 오늘도 목소리를 높이네</div>
+          <br>
+          <div class="verse-break">학생들의 눈동자 바라보면</div>
+          <div class="verse-break">갈 길 잃은 작은 희망 보이네</div>
+          <div class="verse-break">위아래 알고 보고체계를 알아야 한다는 말</div>
+          <div>낡은 닻이 되어 아이들을 붙잡네</div>
+        </div>
+
+        <div class="poem-stanza stanza-chorus">
+          <span class="poem-section-tag" style="background:rgba(250,204,21,0.2);color:#facc15;">[후렴]</span>
+          <div class="verse-break">성적보다 사람이 먼저야</div>
+          <div class="verse-break">꿈보다 점수가 먼저일 순 없어</div>
+          <div class="verse-break">푸른 교실 문을 활짝 열고</div>
+          <div class="verse-break">우리 함께 미래로 가자</div>
+          <br>
+          <div class="verse-break">꿈과 희망 가슴에 안고</div>
+          <div class="verse-break">씩씩하게 세상으로 가자</div>
+          <div class="verse-break">세상을 이롭게 하는 스마트한 바람</div>
+          <div style="font-weight:700;color:#34d399;">푸른 교실 나침반이 되리라</div>
+        </div>
+      </div>
+
+      <!-- 오른쪽 열 (2절 & 2절 후렴 & 마지막 후렴) -->
+      <div class="poem-column">
+        <div class="poem-stanza">
+          <span class="poem-section-tag">[2절]</span>
+          <div class="verse-break">서른두 해 공직의 길</div>
+          <div class="verse-break">튼튼한 나무처럼 살아왔지만</div>
+          <div class="verse-break">그 아래 돋아나는 새순들은</div>
+          <div class="verse-break">숨 쉬기조차 버거웠구나</div>
+          <br>
+          <div class="verse-break">점수 따기에 급급한 아이들</div>
+          <div class="verse-break">거대한 세상 앞에 움츠러들 때</div>
+          <div class="verse-break">이제는 낡은 교단의 관행</div>
+          <div>송두리째 뒤엎어야 하리라</div>
+        </div>
+
+        <div class="poem-stanza stanza-chorus">
+          <span class="poem-section-tag" style="background:rgba(250,204,21,0.2);color:#facc15;">[2절 후렴]</span>
+          <div class="verse-break">성적보다 인간이 먼저야</div>
+          <div class="verse-break">경쟁보다 함께가 더 소중해</div>
+          <div class="verse-break">아이들의 눈빛이 깨어날 때</div>
+          <div class="verse-break">대한민국 미래가 열리리라</div>
+          <br>
+          <div class="verse-break">꿈과 희망 가슴에 안고 씩씩하게 세상으로 가자</div>
+          <div class="verse-break">세상을 이롭게 하는 스마트한 바람</div>
+          <div style="font-weight:700;color:#34d399;">푸른 교실 나침반이 되리라</div>
+        </div>
+
+        <div class="poem-stanza" style="background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+          <span class="poem-section-tag" style="background:#facc15;color:#03140e;">[마지막 결미]</span>
+          <div class="verse-break">세상을 이롭게 하는 스마트한 바람</div>
+          <div class="verse-break" style="font-size:16px;color:#facc15;font-weight:700;">대한민국 교육의 나침반, 푸른 교실의 나침반</div>
+          <div style="font-size:16.5px;color:#34d399;font-weight:800;">우리 아이들의 희망이 되리라</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="poem-footer">
+      <div class="footer-quote">
+        "성적보다 사람이 먼저야! 세상을 이롭게 하는 스마트한 바람, 푸른 교실의 나침반"
+      </div>
+      <div class="footer-branding">
+        <div class="brand-kr">세이스강 (seiskang.kr) 문학 서재</div>
+        <div class="brand-url">https://seiskang.kr/edu/푸른교실의나침반.html</div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    const bgm = document.getElementById('bgmAudio');
+    const bgmBtn = document.getElementById('bgmBtn');
+    const bgmIcon = document.getElementById('bgmIcon');
+    const bgmText = document.getElementById('bgmText');
+    let isPlaying = false;
+
+    function toggleBgm() {
+      if (!bgm) return;
+      if (isPlaying) {
+        bgm.pause();
+        isPlaying = false;
+        bgmIcon.innerText = '🎵';
+        bgmText.innerText = '배경음악 재생';
+        bgmBtn.style.background = 'rgba(255, 255, 255, 0.08)';
+      } else {
+        bgm.play().then(() => {
+          isPlaying = true;
+          bgmIcon.innerText = '⏸️';
+          bgmText.innerText = '배경음악 정지';
+          bgmBtn.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+        }).catch(err => {
+          console.log('재생 대기중:', err);
+        });
+      }
+    }
+
+    // 첫 터치/클릭 시 자동 재생 시작
+    function autoPlayOnFirstClick() {
+      if (!isPlaying && bgm) {
+        bgm.play().then(() => {
+          isPlaying = true;
+          bgmIcon.innerText = '⏸️';
+          bgmText.innerText = '배경음악 정지';
+          bgmBtn.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+        }).catch(() => {});
+      }
+    }
+    window.addEventListener('click', autoPlayOnFirstClick, { once: true });
+    window.addEventListener('touchstart', autoPlayOnFirstClick, { once: true });
+
+    function copyPoem() {
+      const text = `푸른 교실의 나침반 | 세이스강(이윤재)
+(현대 트로트)
+
+[1절]
+차가운 성적표 흑백의 벽돌
+교실엔 웃음보다 그림자가 길고
+교사가 교사다워야 교사라고
+어른들은 오늘도 목소리를 높이네
+
+학생들의 눈동자 바라보면
+갈 길 잃은 작은 희망 보이네
+위아래 알고 보고체계를 알아야 한다는 말
+낡은 닻이 되어 아이들을 붙잡네
+
+[후렴]
+성적보다 사람이 먼저야
+꿈보다 점수가 먼저일 순 없어
+푸른 교실 문을 활짝 열고
+우리 함께 미래로 가자
+꿈과 희망 가슴에 안고
+씩씩하게 세상으로 가자
+세상을 이롭게 하는 스마트한 바람
+푸른 교실 나침반이 되리라
+
+[2절]
+서른두 해 공직의 길
+튼튼한 나무처럼 살아왔지만
+그 아래 돋아나는 새순들은
+숨 쉬기조차 버거웠구나
+
+점수 따기에 급급한 아이들
+거대한 세상 앞에 움츠러들 때
+이제는 낡은 교단의 관행
+송두리째 뒤엎어야 하리라
+
+[2절 후렴]
+성적보다 인간이 먼저야
+경쟁보다 함께가 더 소중해
+아이들의 눈빛이 깨어날 때
+대한민국 미래가 열리리라
+꿈과 희망 가슴에 안고
+씩씩하게 세상으로 가자
+세상을 이롭게 하는 스마트한 바람
+푸른 교실 나침반이 되리라
+
+[마지막 후렴]
+성적보다 사람이 먼저야
+꿈보다 점수가 먼저일 순 없어
+푸른 교실 문을 활짝 열고
+우리 함께 미래로 가자
+꿈과 희망 가슴에 안고
+씩씩하게 세상으로 가자
+세상을 이롭게 하는 스마트한 바람
+대한민국 교육의 나침반
+푸른 교실의 나침반
+우리 아이들의 희망이 되리라`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert('📜 가사 전문이 복사되었습니다! 원하시는 곳에 붙여넣기(Ctrl+V) 하세요.');
+      });
+    }
+  </script>
 </body>
 </html>
