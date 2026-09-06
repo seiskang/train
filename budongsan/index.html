@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>부동산 자산 및 임대 관리 매니저</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <style>
+    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- 0. 보안 잠금 화면 (비밀번호 입력) -->
+  <div id="lockScreen" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md flex items-center justify-center z-[100] transition-opacity">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center space-y-5 mx-4">
+      <div class="w-14 h-14 mx-auto rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl">
+        🔒
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">부동산 관리 시스템</h2>
+        <p class="text-xs text-slate-500 mt-1">자산 보호를 위해 접속 비밀번호를 입력해 주세요.</p>
+      </div>
+      <form onsubmit="handleUnlock(event)" class="space-y-3">
+        <input type="password" id="unlockPassword" autofocus placeholder="비밀번호 입력 (기본: 1234)" 
+          class="w-full text-center tracking-widest text-lg py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        <p id="unlockError" class="text-xs text-rose-600 font-medium hidden">비밀번호가 일치하지 않습니다.</p>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition shadow-sm">
+          접속하기
+        </button>
+      </form>
+      <div class="text-[11px] text-slate-400">초기 설정 비밀번호: <strong>1234</strong> (접속 후 상단에서 변경 가능)</div>
+    </div>
+  </div>
+
+  <!-- 상단 네비게이션 바 -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">부</div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">부동산 자산·임대 통합 매니저</h1>
+          <p class="text-xs text-slate-500">주택 8개 · 상가 1개 종합 관리</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button onclick="lockApp()" title="화면 즉시 잠금" class="px-2.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition flex items-center gap-1">
+          <span>🔒</span><span class="hidden sm:inline">잠금</span>
+        </button>
+        <button onclick="openPasswordModal()" class="px-2.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition flex items-center gap-1">
+          <span>🔑</span><span class="hidden sm:inline">암호변경</span>
+        </button>
+        <button onclick="exportData()" class="px-2.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">백업(JSON)</button>
+        <label class="px-2.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg cursor-pointer transition">
+          복원
+          <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importData(event)">
+        </label>
+        <button onclick="openModal()" class="px-3.5 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition">+ 물건 추가</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- 1. 대시보드 통계 카드 -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-500">보유 물건 현황</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-medium">총 9개 기준</span>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-bold text-slate-900" id="statPropertyCount">0개</span>
+          <span class="text-xs text-slate-600" id="statPropertyDetail">주택 0 · 상가 0</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-500">월 순현금흐름 (예상)</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-medium">수입 - 이자</span>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-bold text-emerald-600" id="statNetIncome">0 만원</span>
+          <span class="text-xs text-slate-500" id="statIncomeDetail">수입 0 / 이자 0</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-500">이달의 월세 수납</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-medium" id="currentMonthLabel">00월</span>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-bold text-blue-600" id="statPaidCount">0 / 0건</span>
+          <span class="text-xs text-amber-600 font-medium" id="statUnpaidCount">미납 0건</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-500">총 보증금 / 대출금</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">부채 관리</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-sm font-semibold text-slate-900">보증금: <span id="statTotalDeposit">0</span> 만원</div>
+          <div class="text-xs text-slate-500">대출잔액: <span id="statTotalLoan">0</span> 만원</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 만기 임박 알림 배너 -->
+    <div id="alertContainer" class="space-y-2"></div>
+
+    <!-- 3. 물건 목록 및 필터 -->
+    <section class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-1.5">
+          <button onclick="setFilter('ALL')" id="filterBtnALL" class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white">전체 (<span id="countALL">0</span>)</button>
+          <button onclick="setFilter('주택')" id="filterBtnHouse" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">주택 (<span id="countHouse">0</span>)</button>
+          <button onclick="setFilter('상가')" id="filterBtnCommercial" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">상가 (<span id="countCommercial">0</span>)</button>
+        </div>
+
+        <div class="text-xs text-slate-500 flex items-center gap-3">
+          <span>* 체크박스를 클릭하여 이번 달 입금 여부를 토글할 수 있습니다.</span>
+          <button onclick="loadSampleData()" class="text-indigo-600 hover:underline font-semibold">9개 샘플 데이터 채우기</button>
+        </div>
+      </div>
+
+      <!-- 테이블 뷰 -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-700 whitespace-nowrap">
+          <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-3.5">구분</th>
+              <th class="py-3 px-3.5">물건명 및 소재지</th>
+              <th class="py-3 px-3.5">소유주 (명의/지분)</th>
+              <th class="py-3 px-3.5">임대 형태 / 임차인</th>
+              <th class="py-3 px-3.5">보증금 / 월세 / 대출</th>
+              <th class="py-3 px-3.5">담당 공인중개사</th>
+              <th class="py-3 px-3.5">입금일 / 세무특이사항</th>
+              <th class="py-3 px-3.5">만료일 (D-Day)</th>
+              <th class="py-3 px-3.5 text-center">이달 수납</th>
+              <th class="py-3 px-3.5 text-center">관리</th>
+            </tr>
+          </thead>
+          <tbody id="propertyTableBody" class="divide-y divide-slate-100">
+            <!-- JavaScript 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 물건 등록/수정 모달 -->
+  <div id="propertyModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6">
+      <div class="flex items-center justify-between border-b pb-3 mb-4">
+        <h3 class="text-base font-bold text-slate-900" id="modalTitle">물건 등록</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+      </div>
+
+      <form id="propertyForm" onsubmit="saveProperty(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="propId">
+
+        <!-- 1. 기본 정보 -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">물건 유형 *</label>
+            <select id="propType" onchange="toggleTypeFields()" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-indigo-500">
+              <option value="주택">주택 (아파트/빌라/오피스텔)</option>
+              <option value="상가">상가 (근린생활시설/점포)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">세부 용도</label>
+            <input type="text" id="propSubType" placeholder="예: 아파트(34평), 오피스텔, 1층 상가" class="w-full border border-slate-300 rounded-lg p-2">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">물건 명칭 *</label>
+            <input type="text" id="propName" required placeholder="예: 서초자이 101동 502호" class="w-full border border-slate-300 rounded-lg p-2">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">소재지(주소)</label>
+            <input type="text" id="propAddress" placeholder="상세 주소 입력" class="w-full border border-slate-300 rounded-lg p-2">
+          </div>
+        </div>
+
+        <!-- 2. 소유주 정보 (신규 추가) -->
+        <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 space-y-2">
+          <span class="font-bold text-indigo-900 text-xs flex items-center gap-1">👤 소유주 정보</span>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">소유자(명의자) *</label>
+              <input type="text" id="ownerName" placeholder="예: 본인, 배우자, 부부공동" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">소유 지분율</label>
+              <input type="text" id="ownershipRatio" placeholder="예: 100%, 50:50" value="100%" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">취득일자</label>
+              <input type="date" id="acquisitionDate" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 금융 정보 -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">취득가/추정가 (만원)</label>
+            <input type="number" id="purchasePrice" value="0" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">담보대출 잔액 (만원)</label>
+            <input type="number" id="currentLoan" value="0" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">월 대출이자 (만원)</label>
+            <input type="number" id="loanInterestMonthly" value="0" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+          </div>
+        </div>
+
+        <!-- 4. 임대차 계약 정보 -->
+        <div class="border border-slate-200 p-3.5 rounded-xl space-y-3">
+          <div class="font-semibold text-slate-800 text-xs border-b pb-1">임대차 계약 정보</div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">임대 형태</label>
+              <select id="leaseType" class="w-full border border-slate-300 rounded-lg p-2">
+                <option value="월세">월세</option>
+                <option value="전세">전세</option>
+                <option value="자가/공실">자가/공실</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">보증금 (만원)</label>
+              <input type="number" id="deposit" value="0" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">월 임대료 (만원)</label>
+              <input type="number" id="monthlyRent" value="0" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">임차인 이름</label>
+              <input type="text" id="tenantName" placeholder="홍길동" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">임차인 연락처</label>
+              <input type="text" id="tenantContact" placeholder="010-0000-0000" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">매월 월세 입금일</label>
+              <input type="number" id="payDay" min="1" max="31" placeholder="예: 25" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">계약 시작일</label>
+              <input type="date" id="startDate" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">계약 만료일</label>
+              <input type="date" id="endDate" class="w-full border border-slate-300 rounded-lg p-2">
+            </div>
+          </div>
+
+          <!-- 상가 전용 옵션 -->
+          <div id="commercialFields" class="bg-amber-50/70 p-2.5 rounded-lg border border-amber-200 hidden space-y-2">
+            <span class="font-bold text-amber-800">상가 전용 옵션</span>
+            <div class="flex items-center gap-4">
+              <label class="flex items-center space-x-1.5 cursor-pointer">
+                <input type="checkbox" id="vatIncluded" class="rounded text-indigo-600">
+                <span class="text-slate-700">월세 외 부가세 10% 별도</span>
+              </label>
+              <div class="flex items-center space-x-1">
+                <span>세금계산서 발행일: 매월</span>
+                <input type="number" id="taxInvoiceDay" min="1" max="31" value="10" class="w-14 border rounded p-1 text-center bg-white">
+                <span>일</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 주택 전용 옵션 -->
+          <div id="housingFields" class="flex items-center gap-4 pt-1">
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" id="registeredRental" class="rounded text-indigo-600">
+              <span class="text-slate-700">등록임대주택 (5% 상한 준수 대상)</span>
+            </label>
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" id="renewalUsed" class="rounded text-indigo-600">
+              <span class="text-slate-700">계약갱신청구권 기사용</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 5. 공인중개사 정보 (신규 추가) -->
+        <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 space-y-2">
+          <span class="font-bold text-emerald-900 text-xs flex items-center gap-1">🏢 전담 공인중개사 정보</span>
+          <div class="grid grid-cols-4 gap-3">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">중개업소 상호</label>
+              <input type="text" id="brokerAgency" placeholder="예: 미래공인중개사" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">담당 중개사 성함</label>
+              <input type="text" id="brokerName" placeholder="예: 김소장" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">중개사 연락처</label>
+              <input type="text" id="brokerContact" placeholder="010-0000-0000" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">지급 중개보수 (만원)</label>
+              <input type="number" id="brokerFee" value="0" class="w-full border border-slate-300 rounded-lg p-2 bg-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 메모 -->
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">특약 및 유지보수 메모</label>
+          <textarea id="memo" rows="2" placeholder="도배 시공일, 보일러 교체 이력, 특약 조항 등 메모" class="w-full border border-slate-300 rounded-lg p-2"></textarea>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-3 border-t">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">취소</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 비밀번호 변경 모달 -->
+  <div id="passwordModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4 text-xs">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="text-sm font-bold text-slate-900">접속 비밀번호 변경</h3>
+        <button onclick="closePasswordModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
+      </div>
+      <form onsubmit="changePassword(event)" class="space-y-3">
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">현재 비밀번호</label>
+          <input type="password" id="currentPassInput" required class="w-full border border-slate-300 rounded-lg p-2">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">새 비밀번호</label>
+          <input type="password" id="newPassInput" required class="w-full border border-slate-300 rounded-lg p-2">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">새 비밀번호 확인</label>
+          <input type="password" id="confirmPassInput" required class="w-full border border-slate-300 rounded-lg p-2">
+        </div>
+        <div class="flex justify-end space-x-2 pt-2 border-t">
+          <button type="button" onclick="closePasswordModal()" class="px-3 py-1.5 rounded bg-slate-100 text-slate-700">취소</button>
+          <button type="submit" class="px-3.5 py-1.5 rounded bg-indigo-600 text-white font-medium">변경 저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'budongsan_portfolio_data_v2';
+    const PASS_KEY = 'budongsan_app_password_v1';
+    let properties = [];
+    let currentFilter = 'ALL';
+
+    // 1. 보안 및 잠금 관리
+    function getPassword() {
+      return localStorage.getItem(PASS_KEY) || '1234';
+    }
+
+    function checkAuth() {
+      const isUnlocked = sessionStorage.getItem('budongsan_unlocked');
+      const lockEl = document.getElementById('lockScreen');
+      if (isUnlocked === 'true') {
+        lockEl.classList.add('hidden');
+      } else {
+        lockEl.classList.remove('hidden');
+        document.getElementById('unlockPassword').focus();
+      }
+    }
+
+    function handleUnlock(e) {
+      e.preventDefault();
+      const inputPass = document.getElementById('unlockPassword').value;
+      const currentPass = getPassword();
+
+      if (inputPass === currentPass) {
+        sessionStorage.setItem('budongsan_unlocked', 'true');
+        document.getElementById('lockScreen').classList.add('hidden');
+        document.getElementById('unlockPassword').value = '';
+        document.getElementById('unlockError').classList.add('hidden');
+      } else {
+        document.getElementById('unlockError').classList.remove('hidden');
+        document.getElementById('unlockPassword').select();
+      }
+    }
+
+    function lockApp() {
+      sessionStorage.removeItem('budongsan_unlocked');
+      document.getElementById('lockScreen').classList.remove('hidden');
+      document.getElementById('unlockPassword').value = '';
+      document.getElementById('unlockError').classList.add('hidden');
+      document.getElementById('unlockPassword').focus();
+    }
+
+    function openPasswordModal() {
+      document.getElementById('currentPassInput').value = '';
+      document.getElementById('newPassInput').value = '';
+      document.getElementById('confirmPassInput').value = '';
+      document.getElementById('passwordModal').classList.remove('hidden');
+    }
+
+    function closePasswordModal() {
+      document.getElementById('passwordModal').classList.add('hidden');
+    }
+
+    function changePassword(e) {
+      e.preventDefault();
+      const cur = document.getElementById('currentPassInput').value;
+      const next = document.getElementById('newPassInput').value;
+      const confirmNext = document.getElementById('confirmPassInput').value;
+
+      if (cur !== getPassword()) {
+        alert('현재 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+      if (next !== confirmNext) {
+        alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+        return;
+      }
+      if (next.length < 4) {
+        alert('비밀번호는 최소 4자리 이상으로 설정해 주세요.');
+        return;
+      }
+
+      localStorage.setItem(PASS_KEY, next);
+      alert('비밀번호가 안전하게 변경되었습니다.');
+      closePasswordModal();
+    }
+
+    // 2. 초기 로드
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try { properties = JSON.parse(saved); } catch (e) { properties = []; }
+      }
+      render();
+    });
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
+      render();
+    }
+
+    function render() {
+      updateStats();
+      renderAlerts();
+      renderTable();
+    }
+
+    // 통계 업데이트
+    function updateStats() {
+      const houseCount = properties.filter(p => p.type === '주택').length;
+      const commCount = properties.filter(p => p.type === '상가').length;
+
+      document.getElementById('statPropertyCount').innerText = `${properties.length}개`;
+      document.getElementById('statPropertyDetail').innerText = `주택 ${houseCount} · 상가 ${commCount}`;
+      document.getElementById('countALL').innerText = properties.length;
+      document.getElementById('countHouse').innerText = houseCount;
+      document.getElementById('countCommercial').innerText = commCount;
+
+      let totalIncome = 0;
+      let totalInterest = 0;
+      let totalDeposit = 0;
+      let totalLoan = 0;
+      let monthlyRentalCount = 0;
+      let paidCount = 0;
+
+      const currentMonth = new Date().getMonth() + 1;
+      document.getElementById('currentMonthLabel').innerText = `${currentMonth}월 기준`;
+
+      properties.forEach(p => {
+        totalDeposit += (Number(p.deposit) || 0);
+        totalLoan += (Number(p.currentLoan) || 0);
+        totalInterest += (Number(p.loanInterestMonthly) || 0);
+
+        if (p.leaseType === '월세') {
+          monthlyRentalCount++;
+          let rent = Number(p.monthlyRent) || 0;
+          totalIncome += rent;
+          if (p.paidThisMonth) paidCount++;
+        }
+      });
+
+      const netIncome = totalIncome - totalInterest;
+      document.getElementById('statNetIncome').innerText = `${netIncome.toLocaleString()} 만원`;
+      document.getElementById('statIncomeDetail').innerText = `월세 ${totalIncome.toLocaleString()} / 이자 ${totalInterest.toLocaleString()}`;
+      document.getElementById('statPaidCount').innerText = `${paidCount} / ${monthlyRentalCount}건`;
+      document.getElementById('statUnpaidCount').innerText = `미납 ${monthlyRentalCount - paidCount}건`;
+      document.getElementById('statTotalDeposit').innerText = totalDeposit.toLocaleString();
+      document.getElementById('statTotalLoan').innerText = totalLoan.toLocaleString();
+    }
+
+    // 계약 만료 알림 배너
+    function renderAlerts() {
+      const container = document.getElementById('alertContainer');
+      container.innerHTML = '';
+      const today = new Date();
+
+      properties.forEach(p => {
+        if (!p.endDate) return;
+        const end = new Date(p.endDate);
+        const diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+
+        if (diffDays >= 0 && diffDays <= 120) {
+          const banner = document.createElement('div');
+          banner.className = 'p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800 shadow-2xs';
+          banner.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="font-bold px-1.5 py-0.5 bg-amber-200 rounded text-[11px]">만기 임박</span>
+              <span><strong>[${p.type}] ${p.name}</strong> (임차인: ${p.tenantName || '-'}, 중개사: ${p.brokerAgency || '-'}) 계약 만료까지 <strong>${diffDays}일</strong> 남았습니다. (만료일: ${p.endDate})</span>
+            </div>
+            <span class="text-slate-500 text-[11px]">${diffDays <= 60 ? '갱신 여부 최종 확정 필요' : '재계약/신규 중개 의뢰 준비'}</span>
+          `;
+          container.appendChild(banner);
+        }
+      });
+    }
+
+    // 테이블 렌더링
+    function renderTable() {
+      const tbody = document.getElementById('propertyTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = properties.filter(p => {
+        if (currentFilter === 'ALL') return true;
+        return p.type === currentFilter;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center py-10 text-slate-400">등록된 물건이 없습니다. 상단의 '+ 물건 추가' 또는 '9개 샘플 데이터 채우기'를 눌러보세요.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+
+        // D-Day 계산
+        let dDayText = '-';
+        let dDayBadge = 'bg-slate-100 text-slate-600';
+        if (p.endDate) {
+          const diffDays = Math.ceil((new Date(p.endDate) - new Date()) / (1000 * 60 * 60 * 24));
+          if (diffDays < 0) {
+            dDayText = `만료됨 (D+${Math.abs(diffDays)})`;
+            dDayBadge = 'bg-rose-100 text-rose-700 font-bold';
+          } else if (diffDays <= 90) {
+            dDayText = `D-${diffDays}`;
+            dDayBadge = 'bg-amber-100 text-amber-800 font-bold';
+          } else {
+            dDayText = `D-${diffDays}`;
+          }
+        }
+
+        const typeBadge = p.type === '상가' 
+          ? '<span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 font-bold text-[11px]">상가</span>'
+          : '<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-medium text-[11px]">주택</span>';
+
+        let taxNotes = [];
+        if (p.type === '상가') {
+          taxNotes.push(p.vatIncluded ? 'VAT별도' : 'VAT포함');
+          if (p.taxInvoiceDay) taxNotes.push(`세금계산서 ${p.taxInvoiceDay}일`);
+        } else {
+          if (p.registeredRental) taxNotes.push('등록임대(5%)');
+          if (p.renewalUsed) taxNotes.push('갱신권사용');
+        }
+
+        tr.innerHTML = `
+          <td class="py-3 px-3.5">${typeBadge}</td>
+          <td class="py-3 px-3.5">
+            <div class="font-semibold text-slate-900">${p.name}</div>
+            <div class="text-[11px] text-slate-400 truncate max-w-xs">${p.address || p.subType || '-'}</div>
+          </td>
+          <td class="py-3 px-3.5">
+            <div class="font-medium text-slate-800">${p.ownerName || '명의 미지정'} <span class="text-[11px] text-indigo-600 font-semibold">(${p.ownershipRatio || '100%'})</span></div>
+            <div class="text-[11px] text-slate-400">취득: ${p.acquisitionDate || '-'}</div>
+          </td>
+          <td class="py-3 px-3.5">
+            <div><span class="font-medium text-slate-900">${p.leaseType}</span> · ${p.tenantName || '미등록'}</div>
+            <div class="text-[11px] text-slate-400">${p.tenantContact ? `<a href="tel:${p.tenantContact}" class="text-indigo-600 hover:underline">${p.tenantContact}</a>` : '-'}</div>
+          </td>
+          <td class="py-3 px-3.5">
+            <div class="font-semibold text-slate-900">
+              ${p.deposit ? `${Number(p.deposit).toLocaleString()}만` : '0'} 
+              ${p.leaseType === '월세' ? `/ ${Number(p.monthlyRent).toLocaleString()}만` : ''}
+            </div>
+            <div class="text-[11px] text-slate-400">이자: ${p.loanInterestMonthly ? `${p.loanInterestMonthly}만` : '0'} (대출 ${p.currentLoan ? Number(p.currentLoan).toLocaleString() : 0}만)</div>
+          </td>
+          <td class="py-3 px-3.5">
+            <div class="font-medium text-slate-800">${p.brokerAgency || '-'} ${p.brokerName ? `(${p.brokerName})` : ''}</div>
+            <div class="text-[11px] text-slate-400">${p.brokerContact ? `<a href="tel:${p.brokerContact}" class="text-emerald-700 hover:underline">${p.brokerContact}</a>` : '-'}</div>
+          </td>
+          <td class="py-3 px-3.5">
+            <div class="font-medium text-slate-800">${p.payDay ? `매월 ${p.payDay}일` : '-'}</div>
+            <div class="text-[11px] text-slate-500 space-x-1">${taxNotes.map(t => `<span class="bg-slate-100 px-1 py-0.5 rounded text-[10px]">${t}</span>`).join('')}</div>
+          </td>
+          <td class="py-3 px-3.5">
+            <div class="text-slate-800">${p.endDate || '-'}</div>
+            <span class="inline-block px-1.5 py-0.5 rounded text-[10px] ${dDayBadge}">${dDayText}</span>
+          </td>
+          <td class="py-3 px-3.5 text-center">
+            ${p.leaseType === '월세' ? `
+              <input type="checkbox" ${p.paidThisMonth ? 'checked' : ''} onchange="togglePaid('${p.id}')" class="w-4 h-4 text-indigo-600 rounded border-slate-300 cursor-pointer">
+              <div class="text-[10px] ${p.paidThisMonth ? 'text-blue-600 font-bold' : 'text-slate-400'}">${p.paidThisMonth ? '완납' : '미납'}</div>
+            ` : '<span class="text-slate-300">-</span>'}
+          </td>
+          <td class="py-3 px-3.5 text-center space-x-1">
+            <button onclick="editProperty('${p.id}')" class="text-slate-600 hover:text-indigo-600 font-medium text-[11px]">수정</button>
+            <button onclick="deleteProperty('${p.id}')" class="text-slate-400 hover:text-rose-600 font-medium text-[11px]">삭제</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setFilter(type) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      const activeId = type === 'ALL' ? 'filterBtnALL' : (type === '주택' ? 'filterBtnHouse' : 'filterBtnCommercial');
+      const activeBtn = document.getElementById(activeId);
+      activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+      activeBtn.classList.add('bg-indigo-600', 'text-white');
+      renderTable();
+    }
+
+    function togglePaid(id) {
+      const p = properties.find(x => x.id === id);
+      if (p) {
+        p.paidThisMonth = !p.paidThisMonth;
+        saveToStorage();
+      }
+    }
+
+    function openModal() {
+      document.getElementById('propertyForm').reset();
+      document.getElementById('propId').value = '';
+      document.getElementById('modalTitle').innerText = '물건 등록';
+      document.getElementById('ownershipRatio').value = '100%';
+      toggleTypeFields();
+      document.getElementById('propertyModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('propertyModal').classList.add('hidden');
+    }
+
+    function toggleTypeFields() {
+      const type = document.getElementById('propType').value;
+      const commFields = document.getElementById('commercialFields');
+      const houseFields = document.getElementById('housingFields');
+      if (type === '상가') {
+        commFields.classList.remove('hidden');
+        houseFields.classList.add('hidden');
+      } else {
+        commFields.classList.add('hidden');
+        houseFields.classList.remove('hidden');
+      }
+    }
+
+    function saveProperty(e) {
+      e.preventDefault();
+      const id = document.getElementById('propId').value || 'prop-' + Date.now();
+      const existing = properties.find(p => p.id === id);
+
+      const newProp = {
+        id,
+        type: document.getElementById('propType').value,
+        subType: document.getElementById('propSubType').value,
+        name: document.getElementById('propName').value,
+        address: document.getElementById('propAddress').value,
+        ownerName: document.getElementById('ownerName').value,
+        ownershipRatio: document.getElementById('ownershipRatio').value,
+        acquisitionDate: document.getElementById('acquisitionDate').value,
+        purchasePrice: Number(document.getElementById('purchasePrice').value) || 0,
+        currentLoan: Number(document.getElementById('currentLoan').value) || 0,
+        loanInterestMonthly: Number(document.getElementById('loanInterestMonthly').value) || 0,
+        leaseType: document.getElementById('leaseType').value,
+        deposit: Number(document.getElementById('deposit').value) || 0,
+        monthlyRent: Number(document.getElementById('monthlyRent').value) || 0,
+        tenantName: document.getElementById('tenantName').value,
+        tenantContact: document.getElementById('tenantContact').value,
+        payDay: document.getElementById('payDay').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        vatIncluded: document.getElementById('vatIncluded').checked,
+        taxInvoiceDay: document.getElementById('taxInvoiceDay').value,
+        registeredRental: document.getElementById('registeredRental').checked,
+        renewalUsed: document.getElementById('renewalUsed').checked,
+        brokerAgency: document.getElementById('brokerAgency').value,
+        brokerName: document.getElementById('brokerName').value,
+        brokerContact: document.getElementById('brokerContact').value,
+        brokerFee: Number(document.getElementById('brokerFee').value) || 0,
+        memo: document.getElementById('memo').value,
+        paidThisMonth: existing ? existing.paidThisMonth : false
+      };
+
+      if (existing) {
+        const idx = properties.findIndex(p => p.id === id);
+        properties[idx] = newProp;
+      } else {
+        properties.push(newProp);
+      }
+
+      saveToStorage();
+      closeModal();
+    }
+
+    function editProperty(id) {
+      const p = properties.find(x => x.id === id);
+      if (!p) return;
+
+      openModal();
+      document.getElementById('modalTitle').innerText = '물건 정보 수정';
+      document.getElementById('propId').value = p.id;
+      document.getElementById('propType').value = p.type;
+      document.getElementById('propSubType').value = p.subType || '';
+      document.getElementById('propName').value = p.name || '';
+      document.getElementById('propAddress').value = p.address || '';
+      document.getElementById('ownerName').value = p.ownerName || '';
+      document.getElementById('ownershipRatio').value = p.ownershipRatio || '100%';
+      document.getElementById('acquisitionDate').value = p.acquisitionDate || '';
+      document.getElementById('purchasePrice').value = p.purchasePrice || 0;
+      document.getElementById('currentLoan').value = p.currentLoan || 0;
+      document.getElementById('loanInterestMonthly').value = p.loanInterestMonthly || 0;
+      document.getElementById('leaseType').value = p.leaseType;
+      document.getElementById('deposit').value = p.deposit || 0;
+      document.getElementById('monthlyRent').value = p.monthlyRent || 0;
+      document.getElementById('tenantName').value = p.tenantName || '';
+      document.getElementById('tenantContact').value = p.tenantContact || '';
+      document.getElementById('payDay').value = p.payDay || '';
+      document.getElementById('startDate').value = p.startDate || '';
+      document.getElementById('endDate').value = p.endDate || '';
+      document.getElementById('vatIncluded').checked = !!p.vatIncluded;
+      document.getElementById('taxInvoiceDay').value = p.taxInvoiceDay || 10;
+      document.getElementById('registeredRental').checked = !!p.registeredRental;
+      document.getElementById('renewalUsed').checked = !!p.renewalUsed;
+      document.getElementById('brokerAgency').value = p.brokerAgency || '';
+      document.getElementById('brokerName').value = p.brokerName || '';
+      document.getElementById('brokerContact').value = p.brokerContact || '';
+      document.getElementById('brokerFee').value = p.brokerFee || 0;
+      document.getElementById('memo').value = p.memo || '';
+
+      toggleTypeFields();
+    }
+
+    function deleteProperty(id) {
+      if (confirm('해당 물건을 삭제하시겠습니까?')) {
+        properties = properties.filter(p => p.id !== id);
+        saveToStorage();
+      }
+    }
+
+    // 9개 샘플 데이터 로드 (소유주 및 공인중개사 정보 포함)
+    function loadSampleData() {
+      if (properties.length > 0 && !confirm('기존 데이터가 대체됩니다. 9개 샘플 데이터를 불러오시겠습니까?')) {
+        return;
+      }
+
+      properties = [
+        // 상가 1개
+        {
+          id: 'prop-comm-1',
+          type: '상가',
+          subType: '근린생활시설 (1층 점포)',
+          name: '역세권 상가 102호',
+          address: '서울시 서초구 서초동 123-4',
+          ownerName: '본인',
+          ownershipRatio: '100%',
+          acquisitionDate: '2021-04-10',
+          purchasePrice: 65000,
+          currentLoan: 25000,
+          loanInterestMonthly: 95,
+          leaseType: '월세',
+          deposit: 5000,
+          monthlyRent: 280,
+          tenantName: '김커피(카페)',
+          tenantContact: '010-1111-2222',
+          payDay: 10,
+          startDate: '2024-03-01',
+          endDate: '2027-03-01',
+          vatIncluded: true,
+          taxInvoiceDay: 10,
+          brokerAgency: '서초황금공인중개사',
+          brokerName: '정중개 대표',
+          brokerContact: '010-1234-5678',
+          brokerFee: 150,
+          memo: '매달 10일 세금계산서 전자발행 필수',
+          paidThisMonth: true
+        },
+        // 주택 8개
+        {
+          id: 'prop-house-1',
+          type: '주택',
+          subType: '아파트 (34평)',
+          name: '반포자이 103동 1201호',
+          address: '서울시 서초구 반포동',
+          ownerName: '부부 공동',
+          ownershipRatio: '50:50',
+          acquisitionDate: '2019-06-20',
+          purchasePrice: 280000,
+          currentLoan: 0,
+          loanInterestMonthly: 0,
+          leaseType: '전세',
+          deposit: 150000,
+          monthlyRent: 0,
+          tenantName: '박은영',
+          tenantContact: '010-2222-3333',
+          payDay: '',
+          startDate: '2024-11-01',
+          endDate: '2026-11-01',
+          registeredRental: false,
+          renewalUsed: true,
+          brokerAgency: '반포베스트공인',
+          brokerName: '이소장',
+          brokerContact: '010-2345-6789',
+          brokerFee: 200,
+          memo: '만기 2개월 전 갱신 여부 확인 필요',
+          paidThisMonth: false
+        },
+        {
+          id: 'prop-house-2',
+          type: '주택',
+          subType: '오피스텔',
+          name: '마포 센트럴 오피스텔 804호',
+          address: '서울시 마포구 공덕동',
+          ownerName: '본인',
+          ownershipRatio: '100%',
+          acquisitionDate: '2020-09-15',
+          purchasePrice: 28000,
+          currentLoan: 12000,
+          loanInterestMonthly: 45,
+          leaseType: '월세',
+          deposit: 2000,
+          monthlyRent: 95,
+          tenantName: '이수민',
+          tenantContact: '010-3333-4444',
+          payDay: 25,
+          startDate: '2025-02-15',
+          endDate: '2027-02-14',
+          registeredRental: true,
+          renewalUsed: false,
+          brokerAgency: '공덕행운부동산',
+          brokerName: '최대표',
+          brokerContact: '010-3456-7890',
+          brokerFee: 40,
+          memo: '등록임대사업자 물건 (5% 상한 준수)',
+          paidThisMonth: true
+        },
+        {
+          id: 'prop-house-3',
+          type: '주택',
+          subType: '오피스텔',
+          name: '강남 루덴스 502호',
+          address: '서울시 강남구 역삼동',
+          ownerName: '배우자',
+          ownershipRatio: '100%',
+          acquisitionDate: '2022-01-10',
+          purchasePrice: 32000,
+          currentLoan: 14000,
+          loanInterestMonthly: 52,
+          leaseType: '월세',
+          deposit: 1000,
+          monthlyRent: 110,
+          tenantName: '정우진',
+          tenantContact: '010-4444-5555',
+          payDay: 1,
+          startDate: '2025-05-01',
+          endDate: '2027-04-30',
+          registeredRental: false,
+          renewalUsed: false,
+          brokerAgency: '역삼에이스부동산',
+          brokerName: '강소장',
+          brokerContact: '010-4567-8901',
+          brokerFee: 50,
+          memo: '',
+          paidThisMonth: false
+        },
+        {
+          id: 'prop-house-4',
+          type: '주택',
+          subType: '빌라/다세대',
+          name: '송파 현대빌라 201호',
+          address: '서울시 송파구 삼전동',
+          ownerName: '본인',
+          ownershipRatio: '100%',
+          acquisitionDate: '2018-03-25',
+          purchasePrice: 35000,
+          currentLoan: 8000,
+          loanInterestMonthly: 30,
+          leaseType: '월세',
+          deposit: 3000,
+          monthlyRent: 80,
+          tenantName: '최진호',
+          tenantContact: '010-5555-6666',
+          payDay: 15,
+          startDate: '2024-09-15',
+          endDate: '2026-09-14',
+          registeredRental: true,
+          renewalUsed: false,
+          brokerAgency: '삼전믿음공인',
+          brokerName: '한대표',
+          brokerContact: '010-5678-9012',
+          brokerFee: 35,
+          memo: '임대차 만료 임박 - 갱신 협의 중',
+          paidThisMonth: true
+        },
+        {
+          id: 'prop-house-5',
+          type: '주택',
+          subType: '빌라/다세대',
+          name: '송파 현대빌라 202호',
+          address: '서울시 송파구 삼전동',
+          ownerName: '본인',
+          ownershipRatio: '100%',
+          acquisitionDate: '2018-03-25',
+          purchasePrice: 35000,
+          currentLoan: 8000,
+          loanInterestMonthly: 30,
+          leaseType: '전세',
+          deposit: 24000,
+          monthlyRent: 0,
+          tenantName: '강태양',
+          tenantContact: '010-6666-7777',
+          payDay: '',
+          startDate: '2025-04-01',
+          endDate: '2027-03-31',
+          registeredRental: true,
+          renewalUsed: false,
+          brokerAgency: '삼전믿음공인',
+          brokerName: '한대표',
+          brokerContact: '010-5678-9012',
+          brokerFee: 80,
+          memo: 'HUG 전세보증금반환보증 가입 확인',
+          paidThisMonth: false
+        },
+        {
+          id: 'prop-house-6',
+          type: '주택',
+          subType: '소형 아파트',
+          name: '노원 상계주공 7단지 704동',
+          address: '서울시 노원구 상계동',
+          ownerName: '배우자',
+          ownershipRatio: '100%',
+          acquisitionDate: '2019-11-05',
+          purchasePrice: 52000,
+          currentLoan: 15000,
+          loanInterestMonthly: 55,
+          leaseType: '월세',
+          deposit: 5000,
+          monthlyRent: 75,
+          tenantName: '윤지현',
+          tenantContact: '010-7777-8888',
+          payDay: 20,
+          startDate: '2025-01-20',
+          endDate: '2027-01-19',
+          registeredRental: false,
+          renewalUsed: false,
+          brokerAgency: '상계드림부동산',
+          brokerName: '송소장',
+          brokerContact: '010-7890-1234',
+          brokerFee: 45,
+          memo: '',
+          paidThisMonth: true
+        },
+        {
+          id: 'prop-house-7',
+          type: '주택',
+          subType: '오피스텔',
+          name: '판교 테크노벨리 오피스텔 302호',
+          address: '경기도 성남시 분당구 삼평동',
+          ownerName: '본인',
+          ownershipRatio: '100%',
+          acquisitionDate: '2021-08-12',
+          purchasePrice: 38000,
+          currentLoan: 16000,
+          loanInterestMonthly: 60,
+          leaseType: '월세',
+          deposit: 2000,
+          monthlyRent: 105,
+          tenantName: '오세훈',
+          tenantContact: '010-8888-9999',
+          payDay: 5,
+          startDate: '2024-10-05',
+          endDate: '2026-10-04',
+          registeredRental: false,
+          renewalUsed: false,
+          brokerAgency: '판교스타부동산',
+          brokerName: '임대표',
+          brokerContact: '010-8901-2345',
+          brokerFee: 50,
+          memo: '도배 시공 완료',
+          paidThisMonth: false
+        },
+        {
+          id: 'prop-house-8',
+          type: '주택',
+          subType: '아파트',
+          name: '일산 킨텍스 원시티 104동 1502호',
+          address: '경기도 고양시 일산서구 대화동',
+          ownerName: '부부 공동',
+          ownershipRatio: '50:50',
+          acquisitionDate: '2020-02-18',
+          purchasePrice: 95000,
+          currentLoan: 30000,
+          loanInterestMonthly: 110,
+          leaseType: '전세',
+          deposit: 55000,
+          monthlyRent: 0,
+          tenantName: '한미경',
+          tenantContact: '010-9999-0000',
+          payDay: '',
+          startDate: '2025-08-01',
+          endDate: '2027-07-31',
+          registeredRental: false,
+          renewalUsed: false,
+          brokerAgency: '일산킨텍스공인',
+          brokerName: '윤소장',
+          brokerContact: '010-9012-3456',
+          brokerFee: 120,
+          memo: '',
+          paidThisMonth: false
+        }
+      ];
+
+      saveToStorage();
+    }
+
+    // 데이터 백업 및 복원
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(properties, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `부동산관리_백업_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported)) {
+            properties = imported;
+            saveToStorage();
+            alert('데이터 복원이 완료되었습니다.');
+          } else {
+            alert('올바른 백업 파일 형식이 아닙니다.');
+          }
+        } catch (err) {
+          alert('JSON 파일을 읽는 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
