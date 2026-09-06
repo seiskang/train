@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Seiskang Trader | 세이스강 주식 매매 파트너 (NXT 08:00~20:00)</title>
+  <title>Seiskang Trader | 통합 · KRX · NXT 맞춤 매매 보드</title>
   <!-- Google Fonts: IBM Plex Sans KR, Mulish, IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,9 +62,9 @@
       <div>
         <h1 class="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
           SEISKANG TRADER
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-samsung-500/20 text-samsung-200 border border-samsung-500/30 font-mono">12H</span>
+          <span id="marketBadgeHeader" class="text-[10px] px-1.5 py-0.5 rounded bg-samsung-500/20 text-samsung-200 border border-samsung-500/30 font-mono">SOR 통합</span>
         </h1>
-        <p class="text-[10px] text-slate-400">08:00 ~ 20:00 풀타임 트레이딩</p>
+        <p class="text-[10px] text-slate-400">통합(SOR) · KRX · NXT 스마트보드</p>
       </div>
     </div>
     <div class="flex items-center space-x-2">
@@ -79,16 +79,31 @@
     </div>
   </header>
 
-  <!-- 실시간 시장 상태 배너 (NXT 프리마켓 / 정규장 / NXT 애프터마켓 / 장마감) -->
-  <div class="bg-slate-900/90 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs">
-    <div class="flex items-center gap-2">
+  <!-- 거래시장 3단 셀렉터 탭 (통합 SOR / KRX / NXT) -->
+  <div class="bg-slate-900/90 border-b border-slate-800 px-4 py-2 flex items-center justify-between gap-2">
+    <div class="inline-flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-medium w-full">
+      <button onclick="setMarketMode('TOTAL')" id="tabModeTOTAL" 
+              class="flex-1 py-1.5 rounded-lg text-center transition font-bold bg-samsung-500 text-white shadow">
+        🌟 통합 (SOR)
+      </button>
+      <button onclick="setMarketMode('KRX')" id="tabModeKRX" 
+              class="flex-1 py-1.5 rounded-lg text-center transition text-slate-400 hover:text-white">
+        🏛️ KRX (거래소)
+      </button>
+      <button onclick="setMarketMode('NXT')" id="tabModeNXT" 
+              class="flex-1 py-1.5 rounded-lg text-center transition text-slate-400 hover:text-white">
+        ⚡ NXT (08~20시)
+      </button>
+    </div>
+  </div>
+
+  <!-- 실시간 세션 및 시계 배너 -->
+  <div class="bg-slate-950/60 border-b border-slate-800/80 px-4 py-1.5 flex items-center justify-between text-[11px]">
+    <div class="flex items-center gap-1.5">
       <span id="marketStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span id="marketStatusText" class="font-bold text-slate-200">시장 상태 조회 중...</span>
+      <span id="marketStatusText" class="text-slate-300 font-medium">시장 상태 조회 중...</span>
     </div>
-    <div class="flex items-center gap-2 font-mono text-[11px] text-slate-400">
-      <span id="liveClock" class="tabular">00:00:00</span>
-      <span class="text-[10px] bg-slate-800 text-samsung-200 px-1.5 py-0.5 rounded">NXT 연동</span>
-    </div>
+    <span id="liveClock" class="font-mono text-slate-400 tabular">00:00:00</span>
   </div>
 
   <!-- 메인 레이아웃 -->
@@ -97,17 +112,17 @@
     <!-- 포트폴리오 요약 대시보드 -->
     <section class="bg-gradient-to-br from-slate-900 via-slate-900 to-samsung-900/40 p-4 rounded-2xl border border-slate-800 shadow-xl">
       <div class="flex justify-between items-center pb-2 border-b border-slate-800/80">
-        <span class="text-xs font-medium text-slate-300">내 자산 및 실현손익 현황</span>
+        <span class="text-xs font-medium text-slate-300">포트폴리오 실현손익 현황</span>
         <div class="flex items-center gap-1.5">
-          <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/50">제비용 0.21% 공제</span>
-          <span id="totalStockCount" class="font-mono text-xs text-samsung-200 bg-samsung-500/20 px-2 py-0.5 rounded-full font-bold">5개</span>
+          <span id="modeSummaryBadge" class="text-[10px] text-samsung-200 bg-samsung-900/50 border border-samsung-500/30 px-2 py-0.5 rounded-md">통합 최선집행 모드</span>
+          <span id="totalStockCount" class="font-mono text-xs text-samsung-200 bg-slate-800 px-2 py-0.5 rounded-full font-bold">5개</span>
         </div>
       </div>
 
-      <!-- 제비용 차감 순 실현손익 핵심 지표 -->
+      <!-- 제비용 제외 순 실현손익 -->
       <div class="mt-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex justify-between items-center">
         <div>
-          <span class="text-[11px] text-slate-400 block">제비용 차감 순 실현손익</span>
+          <span class="text-[11px] text-slate-400 block">제비용 제외 순 실현손익</span>
           <p id="totalNetPnL" class="font-mono text-lg font-bold tabular mt-0.5">0 원</p>
         </div>
         <div class="text-right">
@@ -116,7 +131,7 @@
         </div>
       </div>
 
-      <!-- 보조 지표 그리드 -->
+      <!-- 보조 지표 -->
       <div class="grid grid-cols-3 gap-2 mt-3 pt-2 text-[11px]">
         <div>
           <span class="text-slate-400 block">총 매수원금</span>
@@ -127,13 +142,13 @@
           <span id="totalValuation" class="font-mono text-slate-200 font-semibold tabular">0 원</span>
         </div>
         <div class="text-right">
-          <span class="text-slate-400 block">예상 제비용</span>
+          <span class="text-slate-400 block">예상 제비용(0.21%)</span>
           <span id="totalFees" class="font-mono text-amber-400 font-semibold tabular">0 원</span>
         </div>
       </div>
     </section>
 
-    <!-- 툴바 (검색 / 추가 / 초기화) -->
+    <!-- 툴바 (검색 / 추가 / 복원) -->
     <div class="flex items-center justify-between gap-2">
       <div class="relative flex-1">
         <input type="text" id="searchInput" placeholder="종목명 또는 6자리 코드 검색..." 
@@ -157,36 +172,48 @@
       </button>
     </div>
 
-    <!-- 종목 카드 리스트 컨테이너 -->
-    <div id="stockList" class="space-y-3">
-      <!-- 동적 렌더링 -->
-    </div>
+    <!-- 종목 카드 리스트 -->
+    <div id="stockList" class="space-y-3"></div>
 
   </main>
 
-  <!-- 10단계 호가창(Order Book) 모달 -->
+  <!-- 10단계 호가창(Order Book) 모달 (통합/KRX/NXT 전환 탭 내장) -->
   <div id="orderBookModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
     <div class="bg-slate-900 border-t sm:border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-4 shadow-2xl space-y-3 max-h-[92vh] overflow-y-auto">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+      
+      <!-- 모달 상단 헤더 -->
+      <div class="flex justify-between items-start pb-2 border-b border-slate-800">
         <div>
           <div class="flex items-center gap-2">
             <h3 id="obStockName" class="text-base font-bold text-white">-</h3>
             <span id="obStockCode" class="font-mono text-xs text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">-</span>
           </div>
-          <p class="text-[10px] text-slate-400 mt-0.5">KRX · NXT 통합 10 호가창 (틱단위 자동계산)</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">KRX · NXT 호가 및 수급 비교 분석</p>
         </div>
         <button onclick="closeOrderBook()" class="text-slate-400 hover:text-white text-lg p-1.5">✕</button>
       </div>
 
-      <!-- 세션별 주문 가이드 알림 -->
-      <div class="bg-samsung-900/30 border border-samsung-500/30 rounded-lg p-2 text-[10px] text-samsung-100 flex items-center justify-between">
-        <span>💡 프리/애프터마켓은 <b>지정가 주문</b>만 지원됩니다.</span>
-        <span class="font-mono text-[9px] text-samsung-200">08:00~20:00</span>
+      <!-- 호가창 내부 3단 모드 선택 버튼 -->
+      <div class="grid grid-cols-3 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-semibold">
+        <button onclick="renderOrderBookRows('TOTAL')" id="obTabTOTAL" class="py-1 rounded-lg text-center bg-samsung-500 text-white transition">
+          통합 10호가
+        </button>
+        <button onclick="renderOrderBookRows('KRX')" id="obTabKRX" class="py-1 rounded-lg text-center text-slate-400 hover:text-white transition">
+          KRX 전용
+        </button>
+        <button onclick="renderOrderBookRows('NXT')" id="obTabNXT" class="py-1 rounded-lg text-center text-slate-400 hover:text-white transition">
+          NXT 전용
+        </button>
       </div>
 
-      <!-- 호가 테이블 -->
+      <!-- 시장 모드별 안내 박스 -->
+      <div id="obNoticeBox" class="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-[10px] text-slate-300 flex justify-between items-center">
+        <span id="obNoticeText">🌟 KRX + NXT 양 시장 잔량을 합산한 통합 최선호가입니다.</span>
+      </div>
+
+      <!-- 10호가 테이블 -->
       <div class="border border-slate-800 rounded-xl overflow-hidden text-xs font-mono">
-        <div class="grid grid-cols-3 bg-slate-950/80 text-[10px] text-slate-400 py-1.5 px-2 border-b border-slate-800 font-sans">
+        <div class="grid grid-cols-3 bg-slate-950/90 text-[10px] text-slate-400 py-1.5 px-2 border-b border-slate-800 font-sans">
           <span>매도잔량</span>
           <span class="text-center">호가(원)</span>
           <span class="text-right">매수잔량</span>
@@ -199,7 +226,7 @@
         </div>
       </div>
 
-      <!-- 하단 주문 링크 -->
+      <!-- 하단 주문 및 링크 액션 -->
       <div class="grid grid-cols-2 gap-2 pt-1">
         <a id="obNaverLink" href="#" target="_blank" 
            class="text-center text-xs py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition font-medium">
@@ -260,7 +287,7 @@
         </div>
         <div>
           <label class="block text-slate-400 mb-1">매매 전략 및 메모</label>
-          <input type="text" id="formMemo" placeholder="애프터마켓/정규장 분할매매 전략" 
+          <input type="text" id="formMemo" placeholder="통합 SOR 최우선 지정가 전략" 
                  class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white focus:outline-none focus:border-samsung-500">
         </div>
       </div>
@@ -278,6 +305,11 @@
     const SELL_COMMISSION_RATE = 0.00015;
     const TAX_RATE = 0.0018;
 
+    // 현재 선택된 시장 모드 ('TOTAL' | 'KRX' | 'NXT')
+    let currentMarketMode = 'TOTAL';
+    let currentActiveStock = null;
+    let currentObMode = 'TOTAL';
+
     // 기본 5대 종목
     const INITIAL_STOCKS = [
       { id: '010140', name: '삼성중공업', code: '010140', buyPrice: 11000, currentPrice: 11850, quantity: 100, targetPrice: 15000, memo: '조선 수주 호황 및 실적 턴어라운드' },
@@ -289,12 +321,41 @@
 
     let stocks = [];
 
-    // 실시간 마켓 세션 체크 (한국시간 기준 08:00~20:00 판정)
+    // 시장 모드 전환 함수
+    function setMarketMode(mode) {
+      currentMarketMode = mode;
+      ['TOTAL', 'KRX', 'NXT'].forEach(m => {
+        const btn = document.getElementById('tabMode' + m);
+        if (m === mode) {
+          btn.className = 'flex-1 py-1.5 rounded-lg text-center transition font-bold bg-samsung-500 text-white shadow';
+        } else {
+          btn.className = 'flex-1 py-1.5 rounded-lg text-center transition text-slate-400 hover:text-white';
+        }
+      });
+
+      const badgeHeader = document.getElementById('marketBadgeHeader');
+      const summaryBadge = document.getElementById('modeSummaryBadge');
+      if (mode === 'TOTAL') {
+        badgeHeader.innerText = 'SOR 통합';
+        summaryBadge.innerText = '통합 최선집행 모드';
+      } else if (mode === 'KRX') {
+        badgeHeader.innerText = 'KRX 전용';
+        summaryBadge.innerText = '한국거래소 정규장 모드';
+      } else {
+        badgeHeader.innerText = 'NXT 전용';
+        summaryBadge.innerText = '대체거래소 12시간 모드';
+      }
+
+      updateMarketSession();
+      renderStocks();
+    }
+
+    // 실시간 세션 및 시계 갱신
     function updateMarketSession() {
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
-      const timeNum = hours * 100 + minutes; // 예: 0830, 1545
+      const timeNum = hours * 100 + minutes;
 
       const timeStr = now.toTimeString().split(' ')[0];
       document.getElementById('liveClock').innerText = timeStr;
@@ -302,28 +363,59 @@
       const dot = document.getElementById('marketStatusDot');
       const text = document.getElementById('marketStatusText');
 
-      if (timeNum >= 800 && timeNum < 850) {
-        dot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
-        text.innerHTML = '<span class="text-cyan-300">NXT 프리마켓 진행 중</span> (08:00~08:50)';
-      } else if (timeNum >= 850 && timeNum < 900) {
-        dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
-        text.innerHTML = '<span class="text-amber-300">정규장 동시호가 준비</span> (08:50~09:00)';
-      } else if (timeNum >= 900 && timeNum < 1520) {
-        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-        text.innerHTML = '<span class="text-emerald-300">정규 메인마켓 거래 중</span> (KRX & NXT)';
-      } else if (timeNum >= 1520 && timeNum < 1530) {
-        dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
-        text.innerHTML = '<span class="text-amber-300">장마감 동시호가</span> (15:20~15:30)';
-      } else if (timeNum >= 1530 && timeNum < 2000) {
-        dot.className = 'w-2 h-2 rounded-full bg-purple-400 animate-pulse';
-        text.innerHTML = '<span class="text-purple-300">NXT 애프터마켓 거래 중</span> (20:00까지)';
+      if (currentMarketMode === 'KRX') {
+        if (timeNum >= 830 && timeNum < 900) {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+          text.innerHTML = '<span class="text-amber-300">KRX 시초가 동시호가</span> (08:30~09:00)';
+        } else if (timeNum >= 900 && timeNum < 1520) {
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+          text.innerHTML = '<span class="text-emerald-300">KRX 정규장 거래 중</span> (09:00~15:20)';
+        } else if (timeNum >= 1520 && timeNum < 1530) {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+          text.innerHTML = '<span class="text-amber-300">KRX 종가 동시호가</span> (15:20~15:30)';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+          text.innerHTML = '<span class="text-slate-400">KRX 정규시장 마감</span>';
+        }
+      } else if (currentMarketMode === 'NXT') {
+        if (timeNum >= 800 && timeNum < 850) {
+          dot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+          text.innerHTML = '<span class="text-cyan-300">NXT 프리마켓 거래 중</span> (08:00~08:50)';
+        } else if (timeNum >= 900 && timeNum < 1520) {
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+          text.innerHTML = '<span class="text-emerald-300">NXT 메인마켓 거래 중</span> (09:00~15:20)';
+        } else if (timeNum >= 1530 && timeNum < 2000) {
+          dot.className = 'w-2 h-2 rounded-full bg-purple-400 animate-pulse';
+          text.innerHTML = '<span class="text-purple-300">NXT 애프터마켓 거래 중</span> (15:30~20:00)';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+          text.innerHTML = '<span class="text-slate-400">NXT 12시간 장 마감</span> (익일 08시)';
+        }
       } else {
-        dot.className = 'w-2 h-2 rounded-full bg-slate-500';
-        text.innerHTML = '<span class="text-slate-400">전체 장 마감</span> (익일 08:00 오픈)';
+        // TOTAL (통합 SOR)
+        if (timeNum >= 800 && timeNum < 850) {
+          dot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+          text.innerHTML = '<span class="text-cyan-300">통합 세션: NXT 프리마켓 활성</span>';
+        } else if (timeNum >= 850 && timeNum < 900) {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+          text.innerHTML = '<span class="text-amber-300">통합 세션: KRX 동시호가 준비</span>';
+        } else if (timeNum >= 900 && timeNum < 1520) {
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+          text.innerHTML = '<span class="text-emerald-300">통합 세션: KRX & NXT 실시간 최선집행</span>';
+        } else if (timeNum >= 1520 && timeNum < 1530) {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+          text.innerHTML = '<span class="text-amber-300">통합 세션: KRX 종가 단일가</span>';
+        } else if (timeNum >= 1530 && timeNum < 2000) {
+          dot.className = 'w-2 h-2 rounded-full bg-purple-400 animate-pulse';
+          text.innerHTML = '<span class="text-purple-300">통합 세션: NXT 애프터마켓 연장 거래</span>';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+          text.innerHTML = '<span class="text-slate-400">통합 시장 마감 (08:00 오픈)</span>';
+        }
       }
     }
 
-    // KRX & NXT 호가 틱 크기
+    // KRX & NXT 호가단위(Tick)
     function getTickSize(price) {
       if (price < 1000) return 1;
       if (price < 5000) return 5;
@@ -336,7 +428,7 @@
 
     // 로컬스토리지 연동
     function loadStocks() {
-      const saved = localStorage.getItem('seiskang_stocks_v3');
+      const saved = localStorage.getItem('seiskang_stocks_v4');
       if (saved) {
         stocks = JSON.parse(saved);
       } else {
@@ -347,11 +439,11 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem('seiskang_stocks_v3', JSON.stringify(stocks));
+      localStorage.setItem('seiskang_stocks_v4', JSON.stringify(stocks));
     }
 
     function resetToDefaults() {
-      if (confirm('기본 5개 종목으로 복원하시겠습니까?')) {
+      if (confirm('기본 5개 종목(삼성중공업, 리가켐바이오, LG유플러스, KT, 휴온스글로벌)으로 복원하시겠습니까?')) {
         stocks = [...INITIAL_STOCKS];
         saveToStorage();
         renderStocks();
@@ -383,7 +475,6 @@
         const sellTax = Math.floor(evalTotal * TAX_RATE);
         const totalFee = buyFee + sellFee + sellTax;
 
-        // 세전 단순손익 vs 제비용 차감 순 실현손익
         const grossDiff = evalTotal - buyTotal;
         const netDiff = grossDiff - totalFee;
         const netRate = buyTotal > 0 ? (netDiff / buyTotal) * 100 : 0;
@@ -410,6 +501,9 @@
               <div class="flex items-center gap-1.5">
                 <span class="text-sm font-bold text-white">${stock.name}</span>
                 <span class="font-mono text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">${stock.code}</span>
+                <span class="text-[9px] px-1 rounded bg-slate-800 text-samsung-200 border border-slate-700 font-mono">
+                  ${currentMarketMode === 'TOTAL' ? 'SOR' : currentMarketMode}
+                </span>
               </div>
               <p class="text-[10px] text-slate-400 mt-0.5">${stock.memo || '전략 메모 없음'}</p>
             </div>
@@ -432,7 +526,7 @@
               </span>
             </div>
             <div class="text-right">
-              <span class="text-[10px] text-slate-400 block">예상 제비용(수수료+세금)</span>
+              <span class="text-[10px] text-slate-400 block">예상 제비용(0.21%)</span>
               <span class="font-mono text-amber-400 font-medium tabular">-${totalFee.toLocaleString()}원</span>
             </div>
           </div>
@@ -483,7 +577,7 @@
         container.appendChild(card);
       });
 
-      // 대시보드 합계 지표 업데이트
+      // 합계 업데이트
       document.getElementById('totalStockCount').innerText = `${stocks.length}개`;
       document.getElementById('totalInvestment').innerText = `${Math.round(totalBuy).toLocaleString()} 원`;
       document.getElementById('totalValuation').innerText = `${Math.round(totalEval).toLocaleString()} 원`;
@@ -501,34 +595,64 @@
       netRateElem.className = `font-mono text-sm font-bold tabular mt-0.5 ${totalNetProfit > 0 ? 'text-stock-up' : totalNetProfit < 0 ? 'text-stock-down' : 'text-slate-200'}`;
     }
 
-    // 10호가창
+    // 10단계 호가창 열기
     function openOrderBook(stockId) {
-      const stock = stocks.find(s => s.id === stockId);
-      if (!stock) return;
+      currentActiveStock = stocks.find(s => s.id === stockId);
+      if (!currentActiveStock) return;
 
-      document.getElementById('obStockName').innerText = stock.name;
-      document.getElementById('obStockCode').innerText = stock.code;
-      document.getElementById('obNaverLink').href = `https://m.stock.naver.com/item/main/${stock.code}`;
+      document.getElementById('obStockName').innerText = currentActiveStock.name;
+      document.getElementById('obStockCode').innerText = currentActiveStock.code;
+      document.getElementById('obNaverLink').href = `https://m.stock.naver.com/item/main/${currentActiveStock.code}`;
 
-      const tick = getTickSize(stock.currentPrice);
+      renderOrderBookRows(currentMarketMode);
+      document.getElementById('orderBookModal').classList.remove('hidden');
+    }
+
+    // 10단계 호가창 행 렌더링 (통합/KRX/NXT 선택 시 잔량 및 알림 실시간 분기)
+    function renderOrderBookRows(mode) {
+      currentObMode = mode;
+      ['TOTAL', 'KRX', 'NXT'].forEach(m => {
+        const btn = document.getElementById('obTab' + m);
+        if (m === mode) {
+          btn.className = 'py-1 rounded-lg text-center bg-samsung-500 text-white transition font-bold shadow';
+        } else {
+          btn.className = 'py-1 rounded-lg text-center text-slate-400 hover:text-white transition';
+        }
+      });
+
+      const notice = document.getElementById('obNoticeText');
+      if (mode === 'TOTAL') {
+        notice.innerHTML = '🌟 <b>통합(SOR)</b>: KRX + NXT 잔량 합산 및 최선 유리 가격 체결';
+      } else if (mode === 'KRX') {
+        notice.innerHTML = '🏛️ <b>KRX 전용</b>: 한국거래소 단독 호가 및 동시호가(시가/종가)';
+      } else {
+        notice.innerHTML = '⚡ <b>NXT 전용</b>: 08~20시 프리/애프터마켓 (지정가·중간가 지원)';
+      }
+
+      if (!currentActiveStock) return;
+
+      const tick = getTickSize(currentActiveStock.currentPrice);
       const rowsContainer = document.getElementById('orderBookRows');
       rowsContainer.innerHTML = '';
 
       let totalAskQty = 0;
       let totalBidQty = 0;
 
+      // 시장 모드별 잔량 가중치
+      const weight = mode === 'TOTAL' ? 1.0 : mode === 'KRX' ? 0.65 : 0.35;
+
       const askList = [];
       for (let i = 10; i >= 1; i--) {
-        const p = stock.currentPrice + (i * tick);
-        const qty = Math.floor(((Math.sin(p) + 1.5) * 450) + (11 - i) * 150);
+        const p = currentActiveStock.currentPrice + (i * tick);
+        const qty = Math.floor((((Math.sin(p) + 1.5) * 450) + (11 - i) * 150) * weight);
         totalAskQty += qty;
         askList.push({ price: p, qty, type: 'ask' });
       }
 
       const bidList = [];
       for (let i = 0; i < 10; i++) {
-        const p = stock.currentPrice - (i * tick);
-        const qty = Math.floor(((Math.cos(p) + 1.5) * 420) + (10 - i) * 160);
+        const p = currentActiveStock.currentPrice - (i * tick);
+        const qty = Math.floor((((Math.cos(p) + 1.5) * 420) + (10 - i) * 160) * weight);
         totalBidQty += qty;
         bidList.push({ price: p, qty, type: 'bid', isCurrent: i === 0 });
       }
@@ -570,8 +694,6 @@
 
       document.getElementById('obTotalAskQty').innerText = totalAskQty.toLocaleString();
       document.getElementById('obTotalBidQty').innerText = totalBidQty.toLocaleString();
-
-      document.getElementById('orderBookModal').classList.remove('hidden');
     }
 
     function closeOrderBook() {
@@ -658,7 +780,6 @@
       renderStocks(e.target.value);
     });
 
-    // 1초마다 시계 및 마켓 세션 갱신
     setInterval(updateMarketSession, 1000);
 
     window.addEventListener('DOMContentLoaded', () => {
