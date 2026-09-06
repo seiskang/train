@@ -64,7 +64,7 @@
           SEISKANG TRADER
           <span id="marketBadgeHeader" class="text-xs px-2 py-0.5 rounded-md bg-samsung-500 text-white font-mono font-bold">SOR 통합</span>
         </h1>
-        <p class="text-xs text-slate-300 mt-0.5">삼성증권 평생우대(0.0036%) 적용</p>
+        <p class="text-xs text-slate-300 mt-0.5">삼성증권 연동 · 08:00~20:00 풀타임</p>
       </div>
     </div>
     <div class="flex items-center space-x-2">
@@ -73,7 +73,7 @@
               class="text-xs font-bold px-2 py-2 rounded-xl bg-slate-800 border border-amber-500/50 text-amber-300 hover:bg-slate-700 transition flex items-center gap-1">
         ⚙️ <span id="feeHeaderLabel">우대 0.187%</span>
       </button>
-      <!-- 밝게/어둡게 토글 -->
+      <!-- 테마 토글 -->
       <button onclick="toggleTheme()" id="themeBtn" 
               class="text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-slate-200 hover:bg-slate-700 transition">
         ☀️ 밝게
@@ -150,7 +150,7 @@
           <span id="totalValuation" class="font-mono text-white font-bold tabular mt-0.5 block">0 원</span>
         </div>
         <div class="bg-slate-950/70 p-2 rounded-lg border border-slate-800 text-right">
-          <span class="text-slate-400 block font-medium">예상 제비용</span>
+          <span class="text-slate-400 block font-medium">예상 총 제비용</span>
           <span id="totalFees" class="font-mono text-amber-300 font-bold tabular mt-0.5 block">0 원</span>
         </div>
       </div>
@@ -180,7 +180,7 @@
       </button>
     </div>
 
-    <!-- 종목 카드 리스트 -->
+    <!-- 종목 카드 리스트 (주당 제비용란 탑재) -->
     <div id="stockList" class="space-y-4"></div>
 
   </main>
@@ -270,13 +270,13 @@
       </div>
 
       <div class="border-2 border-slate-700 rounded-xl overflow-hidden text-sm font-mono bg-slate-950">
-        <div class="grid grid-cols-3 bg-slate-900 text-xs font-bold text-slate-300 py-2 px-3 border-b border-slate-700 font-sans">
+        <div class="grid grid-cols-3 bg-slate-950 text-xs font-bold text-slate-300 py-2 px-3 border-b border-slate-700 font-sans">
           <span>매도잔량</span>
           <span class="text-center">호가(원)</span>
           <span class="text-right">매수잔량</span>
         </div>
         <div id="orderBookRows" class="divide-y divide-slate-800"></div>
-        <div class="grid grid-cols-3 bg-slate-900 text-sm py-2.5 px-3 border-t-2 border-slate-700 font-bold">
+        <div class="grid grid-cols-3 bg-slate-950 text-sm py-2.5 px-3 border-t-2 border-slate-700 font-bold">
           <span id="obTotalAskQty" class="text-sky-400 tabular font-extrabold">0</span>
           <span class="text-center text-slate-300 font-sans text-xs">총 잔량</span>
           <span id="obTotalBidQty" class="text-right text-red-400 tabular font-extrabold">0</span>
@@ -296,7 +296,7 @@
     </div>
   </div>
 
-  <!-- 종목 등록/수정 모달 -->
+  <!-- 종목 등록/수정 모달 (주당 제비용 계산기 탑재) -->
   <div id="stockModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border-2 border-slate-700 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-2 border-b border-slate-700">
@@ -334,10 +334,16 @@
           </div>
         </div>
 
-        <!-- 실시간 총 매수금액 미리보기 -->
-        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs">
-          <span class="text-amber-400 font-bold">총 매수금액 (원금):</span>
-          <span id="modalTotalBuyPreview" class="font-mono font-extrabold text-white tabular text-sm">0 원</span>
+        <!-- 실시간 총 매수금액 및 주당 제비용 미리보기 -->
+        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-xs">
+          <div class="flex justify-between items-center">
+            <span class="text-amber-400 font-bold">총 매수금액:</span>
+            <span id="modalTotalBuyPreview" class="font-mono font-extrabold text-white tabular text-sm">0 원</span>
+          </div>
+          <div class="flex justify-between items-center pt-1 border-t border-slate-800/80">
+            <span class="text-sky-300 font-bold">예상 주당 제비용:</span>
+            <span id="modalPerShareFeePreview" class="font-mono font-extrabold text-sky-300 tabular text-xs">약 0 원/주</span>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -347,7 +353,7 @@
                    class="w-full bg-slate-800 border-2 border-slate-600 rounded-lg p-2.5 font-mono text-white font-bold focus:outline-none focus:border-samsung-500">
           </div>
           <div>
-            <label class="block text-slate-300 font-bold mb-1">목표가 (원)</label>
+            <label class="block text-slate-300 font-bold mb-1">목표가/손익분기 (원)</label>
             <input type="text" id="formTargetPrice" placeholder="0" 
                    class="w-full bg-slate-800 border-2 border-slate-600 rounded-lg p-2.5 font-mono text-white font-bold focus:outline-none focus:border-samsung-500">
           </div>
@@ -379,6 +385,11 @@
       const q = parseSafeNumber(document.getElementById('formQuantity').value, 0);
       const total = Math.round(p * q);
       document.getElementById('modalTotalBuyPreview').innerText = `${total.toLocaleString()} 원`;
+
+      // 주당 제비용 추정 계산 (매매 왕복 수수료 + 거래세율 적용)
+      const effectiveRate = ((commissionRatePercent * 2) + taxRatePercent) / 100;
+      const perShareEst = Math.round(p * effectiveRate);
+      document.getElementById('modalPerShareFeePreview').innerText = `약 ${perShareEst.toLocaleString()} 원/주`;
     }
 
     function launchSamsungMpop() {
@@ -431,26 +442,26 @@
     let currentActiveStock = null;
     let isLightMode = false;
 
-    // ★ 세이스강님의 실제 보유 종목 실데이터 반영
+    // 세이스강님의 실제 보유 종목 실데이터 기본값
     const INITIAL_STOCKS = [
       { 
         id: '084110', 
         name: '휴온스글로벌', 
         code: '084110', 
-        buyPrice: 55252,       // 매수금액 6,906,450원 / 125주
-        currentPrice: 23900,   // 현재가
-        quantity: 125,         // 보유수량
-        targetPrice: 55301,    // 손익분기단가
+        buyPrice: 55252,
+        currentPrice: 23900,
+        quantity: 125,
+        targetPrice: 55301,
         memo: '손익분기 55,301원 대응 전략' 
       },
       { 
         id: '030200', 
         name: 'KT', 
         code: '030200', 
-        buyPrice: 65375,       // 매수금액 54,980,200원 / 841주
-        currentPrice: 54200,   // 현재가
-        quantity: 841,         // 보유수량
-        targetPrice: 65487,    // 손익분기단가
+        buyPrice: 65375,
+        currentPrice: 54200,
+        quantity: 841,
+        targetPrice: 65487,
         memo: '손익분기 65,487원 대응 전략' 
       },
       { id: '010140', name: '삼성중공업', code: '010140', buyPrice: 11000, currentPrice: 11850, quantity: 100, targetPrice: 15000, memo: '조선 수주 호황 실적개선' },
@@ -475,7 +486,6 @@
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            // 휴온스글로벌 및 KT의 실제 데이터 우선 갱신
             stocks = parsed.map(s => {
               if (s.code === '084110' || s.name === '휴온스글로벌') {
                 return { ...s, buyPrice: 55252, currentPrice: 23900, quantity: 125, targetPrice: 55301 };
@@ -712,13 +722,17 @@
       );
 
       filtered.forEach(stock => {
-        const buyTotal = (stock.buyPrice || 0) * (stock.quantity || 0);
-        const evalTotal = (stock.currentPrice || 0) * (stock.quantity || 0);
+        const qty = stock.quantity || 0;
+        const buyTotal = (stock.buyPrice || 0) * qty;
+        const evalTotal = (stock.currentPrice || 0) * qty;
 
         const buyFee = Math.floor(buyTotal * commRate);
         const sellFee = Math.floor(evalTotal * commRate);
         const sellTax = Math.floor(evalTotal * taxRate);
         const totalFee = buyFee + sellFee + sellTax;
+
+        // ★ 주당 제비용 계산 (총 제비용 / 수량)
+        const perShareFee = qty > 0 ? (totalFee / qty) : 0;
 
         const grossDiff = evalTotal - buyTotal;
         const netDiff = grossDiff - totalFee;
@@ -731,7 +745,7 @@
         totalNetProfit += netDiff;
         totalEstimatedFees += totalFee;
 
-        // 이론적 손익분기단가 계산
+        // 손익분기단가
         const breakEvenPrice = Math.round(stock.buyPrice * (1 + commRate) / (1 - commRate - taxRate));
 
         let targetProgress = 0;
@@ -760,13 +774,19 @@
                   ${currentMarketMode === 'TOTAL' ? 'SOR' : currentMarketMode}
                 </span>
               </div>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="text-xs font-bold text-amber-400 bg-amber-950/40 border border-amber-500/30 px-1.5 py-0.5 rounded">
+              
+              <!-- ★ 손익분기 및 주당 제비용 배지 표시란 신설 -->
+              <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span class="text-xs font-bold text-amber-400 bg-amber-950/40 border border-amber-500/40 px-2 py-0.5 rounded">
                   손익분기: ${Number(stock.targetPrice || breakEvenPrice).toLocaleString()}원
+                </span>
+                <span class="text-xs font-bold text-cyan-300 bg-cyan-950/40 border border-cyan-500/40 px-2 py-0.5 rounded font-mono">
+                  주당 제비용: 약 ${Math.round(perShareFee).toLocaleString()}원
                 </span>
                 <span class="text-xs font-semibold text-slate-400">${stock.memo || ''}</span>
               </div>
             </div>
+
             <div class="text-right cursor-pointer" onclick="quickUpdatePrice('${stock.id}')" title="터치하여 현재가 즉시 수정">
               <div class="font-mono text-xl sm:text-2xl font-extrabold tabular ${pnlColorClass} flex items-center justify-end gap-1">
                 ${Number(stock.currentPrice).toLocaleString()}원
@@ -778,7 +798,7 @@
             </div>
           </div>
 
-          <!-- 실현손익 및 제비용 -->
+          <!-- 실현손익 및 총 제비용 / 주당 제비용 박스 -->
           <div class="${isLightMode ? 'bg-slate-50 border-slate-300' : 'bg-slate-950 border-slate-700'} border-2 rounded-xl p-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
             <div>
               <span class="text-xs font-bold text-slate-400 block">우대제비용 제외 순 실현손익</span>
@@ -788,7 +808,9 @@
             </div>
             <div class="text-right">
               <span class="text-xs font-bold text-slate-400 block">예상 제비용(${((commRate * 2 + taxRate) * 100).toFixed(3)}%)</span>
-              <span class="font-mono text-amber-400 font-bold tabular text-sm sm:text-base">-${totalFee.toLocaleString()}원</span>
+              <span class="font-mono text-amber-400 font-bold tabular text-sm sm:text-base">
+                -${totalFee.toLocaleString()}원 <span class="text-xs text-cyan-300 font-normal font-sans">(주당 ${Math.round(perShareFee).toLocaleString()}원)</span>
+              </span>
             </div>
           </div>
 
@@ -811,6 +833,18 @@
               <span class="font-mono font-bold tabular text-white">${Math.round(evalTotal).toLocaleString()}원</span>
             </div>
           </div>
+
+          ${stock.targetPrice > 0 ? `
+          <div class="pt-1">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span class="text-slate-300">목표가 ${Number(stock.targetPrice).toLocaleString()}원</span>
+              <span class="text-amber-400">달성률 ${targetProgress.toFixed(1)}%</span>
+            </div>
+            <div class="w-full ${isLightMode ? 'bg-slate-200' : 'bg-slate-800'} h-2.5 rounded-full overflow-hidden">
+              <div class="bg-samsung-500 h-full rounded-full transition-all duration-500" style="width: ${targetProgress}%"></div>
+            </div>
+          </div>
+          ` : ''}
 
           <div class="flex items-center justify-between pt-3 border-t ${isLightMode ? 'border-slate-200' : 'border-slate-700/80'}">
             <div class="flex items-center space-x-2">
