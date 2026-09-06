@@ -62,12 +62,10 @@
       </div>
     </div>
     <div class="flex items-center space-x-2">
-      <!-- 테마 토글 버튼 (밝게 / 어둡게) -->
       <button onclick="toggleTheme()" id="themeBtn" 
               class="text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-amber-300 hover:bg-slate-700 transition">
         ☀️ 밝게
       </button>
-      <!-- 삼성증권 mPOP 주문 바로가기 -->
       <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
          class="flex items-center gap-1.5 text-xs font-bold bg-samsung-500 hover:bg-samsung-600 active:scale-95 text-white px-3 py-2 rounded-xl shadow transition">
         <span>mPOP 주문</span>
@@ -75,7 +73,7 @@
     </div>
   </header>
 
-  <!-- 거래시장 3단 셀렉터 (큼직한 버튼) -->
+  <!-- 거래시장 3단 셀렉터 -->
   <div class="bg-slate-900 border-b border-slate-700 px-4 py-2.5">
     <div class="grid grid-cols-3 gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700 text-sm font-bold">
       <button onclick="setMarketMode('TOTAL')" id="tabModeTOTAL" 
@@ -93,7 +91,7 @@
     </div>
   </div>
 
-  <!-- 실시간 세션 배너 (크고 또렷한 폰트) -->
+  <!-- 실시간 세션 배너 -->
   <div class="bg-slate-900/80 border-b border-slate-700 px-4 py-2 flex items-center justify-between text-xs sm:text-sm">
     <div class="flex items-center gap-2">
       <span id="marketStatusDot" class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -102,10 +100,10 @@
     <span id="liveClock" class="font-mono text-slate-200 font-bold tabular text-sm">00:00:00</span>
   </div>
 
-  <!-- 메인 컨텐츠 영역 -->
+  <!-- 메인 레이아웃 -->
   <main class="max-w-xl mx-auto px-4 pt-4 space-y-4">
 
-    <!-- 포트폴리오 총괄 요약 카드 (고대비 & 큰 글씨) -->
+    <!-- 포트폴리오 총괄 요약 카드 -->
     <section class="bg-slate-900 border-2 border-slate-700 p-4 sm:p-5 rounded-2xl shadow-xl space-y-3">
       <div class="flex justify-between items-center pb-2 border-b border-slate-700">
         <span class="text-sm font-bold text-slate-200">내 자산 실현손익 현황</span>
@@ -115,7 +113,6 @@
         </div>
       </div>
 
-      <!-- 제비용 차감 순 실현손익 (특대형 폰트) -->
       <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-700 flex justify-between items-center">
         <div>
           <span class="text-xs font-bold text-slate-400 block mb-0.5">제비용 제외 순 실현손익</span>
@@ -127,7 +124,6 @@
         </div>
       </div>
 
-      <!-- 3대 요약 지표 (선명한 화이트/골드 텍스트) -->
       <div class="grid grid-cols-3 gap-2 pt-1 text-xs sm:text-sm">
         <div class="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
           <span class="text-slate-400 block font-medium">총 매수원금</span>
@@ -144,7 +140,7 @@
       </div>
     </section>
 
-    <!-- 검색 및 액션 툴바 (버튼 시원하게 확장) -->
+    <!-- 검색 및 툴바 -->
     <div class="flex items-center justify-between gap-2 pt-1">
       <div class="relative flex-1">
         <input type="text" id="searchInput" placeholder="종목명 또는 코드 검색..." 
@@ -168,16 +164,15 @@
       </button>
     </div>
 
-    <!-- 종목 카드 리스트 (큰 글씨 & 고대비 박스) -->
+    <!-- 종목 카드 리스트 -->
     <div id="stockList" class="space-y-4"></div>
 
   </main>
 
-  <!-- 10단계 호가창 모달 (큰 글씨 10호가 뷰어) -->
+  <!-- 10단계 호가창 모달 -->
   <div id="orderBookModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
     <div class="bg-slate-900 border-t-2 sm:border-2 border-slate-700 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3.5 max-h-[92vh] overflow-y-auto">
       
-      <!-- 모달 헤더 -->
       <div class="flex justify-between items-start pb-2 border-b border-slate-700">
         <div>
           <div class="flex items-center gap-2">
@@ -189,7 +184,6 @@
         <button onclick="closeOrderBook()" class="text-slate-300 hover:text-white text-xl font-bold p-2">✕</button>
       </div>
 
-      <!-- 호가창 내부 3단 탭 -->
       <div class="grid grid-cols-3 bg-slate-950 p-1.5 rounded-xl border border-slate-700 text-xs sm:text-sm font-bold">
         <button onclick="renderOrderBookRows('TOTAL')" id="obTabTOTAL" class="py-2 rounded-lg text-center bg-samsung-500 text-white shadow">
           통합 10호가
@@ -202,7 +196,6 @@
         </button>
       </div>
 
-      <!-- 호가 테이블 (큰 글씨) -->
       <div class="border-2 border-slate-700 rounded-xl overflow-hidden text-sm font-mono bg-slate-950">
         <div class="grid grid-cols-3 bg-slate-900 text-xs font-bold text-slate-300 py-2 px-3 border-b border-slate-700 font-sans">
           <span>매도잔량</span>
@@ -217,11 +210,11 @@
         </div>
       </div>
 
-      <!-- 하단 주문 버튼 -->
+      <!-- 하단 액션 버튼 (네이버페이 증권 공식 최신 링크 반영) -->
       <div class="grid grid-cols-2 gap-2 pt-1">
         <a id="obNaverLink" href="#" target="_blank" 
            class="text-center text-xs sm:text-sm py-2.5 rounded-xl bg-slate-800 border border-slate-600 hover:bg-slate-700 text-white font-bold transition">
-          네이버증권 라이브
+          네이버페이 증권
         </a>
         <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
            class="text-center text-xs sm:text-sm py-2.5 rounded-xl bg-samsung-500 hover:bg-samsung-600 text-white font-extrabold transition shadow-lg">
@@ -309,7 +302,6 @@
 
     let stocks = [];
 
-    // 테마 토글 (밝은 모드 vs 다크 모드)
     function toggleTheme() {
       isLightMode = !isLightMode;
       const body = document.body;
@@ -422,7 +414,7 @@
     }
 
     function loadStocks() {
-      const saved = localStorage.getItem('seiskang_stocks_v5');
+      const saved = localStorage.getItem('seiskang_stocks_v6');
       if (saved) {
         stocks = JSON.parse(saved);
       } else {
@@ -433,7 +425,7 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem('seiskang_stocks_v5', JSON.stringify(stocks));
+      localStorage.setItem('seiskang_stocks_v6', JSON.stringify(stocks));
     }
 
     function resetToDefaults() {
@@ -444,7 +436,6 @@
       }
     }
 
-    // 종목 카드 렌더링 (큰 글씨 & 또렷한 카드 테두리)
     function renderStocks(filterText = '') {
       const container = document.getElementById('stockList');
       container.innerHTML = '';
@@ -493,8 +484,10 @@
         const flatColor = isLightMode ? 'text-slate-600' : 'text-slate-300';
         const pnlColorClass = isFlat ? flatColor : isUp ? upColor : downColor;
 
+        // 네이버페이 증권 공식 최신 모바일 링크 (/domestic/stock/{code}/total)
+        const naverOfficialUrl = `https://m.stock.naver.com/domestic/stock/${stock.code}/total`;
+
         card.innerHTML = `
-          <!-- 종목명 & 현재가 헤더 (큰 글씨) -->
           <div class="flex items-start justify-between">
             <div>
               <div class="flex items-center gap-2">
@@ -516,7 +509,6 @@
             </div>
           </div>
 
-          <!-- 제비용 차감 실현손익 하이라이트 박스 -->
           <div class="${isLightMode ? 'bg-slate-50 border-slate-300' : 'bg-slate-950 border-slate-700'} border-2 rounded-xl p-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
             <div>
               <span class="text-xs font-bold text-slate-400 block">제비용 제외 순 실현손익</span>
@@ -530,7 +522,6 @@
             </div>
           </div>
 
-          <!-- 매수가, 수량, 평가금액 (선명한 3분할) -->
           <div class="grid grid-cols-3 gap-2 text-xs sm:text-sm font-semibold pt-1">
             <div class="${isLightMode ? 'bg-slate-100' : 'bg-slate-950/70'} p-2 rounded-lg border ${isLightMode ? 'border-slate-200' : 'border-slate-800'}">
               <span class="text-slate-400 block text-[11px]">매수단가</span>
@@ -546,7 +537,6 @@
             </div>
           </div>
 
-          <!-- 목표가 바 -->
           ${stock.targetPrice > 0 ? `
           <div class="pt-1">
             <div class="flex justify-between text-xs font-bold mb-1">
@@ -559,16 +549,16 @@
           </div>
           ` : ''}
 
-          <!-- 액션 툴바 (큼직한 터치 버튼) -->
           <div class="flex items-center justify-between pt-3 border-t ${isLightMode ? 'border-slate-200' : 'border-slate-700/80'}">
             <div class="flex items-center space-x-2">
               <button onclick="openOrderBook('${stock.id}')" 
                       class="text-xs sm:text-sm font-extrabold px-3 py-2 rounded-xl bg-samsung-500 text-white shadow hover:bg-samsung-600 transition flex items-center gap-1">
                 📊 10호가
               </button>
-              <a href="https://m.stock.naver.com/item/main/${stock.code}" target="_blank" 
+              <!-- 최신 네이버페이 증권 종합창 다이렉트 링크 -->
+              <a href="${naverOfficialUrl}" target="_blank" 
                  class="text-xs sm:text-sm font-bold px-3 py-2 rounded-xl ${isLightMode ? 'bg-slate-200 text-slate-800' : 'bg-slate-800 text-white border border-slate-600'} hover:bg-slate-700 transition">
-                네이버
+                네이버페이 증권
               </a>
               <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
                  class="text-xs sm:text-sm font-bold px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition">
@@ -585,7 +575,6 @@
         container.appendChild(card);
       });
 
-      // 요약 카드 업데이트
       document.getElementById('totalStockCount').innerText = `${stocks.length}개 종목`;
       document.getElementById('totalInvestment').innerText = `${Math.round(totalBuy).toLocaleString()} 원`;
       document.getElementById('totalValuation').innerText = `${Math.round(totalEval).toLocaleString()} 원`;
@@ -607,14 +596,14 @@
       netRateElem.className = `font-mono text-base sm:text-lg font-extrabold tabular ${totalNetProfit > 0 ? upColor : totalNetProfit < 0 ? downColor : flatColor}`;
     }
 
-    // 10단계 호가창
     function openOrderBook(stockId) {
       currentActiveStock = stocks.find(s => s.id === stockId);
       if (!currentActiveStock) return;
 
       document.getElementById('obStockName').innerText = currentActiveStock.name;
       document.getElementById('obStockCode').innerText = currentActiveStock.code;
-      document.getElementById('obNaverLink').href = `https://m.stock.naver.com/item/main/${currentActiveStock.code}`;
+      // 최신 공식 네이버페이 증권 종합 링크 연동
+      document.getElementById('obNaverLink').href = `https://m.stock.naver.com/domestic/stock/${currentActiveStock.code}/total`;
 
       renderOrderBookRows(currentMarketMode);
       document.getElementById('orderBookModal').classList.remove('hidden');
