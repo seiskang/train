@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Seiskang Trader | 세이스강 주식 매매 파트너 (큰글씨·고대비)</title>
+  <title>Seiskang Trader | 세이스강 주식 매매 파트너 (우대수수료 반영)</title>
   <!-- Google Fonts: IBM Plex Sans KR, IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,16 +58,21 @@
           SEISKANG TRADER
           <span id="marketBadgeHeader" class="text-xs px-2 py-0.5 rounded-md bg-samsung-500 text-white font-mono font-bold">SOR 통합</span>
         </h1>
-        <p class="text-xs text-slate-300 mt-0.5">삼성증권 연동 · 08:00~20:00 풀타임</p>
+        <p class="text-xs text-slate-300 mt-0.5">삼성증권 우대수수료 0.0036% 적용</p>
       </div>
     </div>
     <div class="flex items-center space-x-2">
+      <!-- 수수료 설정 버튼 -->
+      <button onclick="openFeeModal()" id="feeSettingBtn" 
+              class="text-xs font-bold px-2 py-2 rounded-xl bg-slate-800 border border-amber-500/50 text-amber-300 hover:bg-slate-700 transition flex items-center gap-1">
+        ⚙️ <span id="feeHeaderLabel">우대 0.187%</span>
+      </button>
       <!-- 밝게/어둡게 토글 -->
       <button onclick="toggleTheme()" id="themeBtn" 
-              class="text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-amber-300 hover:bg-slate-700 transition">
+              class="text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-slate-200 hover:bg-slate-700 transition">
         ☀️ 밝게
       </button>
-      <!-- 삼성증권 mPOP 공식 정식 런처 링크 -->
+      <!-- 삼성증권 mPOP 주문 -->
       <a href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.samsungpop.android.mpop;end" 
          class="flex items-center gap-1.5 text-xs font-bold bg-samsung-500 hover:bg-samsung-600 active:scale-95 text-white px-3 py-2 rounded-xl shadow transition">
         <span>mPOP 주문</span>
@@ -110,14 +115,18 @@
       <div class="flex justify-between items-center pb-2 border-b border-slate-700">
         <span class="text-sm font-bold text-slate-200">내 자산 실현손익 현황</span>
         <div class="flex items-center gap-2">
-          <span class="text-xs text-amber-300 bg-amber-950/60 border border-amber-500/50 px-2 py-0.5 rounded font-bold">제비용 0.21% 공제</span>
+          <!-- 수수료 설정 바로가기 배지 -->
+          <button onclick="openFeeModal()" class="text-xs text-amber-300 bg-amber-950/60 border border-amber-500/50 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+            <span id="dashFeeBadge">우대제비용 0.187% 공제</span> ⚙️
+          </button>
           <span id="totalStockCount" class="font-mono text-xs text-white bg-slate-800 px-2.5 py-0.5 rounded-full font-bold border border-slate-600">5개 종목</span>
         </div>
       </div>
 
+      <!-- 제비용 차감 순 실현손익 -->
       <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-700 flex justify-between items-center">
         <div>
-          <span class="text-xs font-bold text-slate-400 block mb-0.5">제비용 제외 순 실현손익</span>
+          <span class="text-xs font-bold text-slate-400 block mb-0.5">우대제비용 제외 순 실현손익</span>
           <p id="totalNetPnL" class="font-mono text-xl sm:text-2xl font-extrabold tabular text-white">0 원</p>
         </div>
         <div class="text-right">
@@ -171,6 +180,65 @@
 
   </main>
 
+  <!-- 수수료 설정 모달 -->
+  <div id="feeModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border-2 border-slate-700 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-700">
+        <h3 class="text-base font-bold text-white flex items-center gap-1.5">
+          ⚙️ 주식 매매 수수료율 설정
+        </h3>
+        <button onclick="closeFeeModal()" class="text-slate-300 hover:text-white text-lg p-1">✕</button>
+      </div>
+
+      <!-- 프리셋 선택 버튼 -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-bold text-slate-300">간편 프리셋 선택</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="applyFeePreset(0.0036396, 0.18)" 
+                  class="p-2.5 rounded-xl border-2 border-amber-500/60 bg-amber-950/40 text-amber-200 text-xs font-bold text-left hover:bg-amber-900/50 transition">
+            <span class="block">⭐ 삼성증권 평생우대</span>
+            <span class="text-[10px] text-amber-300/80 font-mono">수수료 0.0036%</span>
+          </button>
+          <button onclick="applyFeePreset(0.015, 0.18)" 
+                  class="p-2.5 rounded-xl border-2 border-slate-700 bg-slate-800 text-slate-200 text-xs font-bold text-left hover:bg-slate-700 transition">
+            <span class="block">일반 모바일 표준</span>
+            <span class="text-[10px] text-slate-400 font-mono">수수료 0.0150%</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 상세 요율 입력 -->
+      <div class="space-y-3 text-xs sm:text-sm pt-1">
+        <div>
+          <label class="block text-slate-300 font-bold mb-1">
+            위탁 거래수수료율 (%) <span class="text-[11px] text-amber-300">(매수/매도 각각 적용)</span>
+          </label>
+          <input type="number" id="inputFeeRate" step="0.00001" placeholder="0.0036396" 
+                 class="w-full bg-slate-800 border-2 border-slate-600 rounded-lg p-2.5 font-mono text-white font-bold focus:outline-none focus:border-samsung-500">
+        </div>
+        <div>
+          <label class="block text-slate-300 font-bold mb-1">
+            증권거래세율 (%) <span class="text-[11px] text-slate-400">(매도 시 적용)</span>
+          </label>
+          <input type="number" id="inputTaxRate" step="0.01" placeholder="0.18" 
+                 class="w-full bg-slate-800 border-2 border-slate-600 rounded-lg p-2.5 font-mono text-white font-bold focus:outline-none focus:border-samsung-500">
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+          <div class="flex justify-between font-bold">
+            <span>총 실효 제비용율:</span>
+            <span id="effectiveFeePreview" class="font-mono text-amber-400 font-extrabold tabular">약 0.1873%</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">※ (매수수수료 + 매도수수료 + 증권거래세) 합산 추정치</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-700">
+        <button onclick="closeFeeModal()" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-300 hover:bg-slate-800">취소</button>
+        <button onclick="saveFeeSettings()" class="px-5 py-2 text-sm font-bold rounded-lg bg-samsung-500 hover:bg-samsung-600 text-white shadow-md">적용하기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 10단계 호가창 모달 -->
   <div id="orderBookModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
     <div class="bg-slate-900 border-t-2 sm:border-2 border-slate-700 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3.5 max-h-[92vh] overflow-y-auto">
@@ -212,7 +280,7 @@
         </div>
       </div>
 
-      <!-- 하단 액션 버튼 (공식 인텐트 및 공식 네이버 링크) -->
+      <!-- 하단 액션 버튼 -->
       <div class="grid grid-cols-2 gap-2 pt-1">
         <a id="obNaverLink" href="#" target="_blank" 
            class="text-center text-xs sm:text-sm py-2.5 rounded-xl bg-slate-800 border border-slate-600 hover:bg-slate-700 text-white font-bold transition">
@@ -286,15 +354,14 @@
   </div>
 
   <script>
-    const BUY_COMMISSION_RATE = 0.00015;
-    const SELL_COMMISSION_RATE = 0.00015;
-    const TAX_RATE = 0.0018;
+    // 기본 수수료 설정 (삼성증권 비대면 평생우대 0.0036396% + 거래세 0.18%)
+    let commissionRatePercent = 0.0036396; // % 단위
+    let taxRatePercent = 0.18;             // % 단위
 
     let currentMarketMode = 'TOTAL';
     let currentActiveStock = null;
     let isLightMode = false;
 
-    // 공식 안드로이드 mPOP 런처 인텐트 주소
     const SAMSUNG_MPOP_INTENT = "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.samsungpop.android.mpop;end";
 
     const INITIAL_STOCKS = [
@@ -306,6 +373,65 @@
     ];
 
     let stocks = [];
+
+    // 수수료 로드 및 저장
+    function loadFeeSettings() {
+      const savedFee = localStorage.getItem('seiskang_fee_rate');
+      const savedTax = localStorage.getItem('seiskang_tax_rate');
+      if (savedFee) commissionRatePercent = parseFloat(savedFee);
+      if (savedTax) taxRatePercent = parseFloat(savedTax);
+      updateFeeLabels();
+    }
+
+    function updateFeeLabels() {
+      const totalEffective = (commissionRatePercent * 2) + taxRatePercent;
+      const label = `우대 ${totalEffective.toFixed(3)}%`;
+      document.getElementById('feeHeaderLabel').innerText = label;
+      document.getElementById('dashFeeBadge').innerText = `우대제비용 ${totalEffective.toFixed(3)}% 공제`;
+      document.getElementById('effectiveFeePreview').innerText = `약 ${totalEffective.toFixed(4)}%`;
+    }
+
+    function openFeeModal() {
+      document.getElementById('inputFeeRate').value = commissionRatePercent;
+      document.getElementById('inputTaxRate').value = taxRatePercent;
+      updateFeeLabels();
+      document.getElementById('feeModal').classList.remove('hidden');
+    }
+
+    function closeFeeModal() {
+      document.getElementById('feeModal').classList.add('hidden');
+    }
+
+    function applyFeePreset(fee, tax) {
+      document.getElementById('inputFeeRate').value = fee;
+      document.getElementById('inputTaxRate').value = tax;
+      const total = (fee * 2) + tax;
+      document.getElementById('effectiveFeePreview').innerText = `약 ${total.toFixed(4)}%`;
+    }
+
+    function saveFeeSettings() {
+      const fee = parseFloat(document.getElementById('inputFeeRate').value);
+      const tax = parseFloat(document.getElementById('inputTaxRate').value);
+      if (isNaN(fee) || isNaN(tax) || fee < 0 || tax < 0) {
+        alert('올바른 요율을 입력해 주십시오.');
+        return;
+      }
+      commissionRatePercent = fee;
+      taxRatePercent = tax;
+      localStorage.setItem('seiskang_fee_rate', fee.toString());
+      localStorage.setItem('seiskang_tax_rate', tax.toString());
+      updateFeeLabels();
+      closeFeeModal();
+      renderStocks();
+    }
+
+    document.getElementById('inputFeeRate')?.addEventListener('input', updateFeePreview);
+    document.getElementById('inputTaxRate')?.addEventListener('input', updateFeePreview);
+    function updateFeePreview() {
+      const f = parseFloat(document.getElementById('inputFeeRate').value) || 0;
+      const t = parseFloat(document.getElementById('inputTaxRate').value) || 0;
+      document.getElementById('effectiveFeePreview').innerText = `약 ${((f * 2) + t).toFixed(4)}%`;
+    }
 
     function toggleTheme() {
       isLightMode = !isLightMode;
@@ -321,7 +447,7 @@
         body.classList.remove('bg-slate-100', 'text-slate-900');
         body.classList.add('bg-slate-950', 'text-slate-100');
         btn.innerText = '☀️ 밝게';
-        btn.className = 'text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-amber-300 hover:bg-slate-700 transition';
+        btn.className = 'text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-slate-200 hover:bg-slate-700 transition';
       }
       renderStocks();
     }
@@ -419,7 +545,7 @@
     }
 
     function loadStocks() {
-      const saved = localStorage.getItem('seiskang_stocks_v7');
+      const saved = localStorage.getItem('seiskang_stocks_v8');
       if (saved) {
         stocks = JSON.parse(saved);
       } else {
@@ -430,7 +556,7 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem('seiskang_stocks_v7', JSON.stringify(stocks));
+      localStorage.setItem('seiskang_stocks_v8', JSON.stringify(stocks));
     }
 
     function resetToDefaults() {
@@ -450,6 +576,9 @@
       let totalNetProfit = 0;
       let totalEstimatedFees = 0;
 
+      const commRate = commissionRatePercent / 100;
+      const taxRate = taxRatePercent / 100;
+
       const filtered = stocks.filter(s => 
         s.name.toLowerCase().includes(filterText.toLowerCase()) || 
         s.code.includes(filterText)
@@ -459,9 +588,10 @@
         const buyTotal = stock.buyPrice * stock.quantity;
         const evalTotal = stock.currentPrice * stock.quantity;
 
-        const buyFee = Math.floor(buyTotal * BUY_COMMISSION_RATE);
-        const sellFee = Math.floor(evalTotal * SELL_COMMISSION_RATE);
-        const sellTax = Math.floor(evalTotal * TAX_RATE);
+        // 우대수수료 반영 제비용 계산
+        const buyFee = Math.floor(buyTotal * commRate);
+        const sellFee = Math.floor(evalTotal * commRate);
+        const sellTax = Math.floor(evalTotal * taxRate);
         const totalFee = buyFee + sellFee + sellTax;
 
         const grossDiff = evalTotal - buyTotal;
@@ -515,13 +645,13 @@
 
           <div class="${isLightMode ? 'bg-slate-50 border-slate-300' : 'bg-slate-950 border-slate-700'} border-2 rounded-xl p-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
             <div>
-              <span class="text-xs font-bold text-slate-400 block">제비용 제외 순 실현손익</span>
+              <span class="text-xs font-bold text-slate-400 block">우대제비용 제외 순 실현손익</span>
               <span class="font-mono text-base sm:text-lg font-extrabold tabular ${pnlColorClass}">
                 ${netDiff > 0 ? '+' : ''}${Math.round(netDiff).toLocaleString()}원
               </span>
             </div>
             <div class="text-right">
-              <span class="text-xs font-bold text-slate-400 block">예상 제비용(0.21%)</span>
+              <span class="text-xs font-bold text-slate-400 block">예상 제비용(${((commRate * 2 + taxRate) * 100).toFixed(3)}%)</span>
               <span class="font-mono text-amber-400 font-bold tabular text-sm sm:text-base">-${totalFee.toLocaleString()}원</span>
             </div>
           </div>
@@ -563,7 +693,6 @@
                  class="text-xs sm:text-sm font-bold px-3 py-2 rounded-xl ${isLightMode ? 'bg-slate-200 text-slate-800' : 'bg-slate-800 text-white border border-slate-600'} hover:bg-slate-700 transition">
                 네이버페이 증권
               </a>
-              <!-- 정확한 공식 mPOP 패키지 인텐트 -->
               <a href="${SAMSUNG_MPOP_INTENT}" 
                  class="text-xs sm:text-sm font-bold px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition">
                 mPOP주문
@@ -773,6 +902,7 @@
     setInterval(updateMarketSession, 1000);
 
     window.addEventListener('DOMContentLoaded', () => {
+      loadFeeSettings();
       loadStocks();
       updateMarketSession();
     });
