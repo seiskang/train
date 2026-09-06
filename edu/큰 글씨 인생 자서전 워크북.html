@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>큰 글씨 인생 자서전 워크북</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 20mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      word-break: keep-all;
+    }
+    body {
+      font-family: "Pretendard", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .workbook-container {
+      width: 100%;
+      max-width: 794px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+      padding: 50px 60px;
+    }
+
+    /* 메타데이터 박스 (옵시디언 프런트매터 스타일) */
+    .frontmatter {
+      background: #f1f5f9;
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #475569;
+      margin-bottom: 35px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #0f172a;
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2563eb;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .author-box {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-around;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 35px;
+    }
+
+    .guide-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 5px solid #2563eb;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .guide-box h3 {
+      font-size: 16px;
+      color: #1e40af;
+      margin-bottom: 10px;
+    }
+    .guide-box ul {
+      padding-left: 20px;
+      font-size: 14.5px;
+      color: #334155;
+    }
+    .guide-box li {
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 8px;
+      margin-top: 45px;
+      margin-bottom: 10px;
+    }
+
+    .chapter-sub {
+      font-size: 14px;
+      color: #64748b;
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    .question-block {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .question-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .question-hint {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-bottom: 15px;
+    }
+
+    .answer-line {
+      border-bottom: 1px dashed #cbd5e1;
+      height: 32px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 30px 0;
+    }
+
+    @media print {
+      body { background: #ffffff; padding: 0; }
+      .workbook-container { border: none; box-shadow: none; padding: 0; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="workbook-container">
+
+  <!-- 옵시디언 프런트매터 영역 -->
+  <div class="frontmatter">
+    ---<br>
+    title: 시니어 맞춤 자서전 워크북<br>
+    tags: [자서전, 인생기록, 워크북, 큰글씨]<br>
+    ---
+  </div>
+
+  <h1>📖 큰 글씨 인생 자서전 워크북</h1>
+  <div class="subtitle">내 삶의 소중한 발자국을 기록합니다</div>
+
+  <div class="author-box">
+    <div>🏷️ 이름 : ______________________</div>
+    <div>📅 시작일 : 2026년 _____월 _____일</div>
+  </div>
+
+  <div class="guide-box">
+    <h3>💡 어르신을 위한 편안한 안내</h3>
+    <ul>
+      <li>글씨를 직접 쓰지 않고 스마트폰 마이크 🎙️를 눌러 말씀하셔도 AI가 다 적어드립니다.</li>
+      <li>1번부터 순서대로 쓰지 않으셔도 괜찮습니다. 떠오르는 기억부터 편하게 채워보세요.</li>
+      <li>말하고 싶지 않거나 기억나지 않는 질문은 그냥 넘어가셔도 좋습니다.</li>
+    </ul>
+  </div>
+
+  <!-- 제1장 -->
+  <h2>🌿 제1장. 출생과 가족 이야기</h2>
+  <div class="chapter-sub">"내가 태어난 날, 따뜻했던 우리 집"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 언제, 어디에서 태어나셨나요?</div>
+    <div class="question-hint">(예: 1968년 전남 곡성, 먹고살기 힘들었지만 정이 넘치던 시절)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 부모님은 어떤 분이셨나요?</div>
+    <div class="question-hint">(성격, 하시던 일, 가장 또렷하게 떠오르는 얼굴)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 형제자매는 몇 명이고, 나는 몇째였나요?</div>
+    <div class="question-hint">(형제자매 사이의 정이나 재미있었던 일)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q4. 내가 기억하는 가장 오래된 첫 기억은 무엇인가요?</div>
+    <div class="question-hint">(예: 대여섯 살 무렵 술 주전자 들고 심부름 가던 길)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제2장 -->
+  <h2>🌸 제2장. 어린 시절의 추억</h2>
+  <div class="chapter-sub">"그리운 동네, 순수했던 그 시절"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 나는 어릴 때 어떤 아이였나요?</div>
+    <div class="question-hint">(조용했는지, 골목대장이었는지, 활발했는지)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 동네 친구들과 주로 무슨 놀이를 하며 놀았나요?</div>
+    <div class="question-hint">(고무줄놀이, 구슬치기, 윷놀이, 오징어게임 등)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 어릴 때 가마솥이나 밥상에서 가장 좋아했던 음식은?</div>
+    <div class="question-hint">(예: 엄마가 긁어주던 바삭한 누룽지, 달콤했던 간식)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q4. 고향 동네의 풍경 중 가장 눈에 선한 모습은?</div>
+    <div class="question-hint">(마을 앞 돌담길, 비 오던 날 강가, 계절마다 피던 꽃)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제3장 -->
+  <h2>🎒 제3장. 학창 시절과 배움</h2>
+  <div class="chapter-sub">"동무들과 함께 웃고 울던 시간"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 학창 시절 가장 기억에 남는 추억은 무엇인가요?</div>
+    <div class="question-hint">(입학식, 소풍, 운동회, 친구들과 몰래 먹던 간식)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 특별히 고맙거나 잊지 못할 은사님(선생님)이 계신가요?</div>
+    <div class="question-hint">(나를 따뜻하게 안아주셨던 선생님과의 일화)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 지금까지도 마음속에 남아있는 가장 친한 친구는?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제4장 -->
+  <h2>💼 제4장. 청년기와 첫 사회생활</h2>
+  <div class="chapter-sub">"세상으로 힘차게 첫발을 내딛던 날"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 나의 첫 직업(일)은 무엇이었고, 어떻게 시작하셨나요?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 젊은 시절, 나를 도와주었던 고마운 은인은 누구인가요?</div>
+    <div class="question-hint">(공부나 취업의 길을 열어주셨던 고마운 분)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 낯선 세상에서 혼자 겪었던 외로움이나 어려움은?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제5장 -->
+  <h2>💍 제5장. 결혼과 소중한 가정</h2>
+  <div class="chapter-sub">"둘이 만나 하나의 길을 걸어오며"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 배우자는 어떻게 만나셨나요? (연애? 중매?)</div>
+    <div class="question-hint">(첫인상, 서로 마음이 끌렸던 계기)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 결혼생활 중 가장 든든하고 행복했던 순간은?</div>
+    <div class="question-hint">(어려울 때 묵묵히 곁을 지켜주었던 순간)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 자녀를 낳고 기르며 가장 뿌듯했던 순간은 언제인가요?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제6장 -->
+  <h2>🏅 제6장. 나의 일과 평생의 긍지</h2>
+  <div class="chapter-sub">"땀 흘려 일하며 지켜온 삶의 보람"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 평생 동안 내가 해온 일(직업·경력)은 무엇인가요?</div>
+    <div class="question-hint">(공직 생활, 교육/급식, 가사, 농업, 장사, 봉사 등)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 일을 하면서 가장 보람 있고 자랑스러웠던 성취는?</div>
+    <div class="question-hint">(칭찬받았던 일, 지역이나 이웃에 보탬이 되었던 일)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 평생 일을 통해 얻은 가장 큰 인생 교훈은?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제7장 -->
+  <h2>⛰️ 제7장. 인생의 고난과 극복</h2>
+  <div class="chapter-sub">"비바람 속에서도 꺾이지 않았던 힘"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 살면서 건강이나 일 때문에 가장 힘들었던 고비는?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 그 힘든 위기를 어떻게 이겨내셨나요?</div>
+    <div class="question-hint">(산행, 끈기, 묵묵한 다짐, 가족의 응원)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 그때 나에게 가장 큰 힘이 되어준 사람은 누구인가요?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제8장 -->
+  <h2>💖 제8장. 가족과 소중한 인연</h2>
+  <div class="chapter-sub">"받은 사랑을 마음에 새기며"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 부모님을 떠올리면 가장 감사하고 애틋한 기억은?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 지금 곁에 있는 배우자나 가족에게 꼭 전하고 싶은 말은?</div>
+    <div class="question-hint">(예: "걱정은 내려놓고 하루하루 건강하고 즐겁게 삽시다!")</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제9장 -->
+  <h2>🌟 제9장. 인생 최고의 순간들</h2>
+  <div class="chapter-sub">"돌아보면 눈부시게 빛나는 날들"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 내 인생에서 가장 기쁘고 행복했던 날은 언제인가요?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 내 평생 "참 잘 선택했다"고 생각하는 최고의 선택은?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 제10장 -->
+  <h2>🎺 제10장. 인생 2막과 앞으로의 다짐</h2>
+  <div class="chapter-sub">"맑고 활기차게 채워갈 내일의 꿈"</div>
+
+  <div class="question-block">
+    <div class="question-title">Q1. 은퇴(계획) 이후 새롭게 도전하고 계신 취미나 활동은?</div>
+    <div class="question-hint">(악기 연주, 문학 창작, 자원봉사, 운동 등)</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q2. 건강하고 활기찬 삶을 위해 매일 실천하는 것은?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <div class="question-block">
+    <div class="question-title">Q3. 사랑하는 자녀와 후손들에게 남겨주고 싶은 지혜는?</div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 특별 부록 1 -->
+  <h2>💌 특별 부록 1. 미래의 나에게 보내는 편지</h2>
+  <div class="chapter-sub">"먼 훗날의 나에게, 참 잘 살아왔다!"</div>
+  <div class="question-block" style="height: 150px;">
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+
+  <!-- 특별 부록 2 -->
+  <h2>🌿 특별 부록 2. 나의 한 줄 묘비명 (희망사항)</h2>
+  <div class="chapter-sub">"나는 이런 사람으로 기억되고 싶다"</div>
+  <div class="question-block" style="text-align: center; padding: 30px;">
+    <div style="font-size: 18px; font-weight: bold; color: #2563eb;">“ ____________________________________________________ ”</div>
+  </div>
+
+</div>
+
+</body>
+</html>
