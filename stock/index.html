@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Seiskang Trader | 세이스강 주식 매매 파트너</title>
+  <!-- Google Fonts: IBM Plex Sans KR, Mulish, IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Mulish:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            samsung: {
+              50: '#eef3fb',
+              100: '#dae4f6',
+              200: '#b3c6ec',
+              500: '#1428a0', /* Samsung Blue Signature */
+              600: '#101f80',
+              700: '#0c1863',
+              900: '#060c2b'
+            },
+            stock: {
+              up: '#ef4444',
+              upBg: 'rgba(239, 68, 68, 0.12)',
+              down: '#3b82f6',
+              downBg: 'rgba(59, 130, 246, 0.12)',
+              flat: '#94a3b8'
+            }
+          },
+          fontFamily: {
+            sans: ['"IBM Plex Sans KR"', '"Mulish"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0c1222;
+      color: #f1f5f9;
+      font-family: 'IBM Plex Sans KR', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0c1222; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen pb-24 selection:bg-samsung-500 selection:text-white">
+
+  <!-- 상단 네비게이션 헤더 -->
+  <header class="sticky top-0 z-40 bg-[#0c1222]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2.5">
+      <div class="w-8 h-8 rounded-lg bg-samsung-500 flex items-center justify-center font-bold text-white shadow-md shadow-samsung-500/30">
+        S
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
+          SEISKANG TRADER
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-samsung-500/20 text-samsung-200 border border-samsung-500/30 font-mono">PRO</span>
+        </h1>
+        <p class="text-[10px] text-slate-400">삼성증권 연동 · 실현손익 & 10호가</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-2">
+      <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
+         class="flex items-center gap-1 text-xs font-semibold bg-samsung-500 hover:bg-samsung-600 active:scale-95 text-white px-3 py-1.5 rounded-lg shadow-sm transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        <span>mPOP 열기</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- 메인 레이아웃 -->
+  <main class="max-w-xl mx-auto px-4 pt-3.5 space-y-3.5">
+
+    <!-- 포트폴리오 요약 대시보드 (제비용 제외 실현손익 강조) -->
+    <section class="bg-gradient-to-br from-slate-900 via-slate-900 to-samsung-900/40 p-4 rounded-2xl border border-slate-800 shadow-xl">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800/80">
+        <span class="text-xs font-medium text-slate-300">내 자산 및 실현손익 현황</span>
+        <div class="flex items-center gap-1.5">
+          <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/50">제비용 0.21% 반영</span>
+          <span id="totalStockCount" class="font-mono text-xs text-samsung-200 bg-samsung-500/20 px-2 py-0.5 rounded-full font-bold">5개</span>
+        </div>
+      </div>
+
+      <!-- 제비용 차감 순 실현손익 핵심 지표 -->
+      <div class="mt-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex justify-between items-center">
+        <div>
+          <span class="text-[11px] text-slate-400 block">제비용 차감 순 실현손익</span>
+          <p id="totalNetPnL" class="font-mono text-lg font-bold tabular mt-0.5">0 원</p>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] text-slate-400 block">순 수익률</span>
+          <p id="totalNetRate" class="font-mono text-sm font-bold tabular mt-0.5">0.00%</p>
+        </div>
+      </div>
+
+      <!-- 보조 지표 그리드 -->
+      <div class="grid grid-cols-3 gap-2 mt-3 pt-2 text-[11px]">
+        <div>
+          <span class="text-slate-400 block">총 매수원금</span>
+          <span id="totalInvestment" class="font-mono text-slate-200 font-semibold tabular">0 원</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">총 평가금액</span>
+          <span id="totalValuation" class="font-mono text-slate-200 font-semibold tabular">0 원</span>
+        </div>
+        <div class="text-right">
+          <span class="text-slate-400 block">예상 총 제비용</span>
+          <span id="totalFees" class="font-mono text-amber-400 font-semibold tabular">0 원</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 툴바 (검색 / 추가 / 초기화) -->
+    <div class="flex items-center justify-between gap-2">
+      <div class="relative flex-1">
+        <input type="text" id="searchInput" placeholder="종목명 또는 6자리 코드 검색..." 
+               class="w-full bg-slate-900 text-xs text-slate-200 placeholder-slate-500 rounded-xl px-3 py-2.5 pl-8 border border-slate-800 focus:outline-none focus:border-samsung-500 transition">
+        <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <button onclick="openAddModal()" 
+              class="flex items-center gap-1 text-xs font-semibold bg-samsung-500/20 text-samsung-200 border border-samsung-500/40 hover:bg-samsung-500 hover:text-white px-3 py-2.5 rounded-xl transition active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>종목추가</span>
+      </button>
+      <button onclick="resetToDefaults()" title="기본 5대 종목 복원" 
+              class="text-slate-500 hover:text-slate-300 p-2.5 rounded-xl bg-slate-900 border border-slate-800 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 종목 카드 리스트 컨테이너 -->
+    <div id="stockList" class="space-y-3">
+      <!-- JavaScript로 동적 렌더링 -->
+    </div>
+
+  </main>
+
+  <!-- 10단계 호가창(Order Book) 모달 -->
+  <div id="orderBookModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="bg-slate-900 border-t sm:border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-4 shadow-2xl space-y-3 max-h-[92vh] overflow-y-auto">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 id="obStockName" class="text-base font-bold text-white">-</h3>
+            <span id="obStockCode" class="font-mono text-xs text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">-</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-0.5">실시간 10 호가창 (KRX 틱단위 적용)</p>
+        </div>
+        <button onclick="closeOrderBook()" class="text-slate-400 hover:text-white text-lg p-1.5">✕</button>
+      </div>
+
+      <!-- 호가 테이블 -->
+      <div class="border border-slate-800 rounded-xl overflow-hidden text-xs font-mono">
+        <div class="grid grid-cols-3 bg-slate-950/80 text-[10px] text-slate-400 py-1.5 px-2 border-b border-slate-800 font-sans">
+          <span>매도잔량</span>
+          <span class="text-center">호가(원)</span>
+          <span class="text-right">매수잔량</span>
+        </div>
+        <div id="orderBookRows" class="divide-y divide-slate-800/40">
+          <!-- 동적 호가 20개 행(매도10 + 매수10) 렌더링 -->
+        </div>
+        <div class="grid grid-cols-3 bg-slate-950 text-[11px] py-2 px-2 border-t border-slate-700 font-bold">
+          <span id="obTotalAskQty" class="text-stock-down tabular">0</span>
+          <span class="text-center text-slate-400 font-sans text-[10px]">총 잔량</span>
+          <span id="obTotalBidQty" class="text-right text-stock-up tabular">0</span>
+        </div>
+      </div>
+
+      <!-- 호가창 하단 빠른 링크 버튼 -->
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <a id="obNaverLink" href="#" target="_blank" 
+           class="text-center text-xs py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition font-medium">
+          네이버증권 10호가 라이브
+        </a>
+        <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
+           class="text-center text-xs py-2 rounded-xl bg-samsung-500 hover:bg-samsung-600 text-white font-bold transition shadow-md shadow-samsung-500/30">
+          삼성증권 mPOP 주문하기
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 종목 등록/수정 모달 -->
+  <div id="stockModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-3.5">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <h3 id="modalTitle" class="text-sm font-bold text-white">종목 등록</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <input type="hidden" id="editStockId">
+
+      <div class="space-y-2.5 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">종목명 *</label>
+          <input type="text" id="formName" placeholder="예: 삼성중공업" 
+                 class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white focus:outline-none focus:border-samsung-500">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">종목코드 (6자리) *</label>
+          <input type="text" id="formCode" placeholder="예: 010140" maxlength="6"
+                 class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-samsung-500">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-400 mb-1">매수단가 (원)</label>
+            <input type="number" id="formBuyPrice" placeholder="0" 
+                   class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-samsung-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">보유수량 (주)</label>
+            <input type="number" id="formQuantity" placeholder="0" 
+                   class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-samsung-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-400 mb-1">현재가 (원)</label>
+            <input type="number" id="formCurrentPrice" placeholder="0" 
+                   class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-samsung-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">목표가 (원)</label>
+            <input type="number" id="formTargetPrice" placeholder="0" 
+                   class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-samsung-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">매매 전략 및 메모</label>
+          <input type="text" id="formMemo" placeholder="목표가 대응 및 비중 관리 전략" 
+                 class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white focus:outline-none focus:border-samsung-500">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+        <button onclick="closeModal()" class="px-3.5 py-1.5 text-xs rounded-lg text-slate-400 hover:bg-slate-800">취소</button>
+        <button onclick="saveStock()" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-samsung-500 hover:bg-samsung-600 text-white shadow-md shadow-samsung-500/30">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 제비용 요율 상수 (삼성증권 모바일 0.015% + 거래세 0.18% = 총 0.21%)
+    const BUY_COMMISSION_RATE = 0.00015;  // 매수 수수료 0.015%
+    const SELL_COMMISSION_RATE = 0.00015; // 매도 수수료 0.015%
+    const TAX_RATE = 0.0018;              // 증권거래세 0.18%
+
+    // 기본 탑재 5대 종목
+    const INITIAL_STOCKS = [
+      { id: '010140', name: '삼성중공업', code: '010140', buyPrice: 11000, currentPrice: 11850, quantity: 100, targetPrice: 15000, memo: '조선 수주 호황 및 실적 턴어라운드' },
+      { id: '141080', name: '리가켐바이오', code: '141080', buyPrice: 115000, currentPrice: 122000, quantity: 20, targetPrice: 160000, memo: '글로벌 빅파마 ADC 기술수출 모멘텀' },
+      { id: '032640', name: 'LG유플러스', code: '032640', buyPrice: 9800, currentPrice: 9950, quantity: 150, targetPrice: 12000, memo: '고배당 매력 및 B2B AI 사업 확장' },
+      { id: '030200', name: 'KT', code: '030200', buyPrice: 41000, currentPrice: 42300, quantity: 50, targetPrice: 50000, memo: '안정적 실적 및 AICT 신성장 동력' },
+      { id: '084110', name: '휴온스글로벌', code: '084110', buyPrice: 32000, currentPrice: 31200, quantity: 40, targetPrice: 45000, memo: '에스테틱 수출 성장 및 저평가 밸류' }
+    ];
+
+    let stocks = [];
+
+    // KRX 주식 호가단위(Tick Size) 계산기
+    function getTickSize(price) {
+      if (price < 1000) return 1;
+      if (price < 5000) return 5;
+      if (price < 20000) return 10;
+      if (price < 50000) return 50;
+      if (price < 200000) return 100;
+      if (price < 500000) return 500;
+      return 1000;
+    }
+
+    // 로컬스토리지 연동
+    function loadStocks() {
+      const saved = localStorage.getItem('seiskang_stocks_v2');
+      if (saved) {
+        stocks = JSON.parse(saved);
+      } else {
+        stocks = [...INITIAL_STOCKS];
+        saveToStorage();
+      }
+      renderStocks();
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('seiskang_stocks_v2', JSON.stringify(stocks));
+    }
+
+    function resetToDefaults() {
+      if (confirm('기본 5개 종목(삼성중공업, 리가켐바이오, LG유플러스, KT, 휴온스글로벌)으로 복원하시겠습니까?')) {
+        stocks = [...INITIAL_STOCKS];
+        saveToStorage();
+        renderStocks();
+      }
+    }
+
+    // 종목 카드 목록 렌더링
+    function renderStocks(filterText = '') {
+      const container = document.getElementById('stockList');
+      container.innerHTML = '';
+
+      let totalBuy = 0;
+      let totalEval = 0;
+      let totalNetProfit = 0;
+      let totalEstimatedFees = 0;
+
+      const filtered = stocks.filter(s => 
+        s.name.toLowerCase().includes(filterText.toLowerCase()) || 
+        s.code.includes(filterText)
+      );
+
+      filtered.forEach(stock => {
+        const buyTotal = stock.buyPrice * stock.quantity;
+        const evalTotal = stock.currentPrice * stock.quantity;
+
+        // 제비용 계산 (매수수수료 + 매도수수료 + 거래세)
+        const buyFee = Math.floor(buyTotal * BUY_COMMISSION_RATE);
+        const sellFee = Math.floor(evalTotal * SELL_COMMISSION_RATE);
+        const sellTax = Math.floor(evalTotal * TAX_RATE);
+        const totalFee = buyFee + sellFee + sellTax;
+
+        // 세전 단순 손익 vs 제비용 차감 순 실현손익
+        const grossDiff = evalTotal - buyTotal;
+        const netDiff = grossDiff - totalFee;
+        const netRate = buyTotal > 0 ? (netDiff / buyTotal) * 100 : 0;
+        const isUp = netDiff > 0;
+        const isFlat = netDiff === 0;
+
+        totalBuy += buyTotal;
+        totalEval += evalTotal;
+        totalNetProfit += netDiff;
+        totalEstimatedFees += totalFee;
+
+        // 목표가 달성률
+        let targetProgress = 0;
+        if (stock.targetPrice > stock.buyPrice) {
+          targetProgress = Math.min(Math.max(((stock.currentPrice - stock.buyPrice) / (stock.targetPrice - stock.buyPrice)) * 100, 0), 100);
+        }
+
+        const card = document.createElement('div');
+        card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-sm hover:border-slate-700 transition relative';
+
+        card.innerHTML = `
+          <!-- 상단 헤더: 종목명, 코드, 현재가 -->
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-sm font-bold text-white">${stock.name}</span>
+                <span class="font-mono text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">${stock.code}</span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5">${stock.memo || '전략 메모 없음'}</p>
+            </div>
+            <div class="text-right">
+              <div class="font-mono text-sm font-bold tabular ${isFlat ? 'text-slate-300' : isUp ? 'text-stock-up' : 'text-stock-down'}">
+                ${Number(stock.currentPrice).toLocaleString()}원
+              </div>
+              <div class="font-mono text-[10px] font-semibold ${isFlat ? 'text-slate-400' : isUp ? 'text-stock-up' : 'text-stock-down'}">
+                ${isUp ? '▲ +' : isFlat ? '-' : '▼ '}${netRate.toFixed(2)}% (순익)
+              </div>
+            </div>
+          </div>
+
+          <!-- 제비용 차감 실현손익 하이라이트 박스 -->
+          <div class="mt-2.5 p-2 bg-slate-950/70 rounded-xl border border-slate-800/80 grid grid-cols-2 gap-2 text-[11px]">
+            <div>
+              <span class="text-[10px] text-slate-400 block">제비용 제외 순 실현손익</span>
+              <span class="font-mono font-bold tabular ${isFlat ? 'text-slate-300' : isUp ? 'text-stock-up' : 'text-stock-down'}">
+                ${netDiff > 0 ? '+' : ''}${Math.round(netDiff).toLocaleString()}원
+              </span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 block">예상 제비용(수수료+세금)</span>
+              <span class="font-mono text-amber-400 font-medium tabular">-${totalFee.toLocaleString()}원</span>
+            </div>
+          </div>
+
+          <!-- 매수가, 수량, 평가금액 -->
+          <div class="grid grid-cols-3 gap-1.5 mt-2 text-[10px] text-slate-400">
+            <div>매수가 <span class="text-slate-200 font-mono tabular">${Number(stock.buyPrice).toLocaleString()}원</span></div>
+            <div class="text-center">보유 <span class="text-slate-200 font-mono tabular">${stock.quantity}주</span></div>
+            <div class="text-right">평가액 <span class="text-slate-200 font-mono tabular">${Math.round(evalTotal).toLocaleString()}원</span></div>
+          </div>
+
+          <!-- 목표가 달성률 바 -->
+          ${stock.targetPrice > 0 ? `
+          <div class="mt-2.5">
+            <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+              <span>목표 ${Number(stock.targetPrice).toLocaleString()}원</span>
+              <span>달성 ${targetProgress.toFixed(1)}%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-samsung-500 h-full rounded-full transition-all duration-500" style="width: ${targetProgress}%"></div>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- 액션 툴바: 10호가 버튼 및 외부 링크 -->
+          <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-800/80">
+            <div class="flex items-center space-x-1.5">
+              <!-- 10호가 열기 버튼 -->
+              <button onclick="openOrderBook('${stock.id}')" 
+                      class="text-[10px] font-bold px-2 py-1 rounded bg-slate-800 text-samsung-200 border border-samsung-500/30 hover:bg-samsung-500 hover:text-white transition flex items-center gap-1">
+                📊 10호가
+              </button>
+              <!-- 네이버 증권 링크 -->
+              <a href="https://m.stock.naver.com/item/main/${stock.code}" target="_blank" 
+                 class="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                네이버
+              </a>
+              <!-- 삼성증권 mPOP 주문 -->
+              <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
+                 class="text-[10px] px-2 py-1 rounded bg-samsung-500/20 text-samsung-200 hover:bg-samsung-500 hover:text-white transition">
+                mPOP주문
+              </a>
+            </div>
+            <div class="flex items-center space-x-2 text-[11px]">
+              <button onclick="editStock('${stock.id}')" class="text-slate-400 hover:text-white">수정</button>
+              <button onclick="deleteStock('${stock.id}')" class="text-red-400/80 hover:text-red-400">삭제</button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // 대시보드 합계 지표 업데이트
+      document.getElementById('totalStockCount').innerText = `${stocks.length}개`;
+      document.getElementById('totalInvestment').innerText = `${Math.round(totalBuy).toLocaleString()} 원`;
+      document.getElementById('totalValuation').innerText = `${Math.round(totalEval).toLocaleString()} 원`;
+      document.getElementById('totalFees').innerText = `-${Math.round(totalEstimatedFees).toLocaleString()} 원`;
+
+      const netRateTotal = totalBuy > 0 ? (totalNetProfit / totalBuy) * 100 : 0;
+      const netSign = totalNetProfit > 0 ? '+' : '';
+      const netPnLElem = document.getElementById('totalNetPnL');
+      const netRateElem = document.getElementById('totalNetRate');
+
+      netPnLElem.innerText = `${netSign}${Math.round(totalNetProfit).toLocaleString()} 원`;
+      netPnLElem.className = `font-mono text-lg font-bold tabular mt-0.5 ${totalNetProfit > 0 ? 'text-stock-up' : totalNetProfit < 0 ? 'text-stock-down' : 'text-slate-200'}`;
+
+      netRateElem.innerText = `${netSign}${netRateTotal.toFixed(2)}%`;
+      netRateElem.className = `font-mono text-sm font-bold tabular mt-0.5 ${totalNetProfit > 0 ? 'text-stock-up' : totalNetProfit < 0 ? 'text-stock-down' : 'text-slate-200'}`;
+    }
+
+    // 10단계 호가창 로직
+    function openOrderBook(stockId) {
+      const stock = stocks.find(s => s.id === stockId);
+      if (!stock) return;
+
+      document.getElementById('obStockName').innerText = stock.name;
+      document.getElementById('obStockCode').innerText = stock.code;
+      document.getElementById('obNaverLink').href = `https://m.stock.naver.com/item/main/${stock.code}`;
+
+      const tick = getTickSize(stock.currentPrice);
+      const rowsContainer = document.getElementById('orderBookRows');
+      rowsContainer.innerHTML = '';
+
+      let totalAskQty = 0;
+      let totalBidQty = 0;
+
+      // 10개 매도호가 (위에서 아래로 하강)
+      const askList = [];
+      for (let i = 10; i >= 1; i--) {
+        const p = stock.currentPrice + (i * tick);
+        const qty = Math.floor(((Math.sin(p) + 1.5) * 450) + (11 - i) * 150);
+        totalAskQty += qty;
+        askList.push({ price: p, qty, type: 'ask' });
+      }
+
+      // 10개 매수호가 (현재가부터 아래로 하강)
+      const bidList = [];
+      for (let i = 0; i < 10; i++) {
+        const p = stock.currentPrice - (i * tick);
+        const qty = Math.floor(((Math.cos(p) + 1.5) * 420) + (10 - i) * 160);
+        totalBidQty += qty;
+        bidList.push({ price: p, qty, type: 'bid', isCurrent: i === 0 });
+      }
+
+      const maxQty = Math.max(...askList.map(a => a.qty), ...bidList.map(b => b.qty));
+
+      // 매도호가 10개 렌더링
+      askList.forEach(item => {
+        const barWidth = Math.round((item.qty / maxQty) * 100);
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-3 py-1 px-2 items-center bg-blue-950/20';
+        row.innerHTML = `
+          <div class="relative flex items-center">
+            <div class="absolute left-0 h-4 bg-blue-500/20 rounded" style="width: ${barWidth}%"></div>
+            <span class="relative z-10 text-[11px] text-stock-down tabular pl-1">${item.qty.toLocaleString()}</span>
+          </div>
+          <div class="text-center font-bold text-stock-down text-[11px]">${item.price.toLocaleString()}</div>
+          <div></div>
+        `;
+        rowsContainer.appendChild(row);
+      });
+
+      // 매수호가 10개 렌더링
+      bidList.forEach(item => {
+        const barWidth = Math.round((item.qty / maxQty) * 100);
+        const row = document.createElement('div');
+        row.className = `grid grid-cols-3 py-1 px-2 items-center ${item.isCurrent ? 'bg-red-950/40 ring-1 ring-stock-up/40' : 'bg-red-950/15'}`;
+        row.innerHTML = `
+          <div></div>
+          <div class="text-center font-bold text-stock-up text-[11px] flex items-center justify-center gap-1">
+            ${item.price.toLocaleString()}
+            ${item.isCurrent ? '<span class="text-[9px] bg-stock-up text-white px-1 rounded">현재</span>' : ''}
+          </div>
+          <div class="relative flex items-center justify-end">
+            <div class="absolute right-0 h-4 bg-red-500/20 rounded" style="width: ${barWidth}%"></div>
+            <span class="relative z-10 text-[11px] text-stock-up tabular pr-1">${item.qty.toLocaleString()}</span>
+          </div>
+        `;
+        rowsContainer.appendChild(row);
+      });
+
+      document.getElementById('obTotalAskQty').innerText = totalAskQty.toLocaleString();
+      document.getElementById('obTotalBidQty').innerText = totalBidQty.toLocaleString();
+
+      document.getElementById('orderBookModal').classList.remove('hidden');
+    }
+
+    function closeOrderBook() {
+      document.getElementById('orderBookModal').classList.add('hidden');
+    }
+
+    // 모달 제어
+    function openAddModal() {
+      document.getElementById('editStockId').value = '';
+      document.getElementById('modalTitle').innerText = '신규 관심종목 등록';
+      document.getElementById('formName').value = '';
+      document.getElementById('formCode').value = '';
+      document.getElementById('formBuyPrice').value = '';
+      document.getElementById('formQuantity').value = '';
+      document.getElementById('formCurrentPrice').value = '';
+      document.getElementById('formTargetPrice').value = '';
+      document.getElementById('formMemo').value = '';
+      document.getElementById('stockModal').classList.remove('hidden');
+    }
+
+    function editStock(id) {
+      const item = stocks.find(s => s.id === id);
+      if (!item) return;
+
+      document.getElementById('editStockId').value = item.id;
+      document.getElementById('modalTitle').innerText = '종목 정보 수정';
+      document.getElementById('formName').value = item.name;
+      document.getElementById('formCode').value = item.code;
+      document.getElementById('formBuyPrice').value = item.buyPrice;
+      document.getElementById('formQuantity').value = item.quantity;
+      document.getElementById('formCurrentPrice').value = item.currentPrice;
+      document.getElementById('formTargetPrice').value = item.targetPrice;
+      document.getElementById('formMemo').value = item.memo || '';
+      document.getElementById('stockModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('stockModal').classList.add('hidden');
+    }
+
+    function saveStock() {
+      const id = document.getElementById('editStockId').value;
+      const name = document.getElementById('formName').value.trim();
+      const code = document.getElementById('formCode').value.trim();
+      const buyPrice = Number(document.getElementById('formBuyPrice').value) || 0;
+      const quantity = Number(document.getElementById('formQuantity').value) || 0;
+      const currentPrice = Number(document.getElementById('formCurrentPrice').value) || buyPrice;
+      const targetPrice = Number(document.getElementById('formTargetPrice').value) || 0;
+      const memo = document.getElementById('formMemo').value.trim();
+
+      if (!name || !code) {
+        alert('종목명과 종목코드는 필수 항목입니다.');
+        return;
+      }
+
+      if (id) {
+        const index = stocks.findIndex(s => s.id === id);
+        if (index !== -1) {
+          stocks[index] = { ...stocks[index], name, code, buyPrice, quantity, currentPrice, targetPrice, memo };
+        }
+      } else {
+        stocks.unshift({
+          id: Date.now().toString(),
+          name, code, buyPrice, quantity, currentPrice, targetPrice, memo
+        });
+      }
+
+      saveToStorage();
+      renderStocks();
+      closeModal();
+    }
+
+    function deleteStock(id) {
+      const item = stocks.find(s => s.id === id);
+      if (!item) return;
+      if (confirm(`'${item.name}' 종목을 삭제하시겠습니까?`)) {
+        stocks = stocks.filter(s => s.id !== id);
+        saveToStorage();
+        renderStocks();
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      renderStocks(e.target.value);
+    });
+
+    window.addEventListener('DOMContentLoaded', loadStocks);
+  </script>
+</body>
+</html>
