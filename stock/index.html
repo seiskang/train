@@ -62,11 +62,13 @@
       </div>
     </div>
     <div class="flex items-center space-x-2">
+      <!-- 밝게/어둡게 토글 -->
       <button onclick="toggleTheme()" id="themeBtn" 
               class="text-xs font-bold px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-amber-300 hover:bg-slate-700 transition">
         ☀️ 밝게
       </button>
-      <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
+      <!-- 삼성증권 mPOP 공식 정식 런처 링크 -->
+      <a href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.samsungpop.android.mpop;end" 
          class="flex items-center gap-1.5 text-xs font-bold bg-samsung-500 hover:bg-samsung-600 active:scale-95 text-white px-3 py-2 rounded-xl shadow transition">
         <span>mPOP 주문</span>
       </a>
@@ -210,13 +212,13 @@
         </div>
       </div>
 
-      <!-- 하단 액션 버튼 (네이버페이 증권 공식 최신 링크 반영) -->
+      <!-- 하단 액션 버튼 (공식 인텐트 및 공식 네이버 링크) -->
       <div class="grid grid-cols-2 gap-2 pt-1">
         <a id="obNaverLink" href="#" target="_blank" 
            class="text-center text-xs sm:text-sm py-2.5 rounded-xl bg-slate-800 border border-slate-600 hover:bg-slate-700 text-white font-bold transition">
           네이버페이 증권
         </a>
-        <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
+        <a href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.samsungpop.android.mpop;end" 
            class="text-center text-xs sm:text-sm py-2.5 rounded-xl bg-samsung-500 hover:bg-samsung-600 text-white font-extrabold transition shadow-lg">
           삼성증권 mPOP 주문
         </a>
@@ -291,6 +293,9 @@
     let currentMarketMode = 'TOTAL';
     let currentActiveStock = null;
     let isLightMode = false;
+
+    // 공식 안드로이드 mPOP 런처 인텐트 주소
+    const SAMSUNG_MPOP_INTENT = "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.samsungpop.android.mpop;end";
 
     const INITIAL_STOCKS = [
       { id: '010140', name: '삼성중공업', code: '010140', buyPrice: 11000, currentPrice: 11850, quantity: 100, targetPrice: 15000, memo: '조선 수주 호황 및 실적 턴어라운드' },
@@ -414,7 +419,7 @@
     }
 
     function loadStocks() {
-      const saved = localStorage.getItem('seiskang_stocks_v6');
+      const saved = localStorage.getItem('seiskang_stocks_v7');
       if (saved) {
         stocks = JSON.parse(saved);
       } else {
@@ -425,7 +430,7 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem('seiskang_stocks_v6', JSON.stringify(stocks));
+      localStorage.setItem('seiskang_stocks_v7', JSON.stringify(stocks));
     }
 
     function resetToDefaults() {
@@ -484,7 +489,6 @@
         const flatColor = isLightMode ? 'text-slate-600' : 'text-slate-300';
         const pnlColorClass = isFlat ? flatColor : isUp ? upColor : downColor;
 
-        // 네이버페이 증권 공식 최신 모바일 링크 (/domestic/stock/{code}/total)
         const naverOfficialUrl = `https://m.stock.naver.com/domestic/stock/${stock.code}/total`;
 
         card.innerHTML = `
@@ -555,12 +559,12 @@
                       class="text-xs sm:text-sm font-extrabold px-3 py-2 rounded-xl bg-samsung-500 text-white shadow hover:bg-samsung-600 transition flex items-center gap-1">
                 📊 10호가
               </button>
-              <!-- 최신 네이버페이 증권 종합창 다이렉트 링크 -->
               <a href="${naverOfficialUrl}" target="_blank" 
                  class="text-xs sm:text-sm font-bold px-3 py-2 rounded-xl ${isLightMode ? 'bg-slate-200 text-slate-800' : 'bg-slate-800 text-white border border-slate-600'} hover:bg-slate-700 transition">
                 네이버페이 증권
               </a>
-              <a href="intent://#Intent;package=com.samsung.pop.android;scheme=mpop;end" 
+              <!-- 정확한 공식 mPOP 패키지 인텐트 -->
+              <a href="${SAMSUNG_MPOP_INTENT}" 
                  class="text-xs sm:text-sm font-bold px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition">
                 mPOP주문
               </a>
@@ -602,7 +606,6 @@
 
       document.getElementById('obStockName').innerText = currentActiveStock.name;
       document.getElementById('obStockCode').innerText = currentActiveStock.code;
-      // 최신 공식 네이버페이 증권 종합 링크 연동
       document.getElementById('obNaverLink').href = `https://m.stock.naver.com/domestic/stock/${currentActiveStock.code}/total`;
 
       renderOrderBookRows(currentMarketMode);
