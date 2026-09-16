@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>세이스강(SEISKANG) 이윤재 | 공식 모바일 명함</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 28px;
+      max-width: 420px;
+      width: 100%;
+      padding: 40px 24px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .avatar-wrap {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+    }
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #334155;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .bio {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      word-break: keep-all;
+    }
+    .btn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 20px;
+      background-color: #0f172a;
+      color: #f1f5f9;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid #3b82f6;
+      border-radius: 16px;
+      transition: all 0.2s ease;
+    }
+    .btn:hover, .btn:focus {
+      background-color: #2563eb;
+      color: #ffffff;
+      outline: 2px solid #60a5fa;
+    }
+    .footer {
+      margin-top: 32px;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-label="세이스강(SEISKANG) 이윤재 프로필 명함">
+    <!-- 프로필 사진 영역 -->
+    <div class="avatar-wrap">
+      <img src="profile.png" alt="세이스강 이윤재 강사 프로필 사진" class="avatar">
+    </div>
+
+    <!-- 타이틀 및 소개 문구 -->
+    <h1>세이스강(SEISKANG) 이윤재</h1>
+    <p class="bio">세상을 이롭게 하는 스마트한 강사<br>시니어 AI & 스마트 라이프</p>
+
+    <!-- 4개 핵심 링크 버튼 -->
+    <nav class="btn-list" aria-label="주요 연결 링크">
+      <a href="https://seiskang.kr" target="_blank" rel="noopener noreferrer" class="btn" aria-label="세이스강 공식 홈페이지 바로가기">
+        <span>🌐</span> 세이스강 공식 홈페이지
+      </a>
+      <a href="https://blog.naver.com/kacipi" target="_blank" rel="noopener noreferrer" class="btn" aria-label="네이버 블로그 바로가기">
+        <span>📝</span> 네이버 블로그
+      </a>
+      <a href="https://www.youtube.com/@seisgang" target="_blank" rel="noopener noreferrer" class="btn" aria-label="유튜브 채널 바로가기">
+        <span>🎥</span> 유튜브 채널 (@seisgang)
+      </a>
+      <a href="mailto:kacipi@naver.com" class="btn" aria-label="강의 및 협업 이메일 문의하기">
+        <span>✉️</span> 강의 및 협업 문의 (이메일)
+      </a>
+    </nav>
+
+    <footer class="footer">
+      © 세이스강(SEISKANG) 이윤재. All rights reserved.
+    </footer>
+  </main>
+</body>
+</html>
