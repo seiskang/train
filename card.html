@@ -29,8 +29,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
-        /* 프로필 사진 영역 (전화 링크 적용) */
-        .profile-link {
+        /* 프로필 사진 영역 */
+        .profile-img-wrap {
             display: inline-block;
             width: 120px;
             height: 120px;
@@ -40,14 +40,13 @@
             margin-bottom: 20px;
             transition: transform 0.2s ease;
         }
-        .profile-link:hover {
+        .profile-img-wrap:hover {
             transform: scale(1.05);
         }
-        .profile-link img {
+        .profile-img-wrap img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* 머리카락 위 여백 조정 수치 (필요시 수정) */
             object-position: center 10px; 
         }
         /* 이름 스타일 (줄바꿈 방지) */
@@ -87,6 +86,7 @@
             font-weight: 500;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: background-color 0.2s, border-color 0.2s;
+            cursor: pointer;
         }
         .link-btn:hover {
             background-color: #283548;
@@ -103,10 +103,10 @@
 <body>
 
     <div class="card-container">
-        <!-- 프로필 사진 터치 시 전화 연결 (tel:010-4042-2419) -->
-        <a href="tel:010-4042-2419" class="profile-link" title="전화 걸기">
+        <!-- 프로필 사진 영역 (개인정보 보호를 위해 전화 링크 제거) -->
+        <div class="profile-img-wrap">
             <img src="profile.png" alt="세이스강 프로필 사진">
-        </a>
+        </div>
 
         <!-- 이름 (줄바꿈 방지 적용) -->
         <h1 class="name">세이스강(SEISKANG) 이윤재</h1>
@@ -117,11 +117,11 @@
             <p>시니어 AI & 스마트 라이프</p>
         </div>
 
-        <!-- 4대 공식 채널 링크 버튼 -->
+        <!-- 4대 공식 채널 링크 버튼 (rel="noopener noreferrer" 적용) -->
         <div class="link-list">
-            <a href="https://seiskang.kr" class="link-btn" target="_blank">🌐 세이스강 공식 홈페이지</a>
-            <a href="https://blog.naver.com/kacipi" class="link-btn" target="_blank">📝 네이버 블로그</a>
-            <a href="https://youtube.com/@seisgang" class="link-btn" target="_blank">📺 유튜브 채널 (@seisgang)</a>
+            <a href="https://seiskang.kr" class="link-btn" target="_blank" rel="noopener noreferrer">🌐 세이스강 공식 홈페이지</a>
+            <a href="https://blog.naver.com/kacipi" class="link-btn" target="_blank" rel="noopener noreferrer">📝 네이버 블로그</a>
+            <a href="https://youtube.com/@seisgang" class="link-btn" target="_blank" rel="noopener noreferrer">📺 유튜브 채널 (@seisgang)</a>
             <a href="mailto:kacipi@naver.com" class="link-btn">✉️ 강의 및 협업 문의 (이메일)</a>
         </div>
 
