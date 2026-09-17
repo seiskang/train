@@ -12,7 +12,7 @@
             padding: 0;
         }
         body {
-            background-color: #0b1329;
+            background-color: #0b1329; /* 다크블루 배경 */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             color: #ffffff;
             display: flex;
@@ -30,7 +30,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
-        .profile-img-wrap {
+        /* 프로필 사진 영역 (전화 링크 적용) */
+        .profile-link {
             display: inline-block;
             width: 120px;
             height: 120px;
@@ -40,15 +41,16 @@
             margin-bottom: 20px;
             transition: transform 0.2s ease;
         }
-        .profile-img-wrap:hover {
+        .profile-link:hover {
             transform: scale(1.05);
         }
-        .profile-img-wrap img {
+        .profile-link img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center 10px; 
         }
+        /* 이름 스타일 (줄바꿈 방지) */
         .name {
             font-size: 20px;
             font-weight: 700;
@@ -56,6 +58,7 @@
             white-space: nowrap;
             color: #ffffff;
         }
+        /* 프로필 아래 2줄 텍스트 (흰색 변경 적용) */
         .bio {
             font-size: 14px;
             color: #ffffff;
@@ -65,6 +68,7 @@
         .bio p {
             margin-bottom: 4px;
         }
+        /* 링크 버튼 스타일 */
         .link-list {
             display: flex;
             flex-direction: column;
@@ -89,6 +93,7 @@
             background-color: #283548;
             border-color: #3b82f6;
         }
+        /* 하단 카피라이트 */
         .footer {
             margin-top: 40px;
             font-size: 12px;
@@ -99,21 +104,21 @@
 <body>
 
     <div class="card-container">
-        <!-- 프로필 사진 영역 (개인정보 보호를 위해 전화 연결 링크 제거) -->
-        <div class="profile-img-wrap">
+        <!-- 프로필 사진 터치 시 전화 연결 (명함 필수 기능 유지) -->
+        <a href="tel:010-4042-2419" class="profile-link" title="전화 걸기">
             <img src="profile.png" alt="세이스강 프로필 사진">
-        </div>
+        </a>
 
-        <!-- 이름 (줄바꿈 방지) -->
+        <!-- 이름 (줄바꿈 방지 적용) -->
         <h1 class="name">세이스강(SEISKANG) 이윤재</h1>
 
-        <!-- 2줄 텍스트 (흰색) -->
+        <!-- 프로필 아래 2줄 텍스트 (흰색 적용) -->
         <div class="bio">
             <p>세상을 이롭게 하는 스마트한 강사</p>
             <p>시니어 AI & 스마트 라이프</p>
         </div>
 
-        <!-- 4대 공식 채널 링크 버튼 (Tabnabbing 보안 rel 속성 적용) -->
+        <!-- 4대 공식 채널 링크 버튼 (Tabnabbing 보안 rel="noopener noreferrer" 적용) -->
         <div class="link-list">
             <a href="https://seiskang.kr" class="link-btn" target="_blank" rel="noopener noreferrer">🌐 세이스강 공식 홈페이지</a>
             <a href="https://blog.naver.com/kacipi" class="link-btn" target="_blank" rel="noopener noreferrer">📝 네이버 블로그</a>
