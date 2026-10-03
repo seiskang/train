@@ -3,16 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>세이스강(SEISKANG) 이윤재 클래스 매니저</title> 
+<title>세이스강 이윤재 클래스 매니저</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
-  @keyframes blingPulse {
-  0%, 100% { transform: scale(1); filter: brightness(1); box-shadow: 0 4px 15px rgba(196,104,74,0.4); }
-  50% { transform: scale(1.05); filter: brightness(1.25); box-shadow: 0 0 25px rgba(250,204,21,0.85); }
-}
   /* 사이트 전체 한국어 단어 단위 줄바꿈 */
 body, h1, h2, h3, h4, p, span, div {
   word-break: keep-all;
@@ -540,38 +536,6 @@ button { font-family: var(--font-sans); }
   .engine-input { width: 100%; border: 1px solid var(--hanji-line); border-radius: var(--radius-sm); height: 38px; margin-bottom: 8px; padding: 0 10px; background: var(--surface-page); }
   .engine-btn { width: 100%; height: 38px; }
 }
-/* 프로필 버튼 블링블링 애니메이션 */
-    @keyframes blingPulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 4px 15px rgba(196, 104, 74, 0.4);
-        filter: brightness(1);
-      }
-      50% {
-        transform: scale(1.06);
-        box-shadow: 0 8px 25px rgba(196, 104, 74, 0.8), 0 0 25px rgba(250, 204, 21, 0.9);
-        filter: brightness(1.25);
-      }
-    }
-    .btn-cta {
-      display: inline-block !important;
-      animation: blingPulse 1.4s infinite ease-in-out !important;
-    }
-
-    /* 수강신청 1, 2, 3 가운데 중앙 정렬 */
-    .enroll-steps {
-      max-width: 480px !important;
-      margin: 24px auto 0 auto !important;
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 16px !important;
-    }
-    .enroll-step {
-      display: flex !important;
-      align-items: flex-start !important;
-      gap: 16px !important;
-      text-align: left !important;
-    }  
 </style>
 </head>
 <body>
@@ -1681,19 +1645,7 @@ button { font-family: var(--font-sans); }
           <div style="position:relative;padding-bottom:56.250;overflow:hidden;border-radius:8px;">
             <iframe src="https://www.youtube.com/embed/w1XMkogqv3A" style="position:absolute;top:0;left:0;width:1001000;" allowfullscreen></iframe>
           </div>
-        </div>
-<!-- 세이스강 오리지널 트로트: 완행열차의 가을 온기 -->
-<section class="landing-section" style="max-width:860px;margin:2rem auto;padding:1.5rem;background:#1e293b;border-radius:1rem;box-shadow:0 10px 25px -5px rgba(0,0,0,0.5);border:1px solid #d97706;">
-  <div style="text-align:center;margin-bottom:1rem;">
-    <span style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(217,119,6,0.2);color:#fbbf24;font-size:0.75rem;font-weight:700;border-radius:9999px;border:1px solid rgba(245,158,11,0.3);letter-spacing:1px;">SEISKANG TROT MUSIC</span>
-    <h3 style="color:#fef3c7;font-size:1.5rem;font-weight:800;margin:0.5rem 0 0.25rem;">완행열차의 가을 온기</h3>
-    <p style="color:#94a3b8;font-size:0.875rem;margin:0;">작사·기획 : 세이스강 (seiskang.kr) | 느린 길목 오리지널 완곡</p>
-  </div>
-  <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:0.75rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.3);border:1px solid #334155;">
-    <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;" src="https://www.youtube.com/embed/w1XMkogqv3A" title="완행열차의 가을 온기 - 세이스강" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-  </div>
-</section>
-' + landingHeroArt() +
+        </div>' + landingHeroArt() +
       '<div class="hero-inner">' +
       '<h1>안녕하세요?<br>한국어 전문강사<br>세이스강(SEISKANG) 이윤재입니다.</h1>' +
       '<div style="display: flex; justify-content: center; gap: 12px; margin: 24px 0 16px 0; flex-wrap: wrap;">' +
@@ -1714,8 +1666,8 @@ button { font-family: var(--font-sans); }
       '<a href="#auth-form-anchor" class="btn-hero ghost">이미 계정이 있어요</a>' +
       '</div></div></section>' +
 
-      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>세이스강 이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 세이스강 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><style>@keyframes blingPulse{0%,100%{transform:scale(1);filter:brightness(1);box-shadow:0 4px 15px rgba(196,104,74,0.4)}50%{transform:scale(1.06);filter:brightness(1.25);box-shadow:0 0 25px rgba(250,204,21,0.85)}}</style><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-cta" style="display:inline-block;animation:blingPulse 1.5s infinite ease-in-out;">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
-'<div class="enroll-steps" style="max-width:480px;margin:24px auto 0 auto;display:flex;flex-direction:column;gap:16px;">' +
+      '<section class="landing-section"><div class="landing-head"><span class="eyebrow-seal">Profile</span><h2>세이스강 이윤재 강사 소개</h2></div><p style="text-align:center;color:var(--text-muted);font-size:var(--text-sm);max-width:520px;margin:0 auto">32년의 공직 생활과 수상 이력, 학력과 자격증, 문학 활동까지 — 세이스강 이윤재 강사에 대한 자세한 이야기를 한 페이지에 담았습니다.</p><div style="text-align:center;padding:var(--space-5) 0 0"><a href="/profile.html" class="btn-cta">이윤재 강사 프로필 자세히 보기 →</a></div></section><div class="landing-head"><span class="eyebrow-seal">How to start</span><h2>수강 신청 안내</h2></div>' +
+      '<div class="enroll-steps">' +
       '<div class="enroll-step"><span class="num">1</span><div><div class="title">회원가입 후 로그인</div><div class="desc">아래에서 회원가입하시면 바로 이용하실 수 있습니다.</div></div></div>' +
       '<div class="enroll-step"><span class="num">2</span><div><div class="title">레벨 테스트 상담</div><div class="desc">한국어 실력에 맞는 수업을 위해 먼저 상담을 진행합니다.</div></div></div>' +
       '<div class="enroll-step"><span class="num">3</span><div><div class="title">주 1~2회, 회당 50분</div><div class="desc">보이스톡으로 1:1 맞춤 수업을 진행합니다.</div></div></div>' +
